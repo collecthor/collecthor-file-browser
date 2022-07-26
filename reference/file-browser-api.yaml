@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.0
 x-stoplight:
   id: bv8z7mj7mwxvx
 info:
@@ -55,6 +55,8 @@ paths:
               properties: {}
         description: ''
       parameters: []
+      tags:
+        - file-browser
   /download:
     post:
       summary: Download
@@ -106,9 +108,11 @@ paths:
                 value:
                   path: /some/nested/file.txt
         description: 'The path you want to download, can only be a file'
+      tags:
+        - file-browser
   /create:
     post:
-      summary: ''
+      summary: Create
       operationId: post-create
       responses:
         '201':
@@ -139,11 +143,14 @@ paths:
                     - folder
                 content:
                   type: string
+                  description: A data-URI of the content of the file
               required:
                 - path
                 - name
                 - type
         description: Create a file or folder on the filesystem
+      tags:
+        - file-browser
   /delete:
     post:
       summary: Delete file
@@ -166,6 +173,8 @@ paths:
                   type: string
               required:
                 - path
+      tags:
+        - file-browser
   /move:
     post:
       summary: Move file
@@ -198,6 +207,8 @@ paths:
                 - source
                 - destination
         description: ''
+      tags:
+        - file-browser
 components:
   schemas:
     file:
@@ -275,3 +286,5 @@ components:
         - path
         - size
         - permissions
+tags:
+  - name: file-browser
