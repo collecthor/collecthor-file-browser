@@ -1,0 +1,277 @@
+openapi: 3.1.0
+x-stoplight:
+  id: bv8z7mj7mwxvx
+info:
+  title: file-browser-api
+  version: '1.0'
+  contact:
+    name: Collecthor B.V.
+    url: 'http://collecthor.nl'
+    email: info@collecthor.nl
+  description: The spec that a simple file browser backend must implement
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /view:
+    post:
+      summary: View
+      operationId: post-view
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/file'
+              examples: {}
+        '404':
+          description: Not Found
+      description: View all files(and folders) in a path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                example-1:
+                  path: /
+              properties:
+                path:
+                  type: string
+              required:
+                - path
+            examples:
+              Root directory:
+                value:
+                  path: /
+              Nested:
+                value:
+                  path: /some/nested/directory
+          application/javascript:
+            schema:
+              type: object
+              properties: {}
+        description: ''
+      parameters: []
+  /download:
+    post:
+      summary: Download
+      operationId: post-download
+      responses:
+        '200':
+          description: OK
+          content:
+            application/markdown:
+              schema:
+                type: string
+                readOnly: true
+              examples:
+                File in root:
+                  value: 'Hello, this is the readme of this project'
+            application/json:
+              schema:
+                type: object
+              examples:
+                Example:
+                  value:
+                    test: Object
+            text/plain:
+              schema:
+                type: string
+              examples:
+                String:
+                  value: string
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      description: Download a file from the remote
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+              required:
+                - path
+            examples:
+              File in root:
+                value:
+                  path: /readme.md
+              File in nested dir:
+                value:
+                  path: /some/nested/file.txt
+        description: 'The path you want to download, can only be a file'
+  /create:
+    post:
+      summary: ''
+      operationId: post-create
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/file'
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      description: Create a file or folder at the specified path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                name:
+                  type: string
+                type:
+                  type: string
+                  enum:
+                    - file
+                    - folder
+                content:
+                  type: string
+              required:
+                - path
+                - name
+                - type
+        description: Create a file or folder on the filesystem
+  /delete:
+    post:
+      summary: Delete file
+      operationId: post-delete
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      description: Delete a file or folder from the filesystem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+              required:
+                - path
+  /move:
+    post:
+      summary: Move file
+      operationId: post-move
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/file'
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      description: Move a file on the filesystem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source:
+                  type: string
+                destination:
+                  type: string
+                copy:
+                  type: boolean
+              required:
+                - source
+                - destination
+        description: ''
+components:
+  schemas:
+    file:
+      title: file
+      x-stoplight:
+        id: h8jb1qxnk3eta
+      type: object
+      description: Any item on the file system
+      examples:
+        - filename: readme.md
+          type: file
+          path: /readme.md
+          size: 150
+          mimetype: text/markdown
+          permissions:
+            read: true
+            write: true
+            create: false
+            delete: true
+        - filename: examples
+          type: folder
+          path: /examples
+          size: 0
+          icon: path/to/custom/icon
+          permissions:
+            read: true
+            write: false
+            create: true
+            delete: true
+        - filename: nested.php
+          type: file
+          path: /some/folder/nested.php
+          size: 150
+          mimetype: application/x-httpd-php
+          permissions:
+            read: false
+            write: false
+            create: false
+            delete: false
+      properties:
+        filename:
+          type: string
+        type:
+          type: string
+          enum:
+            - file
+            - folder
+        path:
+          type: string
+        size:
+          type: integer
+        mimetype:
+          type: string
+        icon:
+          type: string
+        permissions:
+          type: object
+          required:
+            - read
+            - write
+            - create
+            - delete
+          properties:
+            read:
+              type: boolean
+            write:
+              type: boolean
+            create:
+              type: boolean
+            delete:
+              type: boolean
+      required:
+        - filename
+        - type
+        - path
+        - size
+        - permissions
