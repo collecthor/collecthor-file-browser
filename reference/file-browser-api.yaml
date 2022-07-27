@@ -251,6 +251,7 @@ components:
       properties:
         filename:
           type: string
+          x-faker: system.commonFileName
         type:
           type: string
           enum:
@@ -258,12 +259,17 @@ components:
             - folder
         path:
           type: string
+          x-faker: system.directoryPath
         size:
           type: integer
+          minimum: 0
+          maximum: 200000
         mimetype:
           type: string
+          x-faker: system.mimeType
         icon:
           type: string
+          x-faker: word.noun
         permissions:
           type: object
           required:
