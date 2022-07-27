@@ -1,9 +1,14 @@
 <script lang="ts">
   import PathBar from "./PathBar.svelte";
-  import SizeDisplay from "./SizeDisplay.svelte";
+  import FileRow from "./FileRow.svelte";
+  import { faFolder } from '@fortawesome/free-solid-svg-icons/index.js'
+  import type ContextMenuAction from "src/interfaces/ContextMenuAction";
+  import type BackendFile from "src/interfaces/BackendFile";
+
   export let baseurl: string;
   export let type: string;
   export let basePath = '/';
+
   let currentPath = basePath;
   let pathContents = [];
   $: if(currentPath) {
@@ -29,31 +34,41 @@
     }
   };
 
-  const rowClicked = (item) => {
-    if (item.type === 'folder') {
-      currentPath += `/${item.filename}`;
+  const setPath = (event) => {
+    currentPath = event.detail.path;
+  }
+
+  const closeOptionDialogs = (event: MouseEvent) => {
+    if (event.target instanceof Element && !event.target.matches('.show-options')) {
+      Array.from(document.getElementsByClassName('dropdown')).forEach(dropdown => {
+        dropdown.classList.remove('show');
+      });
     }
   }
+
+  const defaultActions: ContextMenuAction[] = [
+    {
+      name: 'Delete',
+      icon: faFolder,
+      action: (item: BackendFile) => {
+      }
+    }
+  ]
 
   fetchFilesForPath(currentPath);
 </script>
 
+<svelte:window on:click={event => closeOptionDialogs(event)} />
+
 <div class="file-browser">
-  <PathBar path="{currentPath}"/>
+
+  <PathBar path="{currentPath}" on:pathItemClicked={setPath}/>
   <table>
     <tr>
       <th></th><th>Name</th><th>Size</th><th></th>
     </tr>
     {#each pathContents as item}
-      <tr on:click="{rowClicked(item)}">
-        {#if item.type === 'file'}
-          <td>{item.icon}</td>
-        {:else}
-          <td>📁</td>
-        {/if}
-        <td>{item.filename}</td>
-        <td><SizeDisplay size="{item.size}" /></td>
-      </tr>
+      <FileRow item={item} on:itemClicked={setPath} actions={defaultActions}/>
     {/each}
     <tr>
       <td></td>
@@ -63,5 +78,7 @@
 </div>
 
 <style lang="scss">
-
+  .file-browser {
+    font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+  }
 </style>
