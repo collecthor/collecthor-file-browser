@@ -46,9 +46,10 @@
       <div class="file-options">
         {#each actions.filter(action => action.filter.includes(item.type)) as action}
           <button on:click|stopPropagation={event => actionClicked(event, action)}>
-            <span>
-              <svelte:component this={action.icon}/>{action.name}
-            </span>
+            <div>
+              <svelte:component this={action.icon}/>
+              <span>{action.name}</span>
+            </div>
           </button>
         {/each}
       </div>
@@ -89,12 +90,16 @@
         button {
           color: black;
           text-decoration: none;
-          display: block;
-          min-width: 100px;
+          display: inline-block;
+          width: 100%;
           border: none;
           padding: 4px;
           text-align: left;
           font-size: 1em;
+          div {
+            display: flex;
+            flex-direction: row;
+          }
           &:hover {
             background-color: rgb(220, 220, 220);
           }
