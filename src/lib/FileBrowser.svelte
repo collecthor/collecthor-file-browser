@@ -6,6 +6,7 @@
   import type ContextMenuAction from "src/interfaces/ContextMenuAction";
   import type BackendFile from "src/interfaces/BackendFile";
   import { createEventDispatcher } from "svelte";
+  import BrowserControls from "./BrowserControls.svelte";
 
   export let baseurl: string;
   export let type = "browser";
@@ -16,11 +17,13 @@
   const dispatch = createEventDispatcher();
 
   if (!allowedTypes.includes(type)) {
-    throw new Error(`${type} is not a valid FileBrowser type(${allowedTypes.join(', ')})`)
+    throw new Error(
+      `${type} is not a valid FileBrowser type(${allowedTypes.join(", ")})`
+    );
   }
 
   let currentPath = basePath;
-  let pathContents = [];
+  $: pathContents = [];
   $: if (currentPath) {
     fetchFilesForPath(currentPath);
   }
@@ -50,14 +53,14 @@
 
   const itemClicked = (event) => {
     const item = event.detail as BackendFile;
-    if (item.type === 'folder') {
+    if (item.type === "folder") {
       currentPath = `${item.path}/${item.filename}`;
     } else {
-      if (type === 'picker') {
-        dispatch("itemSelected", {...item});
+      if (type === "picker") {
+        dispatch("itemSelected", { ...item });
       }
     }
-  }
+  };
 
   const closeOptionDialogs = (event: MouseEvent) => {
     if (
@@ -104,6 +107,11 @@
 
 <div class="file-browser">
   <PathBar path={currentPath} on:pathItemClicked={setPath} />
+  <BrowserControls
+    {currentPath}
+    {baseurl}
+    on:fileAdded={(e) => (pathContents = [...pathContents, e.detail])}
+  />
   <table>
     <tr>
       <th /><th>Name</th><th>Size</th><th />
