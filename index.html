@@ -15,8 +15,13 @@
         target: document.getElementById('app'),
         props: {
           baseurl: 'http://localhost:4010',
+          type: 'picker',
         },
       });
+
+      browser.$on('itemSelected', event => {
+        console.log(event.detail);
+      })
     </script>
   </body>
 </html>

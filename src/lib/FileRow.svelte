@@ -11,14 +11,6 @@
 
   const dispatch = createEventDispatcher();
 
-  const rowClicked = (clickedItem: BackendFile) => {
-    if (clickedItem.type === "folder") {
-      dispatch("itemClicked", {
-        path: `${clickedItem.path}/${clickedItem.filename}`,
-      });
-    }
-  };
-
   const optionsClicked = (event: MouseEvent) => {
     if (event.target instanceof Element) {
       event.target.parentElement.classList.toggle("show");
@@ -34,12 +26,14 @@
 
 </script>
 
-<tr on:click={() => rowClicked(item)}>
-  {#if item.type === "file"}
-    <FileIcon file={item} />
-  {:else}
-    <td><Folder/></td>
-  {/if}
+<tr on:click={() => dispatch("itemClicked", {...item})} class="file-row">
+  <td>
+    {#if item.type === "file"}
+      <FileIcon file={item} />
+    {:else}
+      <Folder/>
+    {/if}
+  </td>
   <td>{item.filename}</td>
   <td><SizeDisplay size={item.size} /></td>
   <td>
@@ -68,31 +62,42 @@
       display: block !important;
     }
   }
-  .dropdown {
-    position: relative;
-    display: inline-block;
+  .file-row {
+    font-size: 1.1em;
 
-    button.show-options {
-      border: none;
+    td {
+      padding: 4px;
     }
+    &:hover {
+      background-color: rgb(240, 240, 240);
+    }
+    .dropdown {
+      position: relative;
+      display: inline-block;
 
-    .file-options {
-      display: none;
-      position: absolute;
-      background-color: white;
-      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-      z-index: 1;
-      button {
-        color: black;
-        text-decoration: none;
-        display: block;
-        min-width: 100px;
+      button.show-options {
         border: none;
-        padding: 4px;
-        text-align: left;
-        font-size: 1em;
-        &:hover {
-          background-color: rgb(220, 220, 220);
+      }
+
+      .file-options {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: white;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        button {
+          color: black;
+          text-decoration: none;
+          display: block;
+          min-width: 100px;
+          border: none;
+          padding: 4px;
+          text-align: left;
+          font-size: 1em;
+          &:hover {
+            background-color: rgb(220, 220, 220);
+          }
         }
       }
     }

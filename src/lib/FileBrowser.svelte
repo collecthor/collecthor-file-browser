@@ -1,30 +1,39 @@
 <script lang="ts">
   import PathBar from "./PathBar.svelte";
   import FileRow from "./FileRow.svelte";
-  import Delete from 'svelte-material-icons/Delete.svelte';
-  import Download from 'svelte-material-icons/Download.svelte';
+  import Delete from "svelte-material-icons/Delete.svelte";
+  import Download from "svelte-material-icons/Download.svelte";
   import type ContextMenuAction from "src/interfaces/ContextMenuAction";
   import type BackendFile from "src/interfaces/BackendFile";
+  import { createEventDispatcher } from "svelte";
 
   export let baseurl: string;
-  export let type: string;
-  export let basePath = '/';
+  export let type = "browser";
+  export let basePath = "/";
+  export let actions: ContextMenuAction[] = [];
+
+  const allowedTypes = ["browser", "picker"];
+  const dispatch = createEventDispatcher();
+
+  if (!allowedTypes.includes(type)) {
+    throw new Error(`${type} is not a valid FileBrowser type(${allowedTypes.join(', ')})`)
+  }
 
   let currentPath = basePath;
   let pathContents = [];
-  $: if(currentPath) {
+  $: if (currentPath) {
     fetchFilesForPath(currentPath);
-  };
+  }
 
   const fetchFilesForPath = async (path: string) => {
     const response = await fetch(`${baseurl}/view`, {
-      method: 'POST',
-      credentials: 'same-origin',
+      method: "POST",
+      credentials: "same-origin",
       body: JSON.stringify({
         path,
       }),
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
     const data = await response.json();
@@ -37,58 +46,77 @@
 
   const setPath = (event) => {
     currentPath = event.detail.path;
-  }
+  };
 
-  const closeOptionDialogs = (event: MouseEvent) => {
-    if (event.target instanceof Element && !event.target.matches('.show-options')) {
-      Array.from(document.getElementsByClassName('dropdown')).forEach(dropdown => {
-        dropdown.classList.remove('show');
-      });
+  const itemClicked = (event) => {
+    const item = event.detail as BackendFile;
+    if (item.type === 'folder') {
+      currentPath = `${item.path}/${item.filename}`;
+    } else {
+      if (type === 'picker') {
+        dispatch("itemSelected", {...item});
+      }
     }
   }
 
+  const closeOptionDialogs = (event: MouseEvent) => {
+    if (
+      event.target instanceof Element &&
+      !event.target.matches(".show-options")
+    ) {
+      Array.from(document.getElementsByClassName("dropdown")).forEach(
+        (dropdown) => {
+          dropdown.classList.remove("show");
+        }
+      );
+    }
+  };
+
   const defaultActions: ContextMenuAction[] = [
     {
-      name: 'Delete',
+      name: "Delete",
       icon: Delete,
-      action: (item: BackendFile) => {
-      },
-      filter: ['file', 'folder'],
+      action: (item: BackendFile) => {},
+      filter: ["file", "folder"],
     },
     {
-      name: 'Download',
+      name: "Download",
       icon: Download,
       action: (item: BackendFile) => {
-        const linkElement = document.createElement('a');
-        const url = 'happytechnology.png';
+        const linkElement = document.createElement("a");
+        const url = "happytechnology.png";
+        // const url = `/${currentPath}/${item.filename}`;
         linkElement.href = url;
-        linkElement.setAttribute('download', '');
-        linkElement.style.display = 'none';
+        linkElement.setAttribute("download", "");
+        linkElement.style.display = "none";
         document.body.appendChild(linkElement);
         linkElement.click();
         linkElement.remove();
       },
-      filter: ['file'],
-    }
-  ]
+      filter: ["file"],
+    },
+  ];
 
   fetchFilesForPath(currentPath);
 </script>
 
-<svelte:window on:click={event => closeOptionDialogs(event)} />
+<svelte:window on:click={(event) => closeOptionDialogs(event)} />
 
 <div class="file-browser">
-
-  <PathBar path="{currentPath}" on:pathItemClicked={setPath}/>
+  <PathBar path={currentPath} on:pathItemClicked={setPath} />
   <table>
     <tr>
-      <th></th><th>Name</th><th>Size</th><th></th>
+      <th /><th>Name</th><th>Size</th><th />
     </tr>
     {#each pathContents as item}
-      <FileRow item={item} on:itemClicked={setPath} actions={defaultActions}/>
+      <FileRow
+        {item}
+        on:itemClicked={itemClicked}
+        actions={[...defaultActions, ...actions]}
+      />
     {/each}
     <tr>
-      <td></td>
+      <td />
       <td>Count: {pathContents.length}</td>
     </tr>
   </table>
@@ -97,5 +125,17 @@
 <style lang="scss">
   .file-browser {
     font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+    table {
+      border-collapse: collapse;
+      th {
+        border-bottom: 1px solid black;
+        padding: 0;
+        border-spacing: 0;
+        &:not(:first-child):not(:last-child) {
+          border-left: 1px solid black;
+          border-right: 1px solid black;
+        }
+      }
+    }
   }
 </style>
