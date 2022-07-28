@@ -1,7 +1,8 @@
 <script lang="ts">
   import PathBar from "./PathBar.svelte";
   import FileRow from "./FileRow.svelte";
-  import { faFolder } from '@fortawesome/free-solid-svg-icons/index.js'
+  import Delete from 'svelte-material-icons/Delete.svelte';
+  import Download from 'svelte-material-icons/Download.svelte';
   import type ContextMenuAction from "src/interfaces/ContextMenuAction";
   import type BackendFile from "src/interfaces/BackendFile";
 
@@ -49,9 +50,25 @@
   const defaultActions: ContextMenuAction[] = [
     {
       name: 'Delete',
-      icon: faFolder,
+      icon: Delete,
       action: (item: BackendFile) => {
-      }
+      },
+      filter: ['file', 'folder'],
+    },
+    {
+      name: 'Download',
+      icon: Download,
+      action: (item: BackendFile) => {
+        const linkElement = document.createElement('a');
+        const url = 'happytechnology.png';
+        linkElement.href = url;
+        linkElement.setAttribute('download', '');
+        linkElement.style.display = 'none';
+        document.body.appendChild(linkElement);
+        linkElement.click();
+        linkElement.remove();
+      },
+      filter: ['file'],
     }
   ]
 

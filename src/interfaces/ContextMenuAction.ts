@@ -1,8 +1,9 @@
+import type { SvelteComponentTyped } from "svelte"
 import type BackendFile from "./BackendFile"
-import type { IconDefinition } from "../../node_modules/@fortawesome/fontawesome-common-types/index";
 
 export default interface ContextMenuAction {
   name: string
-  icon: IconDefinition
+  icon: SvelteComponentTyped
   action: (item: BackendFile) => void
+  filter: string[]
 }

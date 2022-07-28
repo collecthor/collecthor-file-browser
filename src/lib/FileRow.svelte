@@ -50,10 +50,10 @@
         >...</button
       >
       <div class="file-options">
-        {#each actions as action}
+        {#each actions.filter(action => action.filter.includes(item.type)) as action}
           <button on:click|stopPropagation={event => actionClicked(event, action)}>
             <span>
-              {action.name}
+              <svelte:component this={action.icon}/>{action.name}
             </span>
           </button>
         {/each}
@@ -89,6 +89,8 @@
         min-width: 100px;
         border: none;
         padding: 4px;
+        text-align: left;
+        font-size: 1em;
         &:hover {
           background-color: rgb(220, 220, 220);
         }
