@@ -22,7 +22,6 @@
     "vite": "^2.9.9"
   },
   "dependencies": {
-    "@fortawesome/free-solid-svg-icons": "^6.1.2",
-    "svelte-fa": "^3.0.3"
+    "svelte-material-icons": "^2.0.4"
   }
 }

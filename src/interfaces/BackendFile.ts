@@ -3,8 +3,8 @@ export default interface BackendFile {
   type: string
   path: string
   size: number
-  mimeType: string
-  icon: string
+  mimetype: string
+  icon?: string
   permissions: {
     read: boolean
     write: boolean

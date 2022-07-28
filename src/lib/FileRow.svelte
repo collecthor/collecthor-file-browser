@@ -1,10 +1,10 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import SizeDisplay from "./SizeDisplay.svelte";
-  import Fa from 'svelte-fa/src/fa.svelte';
-  import { faFolder } from '@fortawesome/free-solid-svg-icons/index.js'
+  import Folder from 'svelte-material-icons/Folder.svelte';
   import type BackendFile from "src/interfaces/BackendFile";
   import type ContextMenuAction from "src/interfaces/ContextMenuAction";
+  import FileIcon from "./FileIcon.svelte";
 
   export let item: BackendFile;
   export let actions: ContextMenuAction[];
@@ -36,9 +36,9 @@
 
 <tr on:click={() => rowClicked(item)}>
   {#if item.type === "file"}
-    <td>{item.icon}</td>
+    <FileIcon file={item} />
   {:else}
-    <td><Fa icon={faFolder} /></td>
+    <td><Folder/></td>
   {/if}
   <td>{item.filename}</td>
   <td><SizeDisplay size={item.size} /></td>
@@ -52,7 +52,6 @@
       <div class="file-options">
         {#each actions as action}
           <button on:click|stopPropagation={event => actionClicked(event, action)}>
-            <Fa icon={action.icon} /> 
             <span>
               {action.name}
             </span>
