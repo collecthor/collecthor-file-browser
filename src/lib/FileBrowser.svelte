@@ -1,6 +1,7 @@
 <script lang="ts">
   import PathBar from "./PathBar.svelte";
   import FileRow from "./FileRow.svelte";
+  import Modal from "svelte-simple-modal";
   import Delete from "svelte-material-icons/Delete.svelte";
   import Download from "svelte-material-icons/Download.svelte";
   import type ContextMenuAction from "src/interfaces/ContextMenuAction";
@@ -104,31 +105,32 @@
 </script>
 
 <svelte:window on:click={(event) => closeOptionDialogs(event)} />
-
-<div class="file-browser">
-  <PathBar path={currentPath} on:pathItemClicked={setPath} />
-  <BrowserControls
-    {currentPath}
-    {baseurl}
-    on:fileAdded={(e) => (pathContents = [...pathContents, e.detail])}
-  />
-  <table>
-    <tr>
-      <th /><th>Name</th><th>Size</th><th />
-    </tr>
-    {#each pathContents as item}
-      <FileRow
-        {item}
-        on:itemClicked={itemClicked}
-        actions={[...defaultActions, ...actions]}
-      />
-    {/each}
-    <tr>
-      <td />
-      <td>Count: {pathContents.length}</td>
-    </tr>
-  </table>
-</div>
+<Modal>
+  <div class="file-browser">
+    <PathBar path={currentPath} on:pathItemClicked={setPath} />
+    <BrowserControls
+      {currentPath}
+      {baseurl}
+      on:fileAdded={(e) => (pathContents = [...pathContents, e.detail])}
+    />
+    <table>
+      <tr>
+        <th /><th>Name</th><th>Size</th><th />
+      </tr>
+      {#each pathContents as item}
+        <FileRow
+          {item}
+          on:itemClicked={itemClicked}
+          actions={[...defaultActions, ...actions]}
+        />
+      {/each}
+      <tr>
+        <td />
+        <td>Count: {pathContents.length}</td>
+      </tr>
+    </table>
+  </div>
+</Modal>
 
 <style lang="scss">
   .file-browser {
