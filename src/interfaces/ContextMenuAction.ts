@@ -4,6 +4,6 @@ import type BackendFile from "./BackendFile"
 export default interface ContextMenuAction {
   name: string
   icon: SvelteComponentTyped
-  action: (item: BackendFile) => void
+  action: (item: BackendFile, items: BackendFile[]) => BackendFile[]
   filter: string[]
 }

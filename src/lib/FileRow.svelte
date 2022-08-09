@@ -7,6 +7,7 @@
   import FileIcon from "./FileIcon.svelte";
 
   export let item: BackendFile;
+  export let items: BackendFile[];
   export let actions: ContextMenuAction[];
 
   const dispatch = createEventDispatcher();
@@ -18,7 +19,7 @@
   };
   
   const actionClicked = (event: MouseEvent, action: ContextMenuAction) => {
-    action.action(item);
+    dispatch('updateItems', action.action(item, items));
     if (event.target instanceof Element) {
       event.target.closest('.dropdown').classList.remove('show');
     }

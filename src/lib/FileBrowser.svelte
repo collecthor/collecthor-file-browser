@@ -76,17 +76,23 @@
     }
   };
 
+  const itemsUpdated = (event) => {
+    pathContents = event.detail as BackendFile[];
+  };
+
   const defaultActions: ContextMenuAction[] = [
     {
       name: "Delete",
       icon: Delete,
-      action: (item: BackendFile) => {},
+      action: (item: BackendFile, items: BackendFile[]) => {
+        return items.filter((i) => i.filename !== item.filename && i.path !== item.path);
+      },
       filter: ["file", "folder"],
     },
     {
       name: "Download",
       icon: Download,
-      action: (item: BackendFile) => {
+      action: (item: BackendFile, items: BackendFile[]) => {
         const linkElement = document.createElement("a");
         const url = "happytechnology.png";
         // const url = `/${currentPath}/${item.filename}`;
@@ -96,6 +102,7 @@
         document.body.appendChild(linkElement);
         linkElement.click();
         linkElement.remove();
+        return items;
       },
       filter: ["file"],
     },
@@ -120,7 +127,9 @@
       {#each pathContents as item}
         <FileRow
           {item}
+          items={pathContents}
           on:itemClicked={itemClicked}
+          on:updateItems={itemsUpdated}
           actions={[...defaultActions, ...actions]}
         />
       {/each}
