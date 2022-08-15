@@ -30,7 +30,7 @@
 <tr on:click={() => dispatch("itemClicked", {...item})} class="file-row">
   <td>
     {#if item.type === "file"}
-      <FileIcon file={item} />
+      <FileIcon fileType={item.mimetype} />
     {:else}
       <Folder/>
     {/if}

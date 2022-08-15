@@ -41,6 +41,9 @@
         "preprocess": true
       }]
     },
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!svelte-material-icons/)"
+    ],
     "moduleFileExtensions": [
       "js",
       "svelte",
