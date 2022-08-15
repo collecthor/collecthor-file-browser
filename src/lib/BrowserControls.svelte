@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher, getContext } from "svelte";
   import NameInputModal from "./NameInputModal.svelte";
+  import type Error from "src/interfaces/Error";
   export let currentPath: string;
   export let baseurl: string;
   export let fileNamePromise: Promise<string> | null = null;
@@ -9,6 +10,7 @@
 
   const dispatch = createEventDispatcher();
   const { open, close } = getContext('simple-modal');
+  const { errorHandler } = getContext('errorHandler');
 
   const onFileSelected = () => {
     const file = fileUpload.files[0];
@@ -30,7 +32,11 @@
         },
       });
       const data = await response.json();
-      dispatch('fileAdded', {...data});
+      if (response.status === 200) {
+        dispatch('fileAdded', {...data});
+      } else {
+        errorHandler(data as Error);
+      }
     };
   };
 
@@ -61,9 +67,14 @@
           "Content-Type": "application/json",
         },
       });
+
       const data = await response.json();
-      dispatch('fileAdded', {...data});
-      close();
+      if (response.status === 200) {
+        dispatch('fileAdded', {...data});
+        close();
+      } else {
+        errorHandler(data as Error);
+      }
     });
   };
 
@@ -95,8 +106,12 @@
         },
       });
       const data = await response.json();
-      dispatch('fileAdded', {...data});
-      close();
+      if (response.status === 200) {
+        dispatch('fileAdded', {...data});
+        close();
+      } else {
+        errorHandler(data as Error);
+      }
     });
   }
 

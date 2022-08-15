@@ -3,13 +3,17 @@
   import FileRow from "./FileRow.svelte";
   import Delete from "svelte-material-icons/Delete.svelte";
   import Download from "svelte-material-icons/Download.svelte";
+  import Eye from "svelte-material-icons/Eye.svelte";
   import type ContextMenuAction from "src/interfaces/ContextMenuAction";
   import type BackendFile from "src/interfaces/BackendFile";
-  import { createEventDispatcher, getContext } from "svelte";
+  import type Error from "src/interfaces/Error";
+  import { createEventDispatcher, getContext, setContext } from "svelte";
   import BrowserControls from "./BrowserControls.svelte";
   import ErrorModal from "./ErrorModal.svelte";
 
+
   export let baseurl: string;
+  export let openFile: (file: BackendFile) => void;
   export let type = "browser";
   export let basePath = "/";
   export let actions: ContextMenuAction[] = [];
@@ -31,6 +35,17 @@
   $: if (currentPath) {
     fetchFilesForPath(currentPath);
   }
+
+  const errorHandler = (errorData: Error) => {
+    open(ErrorModal, {
+        title: errorData.status,
+        message: errorData.detail,
+        type: "error",
+    });
+  };
+
+  setContext('errorHandler', errorHandler);
+
   const dragStart = (event: DragEvent) => {
     event.preventDefault();
     (event.target as Element).classList.add("file-dragging");
@@ -69,8 +84,12 @@
         "Content-Type": "application/json",
       },
     });
-    const data: BackendFile = await response.json();
-    pathContents = [...pathContents, data];
+    const data: BackendFile | Error = await response.json();
+    if (response.status === 200) {
+      pathContents = [...pathContents, data];
+    } else {
+      errorHandler(data as Error);
+    }
   };
 
   const fetchFilesForPath = async (path: string) => {
@@ -89,7 +108,7 @@
       if (response.ok) {
         pathContents = data;
       } else {
-        console.error("Could not load folder contents");
+        errorHandler(data as Error);
       }
     } catch (e) {
       open(ErrorModal, {
@@ -139,7 +158,6 @@
       name: "Delete",
       icon: Delete,
       action: (item: BackendFile, items: BackendFile[]) => {
-        console.log(items);
         return items.filter(
           (i) => i.filename !== item.filename && i.path !== item.path
         );
@@ -159,6 +177,15 @@
         document.body.appendChild(linkElement);
         linkElement.click();
         linkElement.remove();
+        return items;
+      },
+      filter: ["file"],
+    },
+    {
+      name: "Open",
+      icon: Eye,
+      action: (item: BackendFile, items: BackendFile[]) => {
+        openFile(item);
         return items;
       },
       filter: ["file"],
