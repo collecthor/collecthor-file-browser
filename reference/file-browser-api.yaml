@@ -807,5 +807,10 @@ components:
         code:
           type: string
           default: '0'
+      required:
+        - status
+        - title
+        - detail
+        - code
 tags:
   - name: file-browser
