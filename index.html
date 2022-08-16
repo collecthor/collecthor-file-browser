@@ -11,11 +11,21 @@
     <script type="module">
       import FileBrowser from "./src/lib/FileBrowser.svelte"
 
+      const openFile = (file) => {
+        console.log(file);
+      }
+
+      const itemSelected = (file) => {
+        console.log(file);
+      }
+
       const browser = new FileBrowser({
         target: document.getElementById('app'),
         props: {
           baseurl: 'http://localhost:4010',
           type: 'picker',
+          openFile,
+          itemSelected,
         },
       });
 

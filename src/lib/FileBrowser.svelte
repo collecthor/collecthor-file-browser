@@ -7,11 +7,12 @@
   import FileBrowserContent from "./FileBrowserContent.svelte";
   export let baseurl: string;
   export let openFile: (file: BackendFile) => void;
+  export let itemSelected: (file: BackendFile) => void;
   export let type = "browser";
   export let basePath = "/";
   export let actions: ContextMenuAction[] = [];
 </script>
 
 <Modal>
-  <FileBrowserContent {...$$props} />
+  <FileBrowserContent {...$$props} on:message/>
 </Modal>

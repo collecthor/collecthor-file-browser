@@ -10,10 +10,11 @@
   import { createEventDispatcher, getContext, setContext } from "svelte";
   import BrowserControls from "./BrowserControls.svelte";
   import ErrorModal from "./ErrorModal.svelte";
-
+  import ConfirmPickModal from "./ConfirmPickModal.svelte";
 
   export let baseurl: string;
   export let openFile: (file: BackendFile) => void;
+  export let itemSelected: (file: BackendFile) => void;
   export let type = "browser";
   export let basePath = "/";
   export let actions: ContextMenuAction[] = [];
@@ -38,13 +39,13 @@
 
   const errorHandler = (errorData: Error) => {
     open(ErrorModal, {
-        title: errorData.status,
-        message: errorData.detail,
-        type: "error",
+      title: errorData.status,
+      message: errorData.detail,
+      type: "error",
     });
   };
 
-  setContext('errorHandler', errorHandler);
+  setContext("errorHandler", errorHandler);
 
   const dragStart = (event: DragEvent) => {
     event.preventDefault();
@@ -131,7 +132,10 @@
       currentPath = `${item.path}/${item.filename}`;
     } else {
       if (type === "picker") {
-        dispatch("itemSelected", { ...item });
+        open(ConfirmPickModal, {
+          pickedFile: item,
+          confirmed: itemSelected
+        });
       }
     }
   };
