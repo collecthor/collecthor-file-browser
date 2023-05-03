@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.1.0
 x-stoplight:
   id: bv8z7mj7mwxvx
 info:
@@ -25,7 +25,19 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/file'
-              examples: {}
+              examples:
+                Example 1:
+                  value:
+                    - filename: readme.md
+                      type: file
+                      path: /readme.md
+                      size: 150
+                      mimetype: text/markdown
+                      permissions:
+                        read: true
+                        write: true
+                        create: false
+                        delete: true
         '400':
           description: Bad Request
           content:
@@ -115,7 +127,7 @@ paths:
                   path: /
               properties:
                 path:
-                  type: string
+                  $ref: '#/components/schemas/path'
               required:
                 - path
             examples:
@@ -477,9 +489,13 @@ paths:
               type: object
               properties:
                 path:
-                  type: string
+                  $ref: '#/components/schemas/path'
               required:
                 - path
+            examples:
+              Example 1:
+                value:
+                  path: /test
       tags:
         - file-browser
   /move:
@@ -579,9 +595,9 @@ paths:
               type: object
               properties:
                 source:
-                  type: string
+                  $ref: '#/components/schemas/path'
                 destination:
-                  type: string
+                  $ref: '#/components/schemas/path'
               required:
                 - source
                 - destination
@@ -733,28 +749,24 @@ components:
             read: false
             write: false
             create: false
-            delete: false
+            delete: falsea
       properties:
         filename:
-          type: string
-          x-faker: system.commonFileName
+          $ref: '#/components/schemas/filename'
         type:
           type: string
           enum:
             - file
             - folder
         path:
-          type: string
-          x-faker: system.directoryPath
+          $ref: '#/components/schemas/path'
         size:
-          type: integer
-          minimum: 0
-          maximum: 200000
+          $ref: '#/components/schemas/size'
         mimetype:
           type: string
           x-faker: system.mimeType
         icon:
-          type: string
+          $ref: '#/components/schemas/icon'
           x-faker: word.noun
         permissions:
           type: object
@@ -812,5 +824,36 @@ components:
         - title
         - detail
         - code
+    path:
+      title: path
+      x-stoplight:
+        id: 6rq8gi5v2mpm8
+      type: string
+      description: |-
+        A file path fully identifies a file. The directory separator is / and is part of a file path.
+        The path MUST NOT start or end with a directory separator.
+      x-examples:
+        Example 1: file/abc
+      pattern: ^/.*$
+      minLength: 1
+    filename:
+      title: filename
+      x-stoplight:
+        id: uqzurb56y197k
+      type: string
+      pattern: '[^/]'
+      minLength: 1
+    size:
+      title: size
+      x-stoplight:
+        id: 596yia55vrav6
+      type: integer
+      minimum: 0
+      description: File size in bytes
+    icon:
+      title: icon
+      x-stoplight:
+        id: d97yavndec17m
+      type: string
 tags:
   - name: file-browser
