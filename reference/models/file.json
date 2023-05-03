@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "x-examples": {
+    "Example 1": {
+      "filename": "readme.md",
+      "type": "file",
+      "path": "/readme.md",
+      "size": 150,
+      "mimetype": "text/markdown",
+      "permissions": {
+        "read": true,
+        "write": true,
+        "create": false,
+        "delete": true
+      }
+    }
+  },
+  "properties": {
+    "filename": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "path": {
+      "$ref": "./path.json"
+    },
+    "size": {
+      "type": "integer",
+      "description": "Size of the file in bytes"
+    },
+    "mimetype": {
+      "type": "string"
+    },
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "read": {
+          "type": "boolean"
+        },
+        "write": {
+          "type": "boolean"
+        },
+        "create": {
+          "type": "boolean"
+        },
+        "delete": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

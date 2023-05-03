@@ -24,7 +24,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/file'
+                  $ref: ./models/file.json
               examples:
                 Example 1:
                   value:
@@ -284,7 +284,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/file'
+                $ref: ./models/file.json
         '400':
           description: Bad Request
           content:
@@ -378,7 +378,7 @@ paths:
               type: object
               properties:
                 path:
-                  type: string
+                  $ref: ./models/path.json
                 name:
                   type: string
                 type:
@@ -508,7 +508,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/file'
+                $ref: ./models/file.json
         '400':
           description: Bad Request
           content:
@@ -614,7 +614,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/file'
+                $ref: ./models/file.json
         '400':
           description: Bad Request
           content:
@@ -701,9 +701,9 @@ paths:
               type: object
               properties:
                 source:
-                  type: string
+                  $ref: ./models/path.json
                 destination:
-                  type: string
+                  $ref: ./models/path.json
               required:
                 - source
                 - destination
@@ -713,83 +713,6 @@ paths:
     parameters: []
 components:
   schemas:
-    file:
-      title: file
-      x-stoplight:
-        id: h8jb1qxnk3eta
-      type: object
-      description: Any item on the file system
-      examples:
-        - filename: readme.md
-          type: file
-          path: /readme.md
-          size: 150
-          mimetype: text/markdown
-          permissions:
-            read: true
-            write: true
-            create: false
-            delete: true
-        - filename: examples
-          type: folder
-          path: /examples
-          size: 0
-          icon: path/to/custom/icon
-          permissions:
-            read: true
-            write: false
-            create: true
-            delete: true
-        - filename: nested.php
-          type: file
-          path: /some/folder/nested.php
-          size: 150
-          mimetype: application/x-httpd-php
-          permissions:
-            read: false
-            write: false
-            create: false
-            delete: falsea
-      properties:
-        filename:
-          $ref: '#/components/schemas/filename'
-        type:
-          type: string
-          enum:
-            - file
-            - folder
-        path:
-          $ref: '#/components/schemas/path'
-        size:
-          $ref: '#/components/schemas/size'
-        mimetype:
-          type: string
-          x-faker: system.mimeType
-        icon:
-          $ref: '#/components/schemas/icon'
-          x-faker: word.noun
-        permissions:
-          type: object
-          required:
-            - read
-            - write
-            - create
-            - delete
-          properties:
-            read:
-              type: boolean
-            write:
-              type: boolean
-            create:
-              type: boolean
-            delete:
-              type: boolean
-      required:
-        - filename
-        - type
-        - path
-        - size
-        - permissions
     error:
       title: error
       x-stoplight:
@@ -855,5 +778,13 @@ components:
       x-stoplight:
         id: d97yavndec17m
       type: string
+    test:
+      title: test
+      x-stoplight:
+        id: d527osrwokcos
+      type: object
+      properties:
+        id:
+          type: string
 tags:
   - name: file-browser
