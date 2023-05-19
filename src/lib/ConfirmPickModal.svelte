@@ -1,8 +1,9 @@
 <script lang="ts">
-  import type BackendFile from "src/interfaces/BackendFile";
+
   import { getContext } from 'svelte';
-  export let pickedFile: BackendFile;
-  export let confirmed: (file: BackendFile) => void;
+  import type { Node } from '$lib/generated/Node';
+  export let pickedFile: Node;
+  export let confirmed: (file: Node) => void;
 
   const { close } = getContext('simple-modal');
 

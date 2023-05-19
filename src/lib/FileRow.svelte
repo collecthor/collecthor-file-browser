@@ -2,22 +2,22 @@
   import { createEventDispatcher } from "svelte";
   import SizeDisplay from "./SizeDisplay.svelte";
   import Folder from 'svelte-material-icons/Folder.svelte';
-  import type BackendFile from "src/interfaces/BackendFile";
-  import type ContextMenuAction from "src/interfaces/ContextMenuAction";
-  import FileIcon from "./FileIcon.svelte";
+  import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
+  import FileIcon from "./RowIcon.svelte";
+  import type { Node } from "$lib/generated/Node";
 
-  export let item: BackendFile;
-  export let items: BackendFile[];
+  export let item: Node;
+  export let items: Node[];
   export let actions: ContextMenuAction[];
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{itemClicked: Node}>();
 
   const optionsClicked = (event: MouseEvent) => {
     if (event.target instanceof Element) {
       event.target.parentElement.classList.toggle("show");
     }
   };
-  
+
   const actionClicked = (event: MouseEvent, action: ContextMenuAction) => {
     dispatch('updateItems', action.action(item, items));
     if (event.target instanceof Element) {
@@ -27,15 +27,11 @@
 
 </script>
 
-<tr on:click={() => dispatch("itemClicked", {...item})} class="file-row">
+<tr on:click={() => dispatch("itemClicked", item)} class="file-row">
   <td>
-    {#if item.type === "file"}
-      <FileIcon fileType={item.mimetype} />
-    {:else}
-      <Folder/>
-    {/if}
+    <FileIcon mimeType={item.mimeType} />
   </td>
-  <td>{item.filename}</td>
+  <td>{item.name}</td>
   <td><SizeDisplay size={item.size} /></td>
   <td>
     <div class="dropdown">
@@ -45,13 +41,15 @@
         >...</button
       >
       <div class="file-options">
-        {#each actions.filter(action => action.filter.includes(item.type)) as action}
+        {#each actions as action}
+          {#if action.validFor(item)}
           <button on:click|stopPropagation={event => actionClicked(event, action)}>
             <div>
               <svelte:component this={action.icon}/>
               <span>{action.name}</span>
             </div>
           </button>
+          {/if}
         {/each}
       </div>
     </div>

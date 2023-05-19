@@ -1,0 +1,14 @@
+{
+  "title": "Path",
+  "x-stoplight": {
+    "id": "ua8fhduzvwfq0"
+  },
+  "type": "string",
+  "pattern": "^/.*$",
+  "examples": [
+    "/",
+    "/projects",
+    "/projects/file.jpg",
+    "/uuid/97746548-5358-4ec7-bcae-9b9fe3c4234f"
+  ]
+}

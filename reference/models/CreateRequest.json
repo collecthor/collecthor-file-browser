@@ -1,0 +1,25 @@
+{
+  "title": "CreateRequest",
+  "x-stoplight": {
+    "id": "nfr66he25duik"
+  },
+  "type": "object",
+  "description": "Models a file creation request",
+  "properties": {
+    "path": {
+      "$ref": "./Path.json"
+    },
+    "name": {
+      "type": "string"
+    },
+    "mimeType": {
+      "$ref": "./MimeType.json"
+    },
+    "uri": {
+      "type": "string",
+      "format": "uri",
+      "description": "The URI must be a data URI",
+      "pattern": "^data:"
+    }
+  }
+}

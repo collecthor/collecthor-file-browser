@@ -1,0 +1,14 @@
+{
+  "title": "PathRequest",
+  "x-stoplight": {
+    "id": "og5fymap4piah"
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "description": "Models a request object with a single path key",
+  "properties": {
+    "path": {
+      "$ref": "./Path.json"
+    }
+  }
+}

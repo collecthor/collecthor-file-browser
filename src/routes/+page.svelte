@@ -11,7 +11,7 @@ import FileBrowserContent from "$lib/FileBrowserContent.svelte";
 	<FileBrowser
 	openFile={openFile}
 	itemSelected={openFile}
-	baseurl="https://collecthor.test"
+	baseurl="https://collecthor.test/v2/file-manager/organisation2"
 	></FileBrowser>
 </main>
 

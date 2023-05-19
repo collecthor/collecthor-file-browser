@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 
 import { render, screen } from '@testing-library/svelte';
 
-import FileIcon from '../lib/FileIcon.svelte';
+import FileIcon from '../lib/RowIcon.svelte';
 
 test('show file icon with unrecognized mime type', () => {
   render(FileIcon, {
