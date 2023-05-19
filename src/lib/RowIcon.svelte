@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let fileType: string;
+  export let mimeType: string;
   import File from 'svelte-material-icons/File.svelte';
   import FilePdfBox from 'svelte-material-icons/FilePdfBox.svelte';
   import FileImage from 'svelte-material-icons/FileImage.svelte';
@@ -7,20 +7,23 @@
   import Video from 'svelte-material-icons/Video.svelte';
   import MusicBox from 'svelte-material-icons/MusicBox.svelte';
   import Application from 'svelte-material-icons/Application.svelte';
+  import Folder from 'svelte-material-icons/Folder.svelte';
 
 </script>
-{#if fileType.startsWith('video/')}
+{#if mimeType.startsWith('video/')}
   <Video />
-{:else if fileType.startsWith('text/')}
+{:else if mimeType.startsWith('text/')}
   <FileDocumentOutline />
-{:else if fileType === 'application/pdf'}
+{:else if mimeType === 'application/pdf'}
   <FilePdfBox />
-{:else if fileType.startsWith('application/')}
+{:else if mimeType.startsWith('application/')}
   <Application />
-{:else if fileType.startsWith('audio/')}
+{:else if mimeType.startsWith('audio/')}
   <MusicBox />
-{:else if fileType.startsWith('image/')}
+{:else if mimeType.startsWith('image/')}
   <FileImage />
+{:else if mimeType === 'inode/directory'}
+  <Folder />
 {:else }
   <File />
 {/if}

@@ -2,17 +2,16 @@
   import { createEventDispatcher } from "svelte";
   import SizeDisplay from "./SizeDisplay.svelte";
   import Folder from 'svelte-material-icons/Folder.svelte';
-  import type BackendFile from "src/interfaces/BackendFile";
-  import type ContextMenuAction from "src/interfaces/ContextMenuAction";
-  import FileIcon from "./FileIcon.svelte";
+  import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
+  import FileIcon from "./RowIcon.svelte";
+  import type { Node } from "$lib/generated/Node";
 
-  export let item: BackendFile;
-  export let items: BackendFile[];
+  export let item: Node;
+  export let items: Node[];
   export let actions: ContextMenuAction[];
 
+  const dispatch = createEventDispatcher<{itemClicked: Node}>();
   let clickTimer;
-
-  const dispatch = createEventDispatcher();
 
   const optionsClicked = (event: MouseEvent) => {
     if (event.target instanceof Element) {
@@ -32,7 +31,7 @@
     clearTimeout(clickTimer);
     dispatch("itemSelected", {...item});
   }
-  
+
   const actionClicked = (event: MouseEvent, action: ContextMenuAction) => {
     dispatch('updateItems', action.action(item, items));
     if (event.target instanceof Element) {
@@ -43,14 +42,10 @@
 </script>
 
 <tr on:click={itemClicked} on:dblclick={itemDoubleClicked} class="file-row">
-  <td class="text-center-column icon-column small-column">
-    {#if item.type === "file"}
-      <FileIcon fileType={item.mimetype} />
-    {:else}
-      <Folder/>
-    {/if}
+  <td class="text-center-column icon-column">
+      <FileIcon mimeType={item.mimeType} />
   </td>
-  <td class="name-column">{item.filename}</td>
+  <td class="name-column">{item.name}</td>
   <td class="size-column"><SizeDisplay size={item.size} /></td>
   <td class="dropdown-column text-center-column small-column">
     <div class="dropdown">
@@ -60,13 +55,15 @@
         >...</button
       >
       <div class="file-options">
-        {#each actions.filter(action => action.filter.includes(item.type)) as action}
+        {#each actions as action}
+          {#if action.validFor(item)}
           <button on:click|stopPropagation={event => actionClicked(event, action)}>
             <div>
               <svelte:component this={action.icon}/>
               <span>{action.name}</span>
             </div>
           </button>
+          {/if}
         {/each}
       </div>
     </div>

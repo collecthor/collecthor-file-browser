@@ -8,7 +8,7 @@
 	function openFileBrowser() {
 		open(FileBrowser, {
 			itemSelected: (file: BackendFile) => console.log(file.path),
-			baseurl: "http://localhost:3100",
+			baseurl: "https://collecthor.test/v2/file-manager/organisation2",
 			type: "picker",
 		})
 	}
@@ -17,11 +17,11 @@
 <button on:click={() => openFileBrowser()}>Open file browser modal!</button>
 
 <FileBrowser
+	openFile={(file) => console.log(file.path)}
 	itemSelected={(file) => console.log(file.path)}
-	baseurl="http://localhost:3100"
-	type="picker"
->
-</FileBrowser>
+	baseurl="https://collecthor.test/v2/file-manager/organisation2"
+></FileBrowser>
+
 
 <style lang="scss">
 

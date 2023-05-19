@@ -4,18 +4,18 @@
   import Delete from "svelte-material-icons/Delete.svelte";
   import Download from "svelte-material-icons/Download.svelte";
   import Eye from "svelte-material-icons/Eye.svelte";
-  import type ContextMenuAction from "src/interfaces/ContextMenuAction";
-  import type BackendFile from "src/interfaces/BackendFile";
-  import type Error from "src/interfaces/Error";
+  import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
+  import type Error from "$lib/interfaces/Error";
+  import type { Node } from "$lib/generated/Node";
   import { createEventDispatcher, getContext, setContext } from "svelte";
   import BrowserControls from "./BrowserControls.svelte";
   import ErrorModal from "./ErrorModal.svelte";
   import ConfirmPickModal from "./ConfirmPickModal.svelte";
 
   export let baseurl: string;
-  export let openFile: (file: BackendFile) => void;
-  export let itemSelected: (file: BackendFile) => void;
-  export let type = "browser";
+  export let openFile: (file: Node) => void;
+  export let itemSelected: (file: Node) => void;
+  export let type: "browser"|"picker" = "browser";
   export let basePath = "/";
   export let actions: ContextMenuAction[] = [];
 
@@ -31,11 +31,10 @@
 
   let displayBrowser = true;
 
-  let currentPath = basePath;
-  $: pathContents = [];
-  $: if (currentPath) {
-    fetchFilesForPath(currentPath);
-  }
+  let currentPath: string = basePath;
+
+  let pathContents: Node[] = [];
+  $: fetchFilesForPath(currentPath);
 
   const errorHandler = (errorData: Error) => {
     open(ErrorModal, {
@@ -59,11 +58,13 @@
 
   const fileDropped = (event: DragEvent) => {
     (event.target as Element).classList.remove("file-dragging");
-    for (const file of event.dataTransfer.files) {
+    for (const file of event.dataTransfer?.files ?? []) {
       const reader = new FileReader();
       reader.onload = async (event) => {
-        const dataUrl = event.target.result.toString();
-        await uploadFile(file.name, dataUrl);
+        if (reader.result) {
+          const dataUrl = reader.result.toString();
+          await uploadFile(file.name, dataUrl);
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -85,7 +86,8 @@
         "Content-Type": "application/json",
       },
     });
-    const data: BackendFile | Error = await response.json();
+
+    const data: Node | Error = await response.json();
     if (response.status === 200) {
       pathContents = [...pathContents, data];
     } else {
@@ -94,6 +96,7 @@
   };
 
   const fetchFilesForPath = async (path: string) => {
+    console.log("Fetching for path", path);
     try {
       const response = await fetch(`${baseurl}/view`, {
         method: "POST",
@@ -126,10 +129,13 @@
     currentPath = event.detail.path;
   };
 
-  const itemClicked = (event) => {
-    const item = event.detail as BackendFile;
-    if (item.type === "folder") {
-      currentPath = `${item.path}/${item.filename}`;
+  const itemClicked = (event: CustomEvent<Node>) => {
+
+    const item = event.detail;
+    console.log('itemClicked', item);
+    if (item.mimeType === "inode/directory") {
+      currentPath = `/${item.path}`;
+      console.log("Setting path: ", currentPath);
     } else {
       if (type === "picker") {
         open(ConfirmPickModal, {
@@ -154,45 +160,47 @@
   };
 
   const itemsUpdated = (event) => {
-    pathContents = event.detail as BackendFile[];
+    pathContents = event.detail as Node[];
   };
 
   const defaultActions: ContextMenuAction[] = [
     {
       name: "Delete",
       icon: Delete,
-      action: (item: BackendFile, items: BackendFile[]) => {
-        return items.filter(
-          (i) => i.filename !== item.filename && i.path !== item.path
-        );
+      action: (targetItem: Node, items: Node[]) => {
+        /**
+         * @todo implement delete call
+         */
+        return items.filter(item => item.path !== targetItem.path);
       },
-      filter: ["file", "folder"],
+      validFor: () => true
     },
     {
       name: "Download",
       icon: Download,
-      action: (item: BackendFile, items: BackendFile[]) => {
-        const linkElement = document.createElement("a");
-        const url = "happytechnology.png";
-        // const url = `/${currentPath}/${item.filename}`;
-        linkElement.href = url;
-        linkElement.setAttribute("download", "");
-        linkElement.style.display = "none";
-        document.body.appendChild(linkElement);
-        linkElement.click();
-        linkElement.remove();
+      action: async (item: Node, items: Node[]): Promise<Node[]> => {
+        /**
+         * @todo implement download call
+         */
+        const response = await fetch('', /** todo*/)
+        const blob = await response.blob();
+
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = item.name;
+        link.click();
         return items;
       },
-      filter: ["file"],
+      validFor: (item: Node) => item.mimeType !== 'inode/directory'
     },
     {
       name: "Open",
       icon: Eye,
-      action: (item: BackendFile, items: BackendFile[]) => {
+      action: async (item: Node, items: Node[]): Promise<Node[]> => {
         openFile(item);
         return items;
       },
-      filter: ["file"],
+      validFor: (item: Node) => item.mimeType !== 'inode/directory'
     },
   ];
 

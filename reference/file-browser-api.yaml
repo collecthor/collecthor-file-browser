@@ -10,8 +10,10 @@ info:
     email: info@collecthor.nl
   description: The spec that a simple file browser backend must implement
 servers:
-  - url: 'http://localhost:3100'
-    description: Mock
+  - url: 'http://127.0.0.1:3100'
+    description: Mock server
+  - url: 'https://collecthor.test/v2/file-manager'
+    description: Local dev
 paths:
   /view:
     post:
@@ -25,7 +27,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: ./models/file.json
+                  $ref: ./models/Node.json
               examples:
                 Example 1:
                   value:
@@ -122,15 +124,10 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              $ref: ./models/PathRequest.json
               x-examples:
                 example-1:
                   path: /
-              properties:
-                path:
-                  $ref: '#/components/schemas/path'
-              required:
-                - path
             examples:
               Root directory:
                 value:
@@ -146,7 +143,141 @@ paths:
       parameters: []
       tags:
         - file-browser
-      x-internal: true
+      x-internal: false
+  /url:
+    post:
+      summary: View
+      operationId: post-url
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./models/PublicUri.json
+              examples:
+                Example 1:
+                  value:
+                    - filename: readme.md
+                      type: file
+                      path: /readme.md
+                      size: 150
+                      mimetype: text/markdown
+                      permissions:
+                        read: true
+                        write: true
+                        create: false
+                        delete: true
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/error'
+              examples:
+                Path not found:
+                  value:
+                    errors:
+                      - status: '400'
+                        title: Path not found
+                        detail: Could not find files on given path
+                        code: '0'
+                Path too long:
+                  value:
+                    errors:
+                      - status: '400'
+                        title: Path too long
+                        detail: 'The given path is too long. '
+                        code: '0'
+                No permission:
+                  value:
+                    errors:
+                      - status: '400'
+                        title: No permission
+                        detail: 'Cannot view file/path, current user has no permission.'
+                        code: '0'
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/error'
+              examples:
+                Illegal characters in filename:
+                  value:
+                    errors:
+                      - status: '422'
+                        title: Illegal characters in filename
+                        detail: Server could not process character ë in filename
+                        code: '0'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/error'
+              examples:
+                Could not get path contents:
+                  value:
+                    errors:
+                      - status: '500'
+                        title: Could not get path contents
+                        detail: The server was unable to read the path contents
+                        code: '0'
+                Filesystem unavailable:
+                  value:
+                    errors:
+                      - status: '500'
+                        title: Filesystem unavailable
+                        detail: Error reaching the filesystem
+                        code: '0'
+        '':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      description: Retrieves / generates a publicly accessible URL for the file
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/PathRequest.json
+              x-examples:
+                example-1:
+                  path: /
+            examples:
+              Root directory:
+                value:
+                  path: /
+              Nested:
+                value:
+                  path: /some/nested/directory
+          application/javascript:
+            schema:
+              type: object
+              properties: {}
+        description: ''
+      parameters: []
+      tags:
+        - file-browser
+      x-internal: false
+    parameters: []
   /download:
     post:
       summary: Download
@@ -260,12 +391,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                path:
-                  type: string
-              required:
-                - path
+              $ref: ./models/PathRequest.json
             examples:
               File in root:
                 value:
@@ -377,32 +503,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                path:
-                  $ref: ./models/path.json
-                name:
-                  type: string
-                type:
-                  type: string
-                  enum:
-                    - file
-                    - folder
-                  example: file
-                content:
-                  type: string
-                  description: A data-URI of the content of the file
-              required:
-                - path
-                - name
-                - type
-            examples:
-              Example 1:
-                value:
-                  path: string
-                  name: string
-                  type: file
-                  content: string
+              $ref: ./models/CreateRequest.json
         description: Create a file or folder on the filesystem
       tags:
         - file-browser
@@ -496,12 +597,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                path:
-                  $ref: '#/components/schemas/path'
-              required:
-                - path
+              $ref: ./models/PathRequest.json
             examples:
               Example 1:
                 value:
@@ -605,9 +701,9 @@ paths:
               type: object
               properties:
                 source:
-                  $ref: '#/components/schemas/path'
+                  $ref: ./models/Path.json
                 destination:
-                  $ref: '#/components/schemas/path'
+                  $ref: ./models/Path.json
               required:
                 - source
                 - destination
@@ -722,79 +818,10 @@ paths:
         - file-browser
     parameters: []
 components:
-  schemas:
-    error:
-      title: error
-      x-stoplight:
-        id: 3j6j4pcc6jqcz
-      type: object
-      description: 'An error which complies with https://jsonapi.org/format/#errors.'
-      x-examples:
-        Path not found:
-          status: '400'
-          title: Path not found
-          detail: Could not find given path on server
-        Illegal characters in filename:
-          status: '422'
-          title: Illegal characters in filename
-          detail: Server could not process character ë in filename
-        No permission:
-          status: '400'
-          title: No permission
-          detail: 'Cannot view file/path, current user has no permission.'
-      properties:
-        status:
-          type: string
-        title:
-          type: string
-        detail:
-          type: string
-        code:
-          type: string
-          default: '0'
-      required:
-        - status
-        - title
-        - detail
-        - code
-    path:
-      title: path
-      x-stoplight:
-        id: 6rq8gi5v2mpm8
-      type: string
-      description: |-
-        A file path fully identifies a file. The directory separator is / and is part of a file path.
-        The path MUST NOT start or end with a directory separator.
-      x-examples:
-        Example 1: file/abc
-      pattern: ^/.*$
-      minLength: 1
-    filename:
-      title: filename
-      x-stoplight:
-        id: uqzurb56y197k
-      type: string
-      pattern: '[^/]'
-      minLength: 1
-    size:
-      title: size
-      x-stoplight:
-        id: 596yia55vrav6
-      type: integer
-      minimum: 0
-      description: File size in bytes
-    icon:
-      title: icon
-      x-stoplight:
-        id: d97yavndec17m
-      type: string
-    test:
-      title: test
-      x-stoplight:
-        id: d527osrwokcos
-      type: object
-      properties:
-        id:
-          type: string
+  schemas: {}
+  securitySchemes:
+    api:
+      type: http
+      scheme: bearer
 tags:
   - name: file-browser

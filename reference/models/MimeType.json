@@ -1,0 +1,15 @@
+{
+  "title": "MimeType",
+  "x-stoplight": {
+    "id": "t71rtce17oipc"
+  },
+  "type": "string",
+  "pattern": "^(\\w+|\\*)/(\\w+|\\*)",
+  "example": "application/json;indent=4",
+  "description": "Describes a mimetype string",
+  "examples": [
+    "application/json;indent=4",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "image/jpeg"
+  ]
+}

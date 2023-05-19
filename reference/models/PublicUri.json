@@ -1,0 +1,29 @@
+{
+  "title": "PublicUri",
+  "x-stoplight": {
+    "id": "7yp750zb7gs3l"
+  },
+  "type": "object",
+  "properties": {
+    "uri": {
+      "type": "string",
+      "format": "uri"
+    },
+    "expires": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "name": {
+      "type": "string"
+    },
+    "mimeType": {
+      "$ref": "./MimeType.json"
+    },
+    "path": {
+      "$ref": "./Path.json"
+    }
+  }
+}

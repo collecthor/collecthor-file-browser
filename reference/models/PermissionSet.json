@@ -1,0 +1,31 @@
+{
+  "title": "PermissionSet",
+  "x-stoplight": {
+    "id": "0g85jo34gwzpa"
+  },
+  "type": "object",
+  "description": "A permission set is a dictionary with string keys and boolean values. Some keys are required and always present. Additional keys are allowed",
+  "additionalProperties": {
+    "type": "boolean"
+  },
+  "properties": {
+    "read": {
+      "type": "boolean"
+    },
+    "write": {
+      "type": "boolean"
+    },
+    "create": {
+      "type": "boolean"
+    },
+    "delete": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "read",
+    "write",
+    "create",
+    "delete"
+  ]
+}
