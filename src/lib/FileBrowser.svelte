@@ -14,7 +14,7 @@
   export let actions: ContextMenuAction[] = [];
 </script>
 {#if browser}
-<Modal>
+<Modal styleCloseButton={{ cursor: 'pointer' }}>
   <FileBrowserContent {...$$props} on:message/>
 </Modal>
 {/if}

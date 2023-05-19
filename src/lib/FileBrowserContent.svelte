@@ -217,15 +217,22 @@
     on:dragleave={dragEnd}
     on:drop={fileDropped}
   >
+    <div class="control-wrapper">
     <PathBar path={currentPath} on:pathItemClicked={setPath} />
+      <span class="divider"></span>
     <BrowserControls
       {currentPath}
       {baseurl}
       on:fileAdded={(e) => (pathContents = [...pathContents, e.detail])}
     />
-    <table>
+    </div>
+    <div class="table-wrapper">
+    <table class="file-table">
       <tr>
-        <th /><th>Name</th><th>Size</th><th />
+        <th class="icon-column"></th>
+        <th class="name-column left-aligned-column">Name</th>
+        <th class="size-column left-aligned-column">Size</th>
+        <th class="dropdown-column"></th>
       </tr>
       {#each pathContents as item}
         <FileRow
@@ -233,14 +240,16 @@
           items={pathContents}
           on:itemClicked={itemClicked}
           on:updateItems={itemsUpdated}
+          on:itemSelected={(event) => itemSelected(event.detail)}
           actions={[...defaultActions, ...actions]}
         />
       {/each}
-      <tr>
-        <td />
+      <tr class="file-table-footer">
+        <td></td>
         <td>Count: {pathContents.length}</td>
       </tr>
     </table>
+    </div>
   </div>
 {:else}
   <div class="file-browser">
@@ -251,20 +260,121 @@
 {/if}
 
 <style lang="scss">
+  :root {
+    --ch-blue: #71cbf4;
+    --ch-purple: #2d3367;
+    --ch-orange: #f39200;
+    --ch-red: #FF6B6B;
+
+    --ch-dark-blue: #00aeea;
+    --ch-dark-purple: #21244a;
+    --ch-dark-orange: #ed6b06;
+    --ch-dark-red: #FF3939;
+
+    --small-column: 36px;
+    --name-column: 100%;
+    --size-column: 150px;
+  }
+
   .file-browser {
     font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+    container-type: inline-size;
+    container-name: filebrowser;
+
     &:global(.file-dragging) {
       border: 1px solid black;
     }
-    table {
-      border-collapse: collapse;
+
+    .control-wrapper {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin: 8px 0;
+
+      .divider {
+        width: 16px;
+        margin-right: 16px;
+        border-right: 1px solid var(--ch-orange);
+      }
+    }
+
+    .table-wrapper {
+      max-height: 500px;
+      overflow-y: scroll;
+    }
+
+    table.file-table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      position: relative;
+
       th {
-        border-bottom: 2px solid black;
-        padding: 0;
+        background: white;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        border-bottom: 1px solid var(--ch-orange);
+      }
+
+      :global {
+        .icon-column {
+          min-width: var(--small-column);
+          color: var(--ch-purple);
+        }
+
+        .name-column {
+          min-width: var(--name-column);
+        }
+
+        .size-column {
+          min-width: var(--size-column);
+        }
+
+        .dropdown-column {
+          min-width: var(--small-column);
+        }
+      }
+
+      .left-aligned-column {
+        text-align: left;
+        padding-left: 8px;
+      }
+
+      th {
+        padding: 8px 8px 4px 8px;
+      }
+
+      th {
+        border-bottom: 1px solid var(--ch-orange);
         border-spacing: 0;
-        &:not(:first-child):not(:last-child) {
-          border-left: 2px solid black;
-          border-right: 2px solid black;
+        &:not(:first-child) {
+          border-left: 1px solid var(--ch-orange);
+        }
+      }
+
+      .file-table-footer {
+        padding-top: 1rem;
+      }
+    }
+  }
+
+  :global {
+    @container filebrowser (max-width: 1000px) {
+      .file-browser {
+        .control-wrapper {
+          margin: 0;
+
+          .divider {
+            border-right: none !important;
+            border-bottom: 1px solid var(--ch-orange);
+            width: 100% !important;
+            margin: 5px 0 8px 0 !important;
+          }
+
+          .filebrowser-controls {
+            margin: 4px 0 8px auto;
+          }
         }
       }
     }

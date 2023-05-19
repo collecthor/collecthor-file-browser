@@ -15,21 +15,30 @@
 
 <div class="path-bar">
   {#each pathItems as pathItem, i}
-    <div class="path-item" on:click="{() => pathItemClicked(pathItems.slice(1, i + 1).join('/'))}">
-      <span>{pathItem}</span>/ 
-    </div>
+    <span class="path-item" on:click="{() => pathItemClicked(pathItems.slice(1, i + 1).join('/'))}">{pathItem}</span><span>/</span>
   {/each}
 </div>
 
 <style lang="scss">
-  .path-bar{
+  .path-bar {
     display: flex;
     flex-direction: row;
-    .path-item {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    flex-grow: 100;
+    line-height: 32px;
+
+    span {
       margin-right: 0.5em;
-      span {
-        margin-right: 0.5em;
-        font-weight: 400;
+    }
+
+    .path-item {
+      color: var(--ch-dark-purple);
+
+      &:hover {
+        cursor: pointer;
+        opacity: 0.4;
       }
     }
   }

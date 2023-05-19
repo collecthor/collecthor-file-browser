@@ -25,15 +25,43 @@
 <style lang="scss">
   .confirm-pick-modal {
     font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+
+    h1 {
+      margin: 0;
+    }
+
     .confirm-modal-buttons {
       padding-top: 8px;
+      display: flex;
+      justify-content: end;
+
       button {
-        border: none;
-        padding: 8px;
+        border: 1px solid var(--ch-orange);
+        padding: 8px 16px;
+        background-color: transparent;
+        border-radius: 4px;
+        margin: 0 8px;
 
         &.cancel-button {
-          background-color: red;
+          color: white;
+          background-color: var(--ch-red);
+          border-color: var(--ch-red);
         }
+
+        &:hover {
+          cursor: pointer;
+          color: white;
+          background-color: var(--ch-orange);
+
+          &.cancel-button {
+            background-color: var(--ch-dark-red);
+            border-color: var(--ch-dark-red);
+          }
+        }
+      }
+
+      button:last-of-type {
+        margin-right: 0;
       }
     }
   }
