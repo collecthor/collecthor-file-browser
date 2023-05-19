@@ -20,14 +20,19 @@
       "type": "string"
     },
     "type": {
-      "type": "string"
+      "type": "string",
+      "enum": [
+        "folder",
+        "file"
+      ]
     },
     "path": {
       "$ref": "./path.json"
     },
     "size": {
       "type": "integer",
-      "description": "Size of the file in bytes"
+      "description": "Size of the file in bytes",
+      "minimum": 0
     },
     "mimetype": {
       "type": "string"

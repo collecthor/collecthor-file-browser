@@ -10,7 +10,8 @@ info:
     email: info@collecthor.nl
   description: The spec that a simple file browser backend must implement
 servers:
-  - url: 'http://localhost:3000'
+  - url: 'http://localhost:3100'
+    description: Mock
 paths:
   /view:
     post:
@@ -145,6 +146,7 @@ paths:
       parameters: []
       tags:
         - file-browser
+      x-internal: true
   /download:
     post:
       summary: Download
@@ -386,6 +388,7 @@ paths:
                   enum:
                     - file
                     - folder
+                  example: file
                 content:
                   type: string
                   description: A data-URI of the content of the file
@@ -393,6 +396,13 @@ paths:
                 - path
                 - name
                 - type
+            examples:
+              Example 1:
+                value:
+                  path: string
+                  name: string
+                  type: file
+                  content: string
         description: Create a file or folder on the filesystem
       tags:
         - file-browser

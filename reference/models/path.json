@@ -4,5 +4,5 @@
     "id": "ua8fhduzvwfq0"
   },
   "type": "string",
-  "pattern": "^/.*$"
+  "format": "uri"
 }
