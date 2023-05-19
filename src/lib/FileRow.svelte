@@ -28,16 +28,16 @@
 </script>
 
 <tr on:click={() => dispatch("itemClicked", {...item})} class="file-row">
-  <td>
+  <td class="text-center-column icon-column small-column">
     {#if item.type === "file"}
       <FileIcon fileType={item.mimetype} />
     {:else}
       <Folder/>
     {/if}
   </td>
-  <td>{item.filename}</td>
-  <td><SizeDisplay size={item.size} /></td>
-  <td>
+  <td class="name-column">{item.filename}</td>
+  <td class="size-column"><SizeDisplay size={item.size} /></td>
+  <td class="dropdown-column text-center-column small-column">
     <div class="dropdown">
       <button
         class="show-options"
@@ -65,20 +65,33 @@
     }
   }
   .file-row {
-    font-size: 1.1em;
-
     td {
-      padding: 4px;
+      padding: 8px;
     }
+
+    .text-center-column {
+      text-align: center;
+    }
+
     &:hover {
       background-color: rgb(240, 240, 240);
+      cursor: pointer;
     }
+
     .dropdown {
       position: relative;
       display: inline-block;
 
       button.show-options {
-        border: none;
+        border: 1px solid var(--ch-orange);
+        background-color: transparent;
+        border-radius: 4px;
+        color: var(--ch-dark-purple);
+        line-height: 20px;
+
+        &:hover {
+          cursor: pointer;
+        }
       }
 
       .file-options {
@@ -86,24 +99,44 @@
         position: absolute;
         right: 0;
         background-color: white;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--ch-orange);
+        //box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
         z-index: 1;
+        border-radius: 4px;
+        margin-top: 4px;
+
         button {
-          color: black;
+          font-size: 14px;
+          background-color: transparent;
+          color: var(--ch-orange);
           text-decoration: none;
           display: inline-block;
           width: 100%;
           border: none;
           padding: 4px;
           text-align: left;
-          font-size: 1em;
+          border-bottom: 1px solid var(--ch-orange);
+
           div {
             display: flex;
             flex-direction: row;
+
+            span {
+              margin-left: 12px;
+              margin-right: 8px;
+              line-height: 16px;
+            }
           }
+
           &:hover {
-            background-color: rgb(220, 220, 220);
+            background-color: var(--ch-orange);
+            color: white;
+            cursor: pointer;
           }
+        }
+
+        button:last-of-type {
+          border-bottom: none;
         }
       }
     }

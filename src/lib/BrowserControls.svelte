@@ -127,9 +127,17 @@
 <style lang="scss">
   .filebrowser-controls {
     .filebrowser-button {
-      margin: 8px;
-      padding: 8px;
-      border: none;
+      padding: 8px 20px;
+      border: 1px solid var(--ch-orange);
+      background-color: transparent;
+      border-radius: 4px;
+      color: var(--ch-dark-purple);
+
+      &:hover {
+        cursor: pointer;
+        background-color: var(--ch-orange);
+        color: white;
+      }
     }
   }
 </style>
