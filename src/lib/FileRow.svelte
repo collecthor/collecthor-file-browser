@@ -10,6 +10,8 @@
   export let items: BackendFile[];
   export let actions: ContextMenuAction[];
 
+  let clickTimer;
+
   const dispatch = createEventDispatcher();
 
   const optionsClicked = (event: MouseEvent) => {
@@ -17,6 +19,19 @@
       event.target.parentElement.classList.toggle("show");
     }
   };
+
+  const itemClicked = (event: MouseEvent) => {
+    if (event.detail === 1) {
+      clickTimer = setTimeout(() => {
+        dispatch("itemClicked", {...item})
+      }, 200)
+    }
+  }
+
+  const itemDoubleClicked = () => {
+    clearTimeout(clickTimer);
+    dispatch("itemSelected", {...item});
+  }
   
   const actionClicked = (event: MouseEvent, action: ContextMenuAction) => {
     dispatch('updateItems', action.action(item, items));
@@ -27,7 +42,7 @@
 
 </script>
 
-<tr on:click={() => dispatch("itemClicked", {...item})} class="file-row">
+<tr on:click={itemClicked} on:dblclick={itemDoubleClicked} class="file-row">
   <td class="text-center-column icon-column small-column">
     {#if item.type === "file"}
       <FileIcon fileType={item.mimetype} />

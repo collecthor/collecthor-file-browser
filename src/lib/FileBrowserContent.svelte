@@ -232,6 +232,7 @@
           items={pathContents}
           on:itemClicked={itemClicked}
           on:updateItems={itemsUpdated}
+          on:itemSelected={(event) => itemSelected(event.detail)}
           actions={[...defaultActions, ...actions]}
         />
       {/each}
@@ -251,6 +252,22 @@
 {/if}
 
 <style lang="scss">
+  :root {
+    --ch-blue: #71cbf4;
+    --ch-purple: #2d3367;
+    --ch-orange: #f39200;
+    --ch-red: #FF6B6B;
+
+    --ch-dark-blue: #00aeea;
+    --ch-dark-purple: #21244a;
+    --ch-dark-orange: #ed6b06;
+    --ch-dark-red: #FF3939;
+
+    --small-column: 36px;
+    --name-column: 100%;
+    --size-column: 150px;
+  }
+
   .file-browser {
     font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
     container-type: inline-size;
@@ -267,6 +284,8 @@
       margin: 8px 0;
 
       .divider {
+        width: 16px;
+        margin-right: 16px;
         border-right: 1px solid var(--ch-orange);
       }
     }
@@ -334,22 +353,20 @@
 
   :global {
     @container filebrowser (max-width: 1000px) {
-      .file-browser .control-wrapper {
-        margin: 0;
+      .file-browser {
+        .control-wrapper {
+          margin: 0;
 
-        .divider {
-          border-right: none;
-          border-bottom: 1px solid var(--ch-orange);
-          width: 100%;
-          margin: 5px 0 8px 0;
-        }
+          .divider {
+            border-right: none !important;
+            border-bottom: 1px solid var(--ch-orange);
+            width: 100% !important;
+            margin: 5px 0 8px 0 !important;
+          }
 
-        .filebrowser-controls {
-          margin: 4px 0 8px auto;
-        }
-
-        .path-bar {
-          width: 100%;
+          .filebrowser-controls {
+            margin: 4px 0 8px auto;
+          }
         }
       }
     }

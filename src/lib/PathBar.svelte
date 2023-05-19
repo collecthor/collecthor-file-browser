@@ -26,7 +26,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    width: calc(100% - 316px);
+    flex-grow: 100;
     line-height: 32px;
 
     span {
