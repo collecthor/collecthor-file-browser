@@ -1,16 +1,15 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import SizeDisplay from "./SizeDisplay.svelte";
-  import Folder from 'svelte-material-icons/Folder.svelte';
-  import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
   import FileIcon from "./RowIcon.svelte";
   import type { Node } from "$lib/generated/Node";
+  import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
 
   export let item: Node;
   export let items: Node[];
   export let actions: ContextMenuAction[];
 
-  const dispatch = createEventDispatcher<{itemClicked: Node}>();
+  const dispatch = createEventDispatcher<{itemClicked: Node, itemSelected: Node, updateItems: Promise<Node[]>}>();
   let clickTimer;
 
   const optionsClicked = (event: MouseEvent) => {

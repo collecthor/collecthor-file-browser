@@ -15,7 +15,7 @@
 </script>
 <div class="confirm-pick-modal">
   <h1>Confirm choice</h1>
-  <p>Are you sure you want to pick {pickedFile.filename}?</p>
+  <p>Are you sure you want to pick {pickedFile.name}?</p>
   <div class="confirm-modal-buttons">
     <button on:click={itemPicked}>Yes</button>
     <button class="cancel-button" on:click={() => close()}>Cancel</button>

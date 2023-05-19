@@ -5,12 +5,13 @@
   import Download from "svelte-material-icons/Download.svelte";
   import Eye from "svelte-material-icons/Eye.svelte";
   import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
-  import type Error from "$lib/interfaces/Error";
+  import type FileError from "$lib/interfaces/FileError";
   import type { Node } from "$lib/generated/Node";
   import { createEventDispatcher, getContext, setContext } from "svelte";
   import BrowserControls from "./BrowserControls.svelte";
   import ErrorModal from "./ErrorModal.svelte";
   import ConfirmPickModal from "./ConfirmPickModal.svelte";
+  import type FilePath from "$lib/interfaces/FilePath";
 
   export let baseurl: string;
   export let openFile: (file: Node) => void;
@@ -24,19 +25,20 @@
   const { open, close } = getContext("simple-modal");
 
   if (!allowedTypes.includes(type)) {
-    throw new Error(
-      `${type} is not a valid FileBrowser type(${allowedTypes.join(", ")})`
-    );
+    throw new Error(`${type} is not a valid FileBrowser type(${allowedTypes.join(", ")})`);
   }
 
   let displayBrowser = true;
 
-  let currentPath: string = basePath;
+  let currentPath: FilePath = {
+    path: basePath,
+    items: []
+  };
 
   let pathContents: Node[] = [];
-  $: fetchFilesForPath(currentPath);
+  $: fetchFilesForPath(currentPath.path);
 
-  const errorHandler = (errorData: Error) => {
+  const errorHandler = (errorData: FileError) => {
     open(ErrorModal, {
       title: errorData.status,
       message: errorData.detail,
@@ -73,7 +75,7 @@
 
   const uploadFile = async (name: string, dataUrl: string) => {
     const body = {
-      path: currentPath,
+      path: currentPath.path,
       name: name,
       type: "file",
       content: dataUrl,
@@ -89,9 +91,15 @@
 
     const data: Node | Error = await response.json();
     if (response.status === 200) {
-      pathContents = [...pathContents, data];
+      /**
+       * TODO: Make sure data is actually of type Node
+       */
+      pathContents = [...pathContents, data as Node];
     } else {
-      errorHandler(data as Error);
+      /**
+       * TODO: Make sure data is actually of type FileError
+       */
+      errorHandler(data as FileError);
     }
   };
 
@@ -108,11 +116,18 @@
           "Content-Type": "application/json",
         },
       });
+
       const data = await response.json();
       if (response.ok) {
+        /**
+         * TODO: Make sure data is actually of type Node[]
+         */
         pathContents = data;
       } else {
-        errorHandler(data as Error);
+        /**
+         * TODO: Make sure data is actually of type FileError
+         */
+        errorHandler(data as FileError);
       }
     } catch (e) {
       open(ErrorModal, {
@@ -125,17 +140,23 @@
     }
   };
 
-  const setPath = (event) => {
-    currentPath = event.detail.path;
+  const setPath = (event: CustomEvent<FilePath>) => {
+    /**
+     * TODO: Make sure detail is actually of type FilePath
+     */
+    currentPath = event.detail;
   };
 
   const itemClicked = (event: CustomEvent<Node>) => {
-
+    /**
+     * TODO: Make sure detail is actually of type Node
+     */
     const item = event.detail;
-    console.log('itemClicked', item);
+
     if (item.mimeType === "inode/directory") {
-      currentPath = `/${item.path}`;
-      console.log("Setting path: ", currentPath);
+      currentPath.path = `${item.path}`;
+      currentPath.items.push(item);
+
     } else {
       if (type === "picker") {
         open(ConfirmPickModal, {
@@ -167,18 +188,26 @@
     {
       name: "Delete",
       icon: Delete,
-      action: (targetItem: Node, items: Node[]) => {
-        /**
-         * @todo implement delete call
-         */
-        return items.filter(item => item.path !== targetItem.path);
+      action: async (targetItem: Node, pathContents: Node[]): Promise<Node[]> => {
+        await fetch(`${baseurl}/delete`, {
+            method: "POST",
+            credentials: "same-origin",
+            body: JSON.stringify({
+              path: targetItem.path,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            }
+        })
+
+        return pathContents.filter(item => item.path !== targetItem.path);
       },
       validFor: () => true
     },
     {
       name: "Download",
       icon: Download,
-      action: async (item: Node, items: Node[]): Promise<Node[]> => {
+      action: async (item: Node, pathContents: Node[]): Promise<Node[]> => {
         /**
          * @todo implement download call
          */
@@ -189,22 +218,22 @@
         link.href = window.URL.createObjectURL(blob);
         link.download = item.name;
         link.click();
-        return items;
+        return pathContents;
       },
       validFor: (item: Node) => item.mimeType !== 'inode/directory'
     },
     {
       name: "Open",
       icon: Eye,
-      action: async (item: Node, items: Node[]): Promise<Node[]> => {
+      action: async (item: Node, pathContents: Node[]): Promise<Node[]> => {
         openFile(item);
-        return items;
+        return pathContents;
       },
       validFor: (item: Node) => item.mimeType !== 'inode/directory'
     },
   ];
 
-  fetchFilesForPath(currentPath);
+  fetchFilesForPath(currentPath.path);
 </script>
 
 <svelte:window on:click={(event) => closeOptionDialogs(event)} />
@@ -221,7 +250,7 @@
     <PathBar path={currentPath} on:pathItemClicked={setPath} />
       <span class="divider"></span>
     <BrowserControls
-      {currentPath}
+      currentPath={currentPath.path}
       {baseurl}
       on:fileAdded={(e) => (pathContents = [...pathContents, e.detail])}
     />
