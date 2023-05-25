@@ -8,28 +8,52 @@
 
   let nameInput: HTMLInputElement;
 </script>
+
 <div class="name-input-modal">
-  <div>
-    <p>{title}</p>
-    <input type="text" bind:this={nameInput}/>
-  </div>
+  <p>{title}</p>
+  <input type="text" bind:this={nameInput}/>
   <div class="input-modal-buttons">
     <button on:click={() => namePicked(nameInput.value)} >Create</button>
     <button class="cancel-button" on:click={() => close()} >Cancel</button>
   </div>
 </div>
+
 <style lang="scss">
   .name-input-modal {
     font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+
     .input-modal-buttons {
       padding-top: 8px;
+      display: flex;
+      justify-content: end;
+
       button {
-        border: none;
-        padding: 8px;
+        border: 1px solid var(--ch-orange);
+        padding: 8px 16px;
+        background-color: transparent;
+        border-radius: 4px;
+        margin: 0 8px;
 
         &.cancel-button {
-          background-color: red;
+          color: white;
+          background-color: var(--ch-red);
+          border-color: var(--ch-red);
         }
+
+        &:hover {
+          cursor: pointer;
+          color: white;
+          background-color: var(--ch-orange);
+
+          &.cancel-button {
+            background-color: var(--ch-dark-red);
+            border-color: var(--ch-dark-red);
+          }
+        }
+      }
+
+      button:last-of-type {
+        margin-right: 0;
       }
     }
   }
