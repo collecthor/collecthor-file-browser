@@ -1,21 +1,22 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import type FilePath from "$lib/interfaces/FilePath";
 
-  export let path: string;
-  $: pathItems = ['Home', ...path.split('/').slice(1).filter((item) => item !== "")];
-
+  export let path: FilePath;
   const dispatch = createEventDispatcher();
-  
-  const pathItemClicked = (path: string) => {
+
+  const pathItemClicked = (newPath: string, index: number) => {
     dispatch('pathItemClicked', {
-      path: `/${path}`,
-    });
+      path: `${newPath}`,
+      items: path.items.slice(0, index + 1)
+    } as FilePath);
   }
 </script>
 
 <div class="path-bar">
-  {#each pathItems as pathItem, i}
-    <span class="path-item" on:click="{() => pathItemClicked(pathItems.slice(1, i + 1).join('/'))}">{pathItem}</span><span>/</span>
+  <span class="path-item" on:click="{() => pathItemClicked('/', -1)}">Home</span><span>/</span>
+  {#each path.items as pathItem, i}
+    <span class="path-item" on:click="{() => pathItemClicked(pathItem.path, i)}">{pathItem.name}</span><span>/</span>
   {/each}
 </div>
 

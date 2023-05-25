@@ -1,7 +1,7 @@
 <script lang="ts">
     // This component is needed to be able to use the modal from the filebrowsercontent component
   import type ContextMenuAction from "./interfaces/ContextMenuAction";
-    import type { Node } from '$lib/generated/Node';
+  import type { Node } from '$lib/generated/Node';
 
   import type { Modal as ModalType } from "svelte-simple-modal";
   import FileBrowserContent from "$lib/FileBrowserContent.svelte";

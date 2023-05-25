@@ -5,6 +5,9 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+/**
+ * A path to a node
+ */
 export type Path = string;
 /**
  * For directories we use `inode/directory`
@@ -29,6 +32,9 @@ export interface Node {
  * A permission set is a dictionary with string keys and boolean values. Some keys are required and always present. Additional keys are allowed
  */
 export interface PermissionSet {
+  /**
+   * This is the read permission
+   */
   read: boolean;
   write: boolean;
   create: boolean;

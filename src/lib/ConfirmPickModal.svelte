@@ -1,5 +1,4 @@
 <script lang="ts">
-
   import { getContext } from 'svelte';
   import type { Node } from '$lib/generated/Node';
   export let pickedFile: Node;
@@ -11,11 +10,11 @@
     confirmed(pickedFile);
     close();
   }
-
 </script>
+
 <div class="confirm-pick-modal">
   <h1>Confirm choice</h1>
-  <p>Are you sure you want to pick {pickedFile.filename}?</p>
+  <p>Are you sure you want to pick {pickedFile.name}?</p>
   <div class="confirm-modal-buttons">
     <button on:click={itemPicked}>Yes</button>
     <button class="cancel-button" on:click={() => close()}>Cancel</button>

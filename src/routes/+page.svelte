@@ -1,14 +1,15 @@
 <script lang="ts">
 	import {getContext, onMount} from "svelte";
 	import FileBrowser from "$lib/FileBrowser.svelte";
-	import type BackendFile from "../interfaces/BackendFile";
+	import type { Node } from "$lib/generated/Node";
 
 	const { open } = getContext('simple-modal');
 
 	function openFileBrowser() {
 		open(FileBrowser, {
-			itemSelected: (file: BackendFile) => console.log(file.path),
-			baseurl: "https://collecthor.test/v2/file-manager/organisation2",
+			openFile: (file) => console.log(file.path),
+			itemSelected: (file: Node) => console.log(file.path),
+			baseurl: "http://localhost:3100",
 			type: "picker",
 		})
 	}
@@ -19,7 +20,7 @@
 <FileBrowser
 	openFile={(file) => console.log(file.path)}
 	itemSelected={(file) => console.log(file.path)}
-	baseurl="https://collecthor.test/v2/file-manager/organisation2"
+	baseurl="http://localhost:3100"
 ></FileBrowser>
 
 
