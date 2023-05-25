@@ -18,8 +18,7 @@
     "uri": {
       "type": "string",
       "format": "uri",
-      "description": "The URI must be a data URI",
-      "pattern": "^data:"
+      "description": "The URI must be a data URI"
     }
   },
   "required": [
