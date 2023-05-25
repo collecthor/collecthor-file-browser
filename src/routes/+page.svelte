@@ -7,6 +7,7 @@
 
 	function openFileBrowser() {
 		open(FileBrowser, {
+			openFile: (file) => console.log(file.path),
 			itemSelected: (file: Node) => console.log(file.path),
 			baseurl: "http://localhost:3100",
 			type: "picker",
