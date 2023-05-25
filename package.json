@@ -17,6 +17,7 @@
     "svelte": "^3.58"
   },
   "devDependencies": {
+    "@sveltejs/kit": "^1.15.9",
     "@stoplight/prism-cli": "^4.10.1",
     "@sveltejs/package": "^2.0.2",
     "@testing-library/jest-dom": "^5.16.5",
