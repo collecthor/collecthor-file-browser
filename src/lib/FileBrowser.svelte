@@ -1,20 +1,23 @@
 <script lang="ts">
     // This component is needed to be able to use the modal from the filebrowsercontent component
-  import { browser } from '$app/environment';
   import type ContextMenuAction from "./interfaces/ContextMenuAction";
     import type { Node } from '$lib/generated/Node';
 
-  import Modal from "svelte-simple-modal";
+  import type { Modal as ModalType } from "svelte-simple-modal";
   import FileBrowserContent from "$lib/FileBrowserContent.svelte";
+  import { onMount } from 'svelte';
   export let baseurl: string;
   export let openFile: (file: Node) => void;
   export let itemSelected: (file: Node) => void;
   export let type = "browser";
   export let basePath = "/";
   export let actions: ContextMenuAction[] = [];
+
+  let Modal: typeof ModalType;
+  onMount(async () => {
+    Modal = (await import("svelte-simple-modal")).default;
+  });
 </script>
-{#if browser}
-<Modal styleCloseButton={{ cursor: 'pointer' }}>
+<svelte:component this={Modal} styleCloseButton={{ cursor: 'pointer' }}>
   <FileBrowserContent {...$$props} on:message/>
-</Modal>
-{/if}
+</svelte:component>
