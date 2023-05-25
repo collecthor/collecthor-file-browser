@@ -1,7 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import SizeDisplay from "./SizeDisplay.svelte";
-  import Folder from 'svelte-material-icons/Folder.svelte';
   import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
   import RowIcon from "./RowIcon.svelte";
   import type { Node } from "$lib/generated/Node";
@@ -11,7 +10,7 @@
   export let actions: ContextMenuAction[];
 
   const dispatch = createEventDispatcher<{itemClicked: Node, itemSelected: Node, updateItems: Promise<Node[]>}>();
-  let clickTimer;
+  let clickTimer: NodeJS.Timeout;
 
   const optionsClicked = (event: MouseEvent) => {
     if (event.target instanceof Element) {
@@ -43,7 +42,7 @@
 
 <tr on:click={itemClicked} on:dblclick={itemDoubleClicked} class="file-row">
   <td class="text-center-column icon-column">
-      <RowIcon mimeType={item.mimeType} />
+      <RowIcon iconUrl={item.icon} mimeType={item.mimeType} />
   </td>
   <td class="name-column">{item.name}</td>
   <td class="size-column"><SizeDisplay size={item.size} /></td>

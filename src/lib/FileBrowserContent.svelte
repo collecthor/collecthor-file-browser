@@ -14,12 +14,13 @@
   import type FilePath from "$lib/interfaces/FilePath";
   import { uploadFile } from "$lib/helpers/uploadFile";
   import type ErrorResponse from "$lib/interfaces/ErrorResponse";
+  import type { PublicUri } from "$lib/generated/PublicUri";
 
   export let baseurl: string;
   export let openFile: (file: Node) => void;
   export let itemSelected: (file: Node) => void;
   export let type: "browser"|"picker" = "browser";
-  export let basePath = "/";
+  export let basePath = "";
   export let actions: ContextMenuAction[] = [];
 
   const allowedTypes = ["browser", "picker"];
@@ -52,8 +53,6 @@
       type: "error",
     });
   };
-
-  setContext("errorHandler", errorHandler);
 
   const dragStart = (event: DragEvent) => {
     event.preventDefault();
@@ -90,9 +89,6 @@
       const response = await fetch(`${baseurl}/view`, {
         method: "POST",
         credentials: "same-origin",
-        body: JSON.stringify({
-          path,
-        }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -100,12 +96,12 @@
 
       if (response.ok) {
         /**
-         * TODO: Make sure data is actually of type Node[]
+         * TODO TYPING: Make sure data is actually of type Node[]
          */
         pathContents = await response.json();
       } else {
         /**
-         * TODO: Make sure data is actually of type FileBrowserError
+         * TODO TYPING: Make sure data is actually of type FileBrowserError
          */
         const { errors }: ErrorResponse = await response.json();
         if (errors.length > 0) {
@@ -113,33 +109,34 @@
         }
       }
     } catch (e) {
-      open(ErrorModal, {
-        title: "File server unreachable",
-        message:
-          "Unable to reach file server. Please check your internet connection and try again.",
-        type: "error",
-      });
-      displayBrowser = false;
+        const errorData: FileBrowserError = {
+          title: "File server unreachable",
+          status: "File server unreachable",
+          detail: "Unable to reach file server. Please check your internet connection and try again.",
+          code: ""
+        }
+
+        errorHandler(errorData);
+        displayBrowser = false;
     }
   };
 
   const setPath = (event: CustomEvent<FilePath>) => {
     /**
-     * TODO: Make sure detail is actually of type FilePath
+     * TODO TYPING: Make sure detail is actually of type FilePath
      */
     currentPath = event.detail;
   };
 
   const itemClicked = (event: CustomEvent<Node>) => {
     /**
-     * TODO: Make sure detail is actually of type Node
+     * TODO TYPING: Make sure detail is actually of type Node
      */
     const item = event.detail;
 
     if (item.mimeType === "inode/directory") {
       currentPath.path = `${item.path}`;
       currentPath.items.push(item);
-
     } else {
       if (type === "picker") {
         open(ConfirmPickModal, {
@@ -163,16 +160,23 @@
     }
   };
 
-  const itemsUpdated = (event) => {
-    pathContents = event.detail as Node[];
+  const itemsUpdated = async (event) => {
+    const promiseItems = await event.detail;
+
+    /**
+     * TODO TYPING: Check if this is truly an array of Node types
+     */
+    if (Array.isArray(promiseItems)) {
+      pathContents = promiseItems as Node[];
+    }
   };
 
   const defaultActions: ContextMenuAction[] = [
     {
       name: "Delete",
       icon: Delete,
-      action: async (targetItem: Node, pathContents: Node[]): Promise<Node[]> => {
-        await fetch(`${baseurl}/delete`, {
+      action: async (targetItem: Node, pathItems: Node[]): Promise<Node[]> => {
+        const response = await fetch(`${baseurl}/delete`, {
             method: "POST",
             credentials: "same-origin",
             body: JSON.stringify({
@@ -183,38 +187,68 @@
             }
         })
 
-        return pathContents.filter(item => item.path !== targetItem.path);
+        if (response.status === 200) {
+          return pathItems.filter(item => item.path !== targetItem.path && item.name !== targetItem.name);
+        } else {
+          const errorData: FileBrowserError = {
+            title: "Something went wrong deleting the file",
+            status: "Something went wrong deleting the file",
+            detail: `${targetItem.name} could not be deleted`,
+            code: ""
+          }
+
+          errorHandler(errorData);
+        }
       },
       validFor: () => true
     },
     {
       name: "Download",
       icon: Download,
-      action: async (item: Node, pathContents: Node[]): Promise<Node[]> => {
-        /**
-         * @todo implement download call
-         */
-        const response = await fetch('', /** todo*/)
-        const blob = await response.blob();
+      action: async (targetItem: Node, pathItems: Node[]): Promise<Node[]> => {
+        const response = await fetch(`${baseurl}/url`, {
+          method: "POST",
+          credentials: "same-origin",
+          body: JSON.stringify({
+            path: targetItem.path,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          }
+        });
 
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = item.name;
-        link.click();
-        return pathContents;
+        if (response.status === 200) {
+          const data = await response.json() satisfies Promise<PublicUri>;
+          const link = document.createElement("a");
+          link.href = data.uri;
+          link.download = targetItem.name;
+          link.click();
+          return pathItems;
+        } else {
+          const errorData: FileBrowserError = {
+            title: "Something went wrong downloading the file",
+            status: "Something went wrong downloading the file",
+            detail: `${targetItem.name} could not be downloaded from the server`,
+            code: ""
+          }
+
+          errorHandler(errorData);
+        }
       },
       validFor: (item: Node) => item.mimeType !== 'inode/directory'
     },
     {
       name: "Open",
       icon: Eye,
-      action: async (item: Node, pathContents: Node[]): Promise<Node[]> => {
+      action: async (item: Node, pathItems: Node[]): Promise<Node[]> => {
         openFile(item);
-        return pathContents;
+        return pathItems;
       },
       validFor: (item: Node) => item.mimeType !== 'inode/directory'
     },
   ];
+
+  setContext("errorHandler", errorHandler);
 </script>
 
 <svelte:window on:click={(event) => closeOptionDialogs(event)} />
