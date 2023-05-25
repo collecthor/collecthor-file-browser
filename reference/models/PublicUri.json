@@ -17,7 +17,7 @@
       "format": "date-time"
     },
     "name": {
-      "type": "string"
+      "$ref": "./NodeName.json"
     },
     "mimeType": {
       "$ref": "./MimeType.json"

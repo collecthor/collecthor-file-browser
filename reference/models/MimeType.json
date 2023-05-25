@@ -3,7 +3,9 @@
   "x-stoplight": {
     "id": "t71rtce17oipc"
   },
-  "type": "string",
+  "type": [
+    "string"
+  ],
   "pattern": "^(\\w+|\\*)/(\\w+|\\*)",
   "example": "application/json;indent=4",
   "description": "Describes a mimetype string",

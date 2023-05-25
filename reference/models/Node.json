@@ -32,7 +32,8 @@
         "integer",
         "null"
       ],
-      "description": "Size of the file in bytes, null if not applicable "
+      "description": "Size of the file in bytes, null if not applicable ",
+      "minimum": 1
     },
     "mimeType": {
       "$ref": "./MimeType.json",
