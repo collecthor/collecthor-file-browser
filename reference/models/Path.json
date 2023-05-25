@@ -6,10 +6,10 @@
   "type": "string",
   "pattern": "^([^/].*)?$",
   "examples": [
-    "/",
-    "/projects",
-    "/projects/file.jpg",
-    "/uuid/97746548-5358-4ec7-bcae-9b9fe3c4234f"
+    "",
+    "projects",
+    "projects/file.jpg",
+    "uuid/97746548-5358-4ec7-bcae-9b9fe3c4234f"
   ],
   "description": "A path to a node"
 }
