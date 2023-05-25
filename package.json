@@ -16,6 +16,10 @@
     "@sveltejs/kit": "^1.15.9",
     "svelte": "^3.58"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/collecthor/collecthor-file-browser"
+  },
   "devDependencies": {
     "@stoplight/prism-cli": "^5",
     "@sveltejs/kit": "^1.15.9",
