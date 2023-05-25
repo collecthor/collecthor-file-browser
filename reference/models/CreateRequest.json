@@ -21,5 +21,11 @@
       "description": "The URI must be a data URI",
       "pattern": "^data:"
     }
-  }
+  },
+  "required": [
+    "path",
+    "name",
+    "mimeType",
+    "uri"
+  ]
 }
