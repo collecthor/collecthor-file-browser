@@ -1,9 +1,10 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import SizeDisplay from "./SizeDisplay.svelte";
-  import FileIcon from "./RowIcon.svelte";
-  import type { Node } from "$lib/generated/Node";
+  import Folder from 'svelte-material-icons/Folder.svelte';
   import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
+  import RowIcon from "./RowIcon.svelte";
+  import type { Node } from "$lib/generated/Node";
 
   export let item: Node;
   export let items: Node[];
@@ -42,7 +43,7 @@
 
 <tr on:click={itemClicked} on:dblclick={itemDoubleClicked} class="file-row">
   <td class="text-center-column icon-column">
-      <FileIcon mimeType={item.mimeType} />
+      <RowIcon mimeType={item.mimeType} />
   </td>
   <td class="name-column">{item.name}</td>
   <td class="size-column"><SizeDisplay size={item.size} /></td>

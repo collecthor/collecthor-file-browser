@@ -31,114 +31,34 @@ paths:
               examples:
                 Example 1:
                   value:
-                    - filename: readme.md
+                    - name: Example 1
+                      icon: 'https://icon.com/file.png'
+                      filename: readme.md
                       type: file
-                      path: /readme.md
+                      path: readme.md
                       size: 150
-                      mimetype: text/markdown
+                      mimeType: text/markdown
                       permissions:
                         read: true
                         write: true
                         create: false
                         delete: true
-        '400':
-          description: Bad Request
-          content:
-            application/json:
+            application/xml:
               schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Path not found:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path not found
-                        detail: Could not find files on given path
-                        code: '0'
-                Path too long:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path too long
-                        detail: 'The given path is too long. '
-                        code: '0'
-                No permission:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: No permission
-                        detail: 'Cannot view file/path, current user has no permission.'
-                        code: '0'
-        '422':
-          description: Unprocessable Entity (WebDAV)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Illegal characters in filename:
-                  value:
-                    errors:
-                      - status: '422'
-                        title: Illegal characters in filename
-                        detail: Server could not process character ë in filename
-                        code: '0'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Could not get path contents:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Could not get path contents
-                        detail: The server was unable to read the path contents
-                        code: '0'
-                Filesystem unavailable:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Filesystem unavailable
-                        detail: Error reaching the filesystem
-                        code: '0'
+                type: array
+                items:
+                  $ref: ./models/Node.json
       description: View all files(and folders) in a path
       requestBody:
         content:
           application/json:
             schema:
-              $ref: ./models/PathRequest.json
-              x-examples:
-                example-1:
-                  path: /
+              $ref: ./models/Path.json
             examples:
               Root directory:
-                value:
-                  path: /
+                value: ""
               Nested:
-                value:
-                  path: /some/nested/directory
-          application/javascript:
-            schema:
-              type: object
-              properties: {}
+                value: some/nested/directory
         description: ''
       parameters: []
       tags:
@@ -157,8 +77,9 @@ paths:
                 $ref: ./models/PublicUri.json
               examples:
                 Example 1:
-                  value:
-                    - filename: readme.md
+                  value: 
+                    readme:
+                      filename: readme.md
                       type: file
                       path: /readme.md
                       size: 150
@@ -168,240 +89,25 @@ paths:
                         write: true
                         create: false
                         delete: true
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Path not found:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path not found
-                        detail: Could not find files on given path
-                        code: '0'
-                Path too long:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path too long
-                        detail: 'The given path is too long. '
-                        code: '0'
-                No permission:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: No permission
-                        detail: 'Cannot view file/path, current user has no permission.'
-                        code: '0'
-        '422':
-          description: Unprocessable Entity (WebDAV)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Illegal characters in filename:
-                  value:
-                    errors:
-                      - status: '422'
-                        title: Illegal characters in filename
-                        detail: Server could not process character ë in filename
-                        code: '0'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Could not get path contents:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Could not get path contents
-                        detail: The server was unable to read the path contents
-                        code: '0'
-                Filesystem unavailable:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Filesystem unavailable
-                        detail: Error reaching the filesystem
-                        code: '0'
-        '':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: {}
       description: Retrieves / generates a publicly accessible URL for the file
       requestBody:
         content:
           application/json:
             schema:
               $ref: ./models/PathRequest.json
-              x-examples:
-                example-1:
-                  path: /
             examples:
               Root directory:
                 value:
-                  path: /
+                  path: ""
               Nested:
                 value:
-                  path: /some/nested/directory
-          application/javascript:
-            schema:
-              type: object
-              properties: {}
+                  path: some/nested/directory
         description: ''
       parameters: []
       tags:
         - file-browser
       x-internal: false
     parameters: []
-  /download:
-    post:
-      summary: Download
-      operationId: post-download
-      responses:
-        '200':
-          description: OK
-          content:
-            application/markdown:
-              schema:
-                type: string
-                readOnly: true
-              examples:
-                File in root:
-                  value: 'Hello, this is the readme of this project'
-            application/json:
-              schema:
-                type: object
-              examples:
-                Example:
-                  value:
-                    test: Object
-            text/plain:
-              schema:
-                type: string
-              examples:
-                String:
-                  value: string
-            application/octet-stream:
-              schema: {}
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Path not found:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path not found
-                        detail: Could not find files on given path
-                        code: '0'
-                Path too long:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path too long
-                        detail: 'The given path is too long. '
-                        code: '0'
-                No permission:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: No permission
-                        detail: 'Cannot download file/path, current user has no permission.'
-                        code: '0'
-        '422':
-          description: Unprocessable Entity (WebDAV)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Illegal characters in filename:
-                  value:
-                    errors:
-                      - status: '422'
-                        title: Illegal characters in filename
-                        detail: Server could not process character ë in filename
-                        code: '0'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Could not get path contents:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Could not get path contents
-                        detail: The server was unable to read the path contents
-                        code: '0'
-                Filesystem unavailable:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Filesystem unavailable
-                        detail: Error reaching the filesystem
-                        code: '0'
-      description: Download a file from the remote
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: ./models/PathRequest.json
-            examples:
-              File in root:
-                value:
-                  path: /readme.md
-              File in nested dir:
-                value:
-                  path: /some/nested/file.txt
-        description: 'The path you want to download, can only be a file'
-      tags:
-        - file-browser
   /create:
     post:
       summary: Create
@@ -412,92 +118,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/file.json
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Path not found:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path not found
-                        detail: Could not find files on given path
-                        code: '0'
-                Path too long:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path too long
-                        detail: 'The given path is too long. '
-                        code: '0'
-                No permission:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: No permission
-                        detail: 'Cannot view file/path, current user has no permission.'
-                        code: '0'
-                File too large:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: File too large
-                        detail: File was too large to be created or path is full
-                        code: '0'
-        '422':
-          description: Unprocessable Entity (WebDAV)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Illegal characters in filename:
-                  value:
-                    errors:
-                      - status: '422'
-                        title: Illegal characters in filename
-                        detail: Server could not process character ë in filename
-                        code: '0'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Could not get path contents:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Could not get path contents
-                        detail: The server was unable to read the path contents
-                        code: '0'
-                Filesystem unavailable:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Filesystem unavailable
-                        detail: Error reaching the filesystem
-                        code: '0'
+                $ref: ./models/Node.json
       description: Create a file or folder at the specified path
       requestBody:
         content:
@@ -514,84 +135,6 @@ paths:
       responses:
         '200':
           description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Path not found:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path not found
-                        detail: Could not find files on given path
-                        code: '0'
-                Path too long:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path too long
-                        detail: 'The given path is too long. '
-                        code: '0'
-                No permission:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: No permission
-                        detail: 'Cannot view file/path, current user has no permission.'
-                        code: '0'
-        '422':
-          description: Unprocessable Entity (WebDAV)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Illegal characters in filename:
-                  value:
-                    errors:
-                      - status: '422'
-                        title: Illegal characters in filename
-                        detail: Server could not process character ë in filename
-                        code: '0'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Could not get path contents:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Could not get path contents
-                        detail: The server was unable to read the path contents
-                        code: '0'
-                Filesystem unavailable:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Filesystem unavailable
-                        detail: Error reaching the filesystem
-                        code: '0'
       description: Delete a file or folder from the filesystem
       requestBody:
         content:
@@ -601,7 +144,7 @@ paths:
             examples:
               Example 1:
                 value:
-                  path: /test
+                  path: test
       tags:
         - file-browser
   /move:
@@ -614,85 +157,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/file.json
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Path not found:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path not found
-                        detail: Could not find files on given path
-                        code: '0'
-                Path too long:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path too long
-                        detail: 'The given path is too long. '
-                        code: '0'
-                No permission:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: No permission
-                        detail: 'Cannot view file/path, current user has no permission.'
-                        code: '0'
-        '422':
-          description: Unprocessable Entity (WebDAV)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Illegal characters in filename:
-                  value:
-                    errors:
-                      - status: '422'
-                        title: Illegal characters in filename
-                        detail: Server could not process character ë in filename
-                        code: '0'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Could not get path contents:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Could not get path contents
-                        detail: The server was unable to read the path contents
-                        code: '0'
-                Filesystem unavailable:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Filesystem unavailable
-                        detail: Error reaching the filesystem
-                        code: '0'
+                $ref: ./models/Node.json
       description: Move a file on the filesystem
       requestBody:
         content:
@@ -720,85 +185,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/file.json
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Path not found:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path not found
-                        detail: Could not find files on given path
-                        code: '0'
-                Path too long:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: Path too long
-                        detail: 'The given path is too long. '
-                        code: '0'
-                No permission:
-                  value:
-                    errors:
-                      - status: '400'
-                        title: No permission
-                        detail: 'Cannot view file/path, current user has no permission.'
-                        code: '0'
-        '422':
-          description: Unprocessable Entity (WebDAV)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Illegal characters in filename:
-                  value:
-                    errors:
-                      - status: '422'
-                        title: Illegal characters in filename
-                        detail: Server could not process character ë in filename
-                        code: '0'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/error'
-              examples:
-                Could not get path contents:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Could not get path contents
-                        detail: The server was unable to read the path contents
-                        code: '0'
-                Filesystem unavailable:
-                  value:
-                    errors:
-                      - status: '500'
-                        title: Filesystem unavailable
-                        detail: Error reaching the filesystem
-                        code: '0'
+                $ref: ./models/Node.json
       description: Move a file on the filesystem
       requestBody:
         content:
@@ -807,9 +194,9 @@ paths:
               type: object
               properties:
                 source:
-                  $ref: ./models/path.json
+                  $ref: ./models/Path.json
                 destination:
-                  $ref: ./models/path.json
+                  $ref: ./models/Path.json
               required:
                 - source
                 - destination

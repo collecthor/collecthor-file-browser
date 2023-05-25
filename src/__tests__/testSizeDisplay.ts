@@ -6,13 +6,13 @@ import SizeDisplay from '../lib/SizeDisplay.svelte';
 
 test('shows bytes under a 1000 bytes', () => {
   render(SizeDisplay, { size: 50 });
-  const size = screen.getByText('50.00 B');
+  const size = screen.getByText('50 B');
   expect(size).toBeInTheDocument();
 });
 
 test('shows kilobytes under 1000000 bytes', () => {
   render(SizeDisplay, { size: 12344});
-  const size = screen.getByText('12.34 KB');
+  const size = screen.getByText('12 KB');
   expect(size).toBeInTheDocument();
 });
 

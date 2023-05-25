@@ -10,7 +10,8 @@
   },
   "properties": {
     "read": {
-      "type": "boolean"
+      "type": "boolean",
+      "description": "This is the read permission"
     },
     "write": {
       "type": "boolean"
