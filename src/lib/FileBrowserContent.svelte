@@ -5,13 +5,15 @@
   import Download from "svelte-material-icons/Download.svelte";
   import Eye from "svelte-material-icons/Eye.svelte";
   import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
-  import type FileError from "$lib/interfaces/FileError";
+  import type FileBrowserError from "$lib/interfaces/FileBrowserError";
   import type { Node } from "$lib/generated/Node";
   import { createEventDispatcher, getContext, setContext } from "svelte";
   import BrowserControls from "./BrowserControls.svelte";
   import ErrorModal from "./ErrorModal.svelte";
   import ConfirmPickModal from "./ConfirmPickModal.svelte";
   import type FilePath from "$lib/interfaces/FilePath";
+  import { uploadFile } from "$lib/helpers/uploadFile";
+  import type ErrorResponse from "$lib/interfaces/ErrorResponse";
 
   export let baseurl: string;
   export let openFile: (file: Node) => void;
@@ -38,7 +40,12 @@
   let pathContents: Node[] = [];
   $: fetchFilesForPath(currentPath.path);
 
-  const errorHandler = (errorData: FileError) => {
+  /**
+   * Shows error modal on error
+   *
+   * @param errorData: FileBrowserError data with status, details, title and code
+   */
+  const errorHandler = (errorData: FileBrowserError) => {
     open(ErrorModal, {
       title: errorData.status,
       message: errorData.detail,
@@ -62,10 +69,13 @@
     (event.target as Element).classList.remove("file-dragging");
     for (const file of event.dataTransfer?.files ?? []) {
       const reader = new FileReader();
-      reader.onload = async (event) => {
+      reader.onload = async () => {
         if (reader.result) {
           const dataUrl = reader.result.toString();
-          await uploadFile(file.name, dataUrl);
+          const newFile = await uploadFile(baseurl, currentPath.path, file.name, file.type, dataUrl, errorHandler);
+          if (newFile) {
+            pathContents = [...pathContents, newFile]
+          }
         }
       };
       reader.readAsDataURL(file);
@@ -73,35 +83,6 @@
     event.preventDefault();
   };
 
-  const uploadFile = async (name: string, dataUrl: string) => {
-    const body = {
-      path: currentPath.path,
-      name: name,
-      type: "file",
-      content: dataUrl,
-    };
-    const response = await fetch(`${baseurl}/create`, {
-      method: "POST",
-      credentials: "same-origin",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const data: Node | Error = await response.json();
-    if (response.status === 200) {
-      /**
-       * TODO: Make sure data is actually of type Node
-       */
-      pathContents = [...pathContents, data as Node];
-    } else {
-      /**
-       * TODO: Make sure data is actually of type FileError
-       */
-      errorHandler(data as FileError);
-    }
-  };
 
   const fetchFilesForPath = async (path: string) => {
     console.log("Fetching for path", path);
@@ -117,17 +98,19 @@
         },
       });
 
-      const data = await response.json();
       if (response.ok) {
         /**
          * TODO: Make sure data is actually of type Node[]
          */
-        pathContents = data;
+        pathContents = await response.json();
       } else {
         /**
-         * TODO: Make sure data is actually of type FileError
+         * TODO: Make sure data is actually of type FileBrowserError
          */
-        errorHandler(data as FileError);
+        const { errors }: ErrorResponse = await response.json();
+        if (errors.length > 0) {
+          errorHandler(errors[0] as FileBrowserError);
+        }
       }
     } catch (e) {
       open(ErrorModal, {
@@ -232,8 +215,6 @@
       validFor: (item: Node) => item.mimeType !== 'inode/directory'
     },
   ];
-
-  fetchFilesForPath(currentPath.path);
 </script>
 
 <svelte:window on:click={(event) => closeOptionDialogs(event)} />

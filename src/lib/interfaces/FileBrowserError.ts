@@ -1,4 +1,4 @@
-export default interface FileError {
+export default interface FileBrowserError {
   status: string
   title: string
   detail: string
