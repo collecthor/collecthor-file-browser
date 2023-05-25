@@ -1,8 +1,7 @@
 import '@testing-library/jest-dom';
+import { render } from '@testing-library/svelte';
 
-import { render, screen } from '@testing-library/svelte';
-
-import RowIcon from '../lib/RowIcon.svelte';
+import RowIcon from './RowIcon.svelte';
 
 test('show file icon with unrecognized mime type', () => {
   render(RowIcon, {

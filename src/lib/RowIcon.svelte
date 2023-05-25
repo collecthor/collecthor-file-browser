@@ -10,11 +10,11 @@
 
   export let mimeType: string;
 
-  export let iconUrl: string | null;
+  export let iconUrl: string | null = null;
 
 </script>
 
-{#if iconUrl }
+{#if iconUrl}
   <img src={iconUrl} alt="File icon">
 {:else}
   {#if mimeType.startsWith('video/')}

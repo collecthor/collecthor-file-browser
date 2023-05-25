@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 
 import { render, screen } from '@testing-library/svelte';
 
-import SizeDisplay from '../lib/SizeDisplay.svelte';
+import SizeDisplay from './SizeDisplay.svelte';
 
 test('shows bytes under a 1000 bytes', () => {
   render(SizeDisplay, { size: 50 });
