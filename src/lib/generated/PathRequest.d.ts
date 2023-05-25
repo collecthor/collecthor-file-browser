@@ -5,11 +5,14 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+/**
+ * A path to a node
+ */
 export type Path = string;
 
 /**
  * Models a request object with a single path key
  */
 export interface PathRequest {
-  path?: Path;
+  path: Path;
 }

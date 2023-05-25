@@ -9,6 +9,9 @@
  * A permission set is a dictionary with string keys and boolean values. Some keys are required and always present. Additional keys are allowed
  */
 export interface PermissionSet {
+  /**
+   * This is the read permission
+   */
   read: boolean;
   write: boolean;
   create: boolean;

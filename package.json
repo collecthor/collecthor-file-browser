@@ -11,7 +11,8 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "test": "jest src",
-    "json2ts": "npx json2ts --input 'reference/models/*.json'  --cwd reference/models --unknownAny --output 'src/lib/generated/' --additionalProperties false"
+    "clearGeneratedInterfaces": "rm -rf ./src/lib/generated/*",
+    "json2ts": "npm run clearGeneratedInterfaces && npx json2ts --input 'reference/models/*.json'  --cwd reference/models --unknownAny --output 'src/lib/generated/' --additionalProperties false"
   },
   "peerDependencies": {
     "@sveltejs/kit": "^1.15.9",

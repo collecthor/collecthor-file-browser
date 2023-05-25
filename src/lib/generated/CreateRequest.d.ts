@@ -5,6 +5,9 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+/**
+ * A path to a node
+ */
 export type Path = string;
 /**
  * Describes a mimetype string
@@ -15,11 +18,11 @@ export type MimeType = string;
  * Models a file creation request
  */
 export interface CreateRequest {
-  path?: Path;
-  name?: string;
-  mimeType?: MimeType;
+  path: Path;
+  name: string;
+  mimeType: MimeType;
   /**
    * The URI must be a data URI
    */
-  uri?: string;
+  uri: string;
 }

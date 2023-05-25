@@ -5,4 +5,7 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+/**
+ * A path to a node
+ */
 export type Path = string;

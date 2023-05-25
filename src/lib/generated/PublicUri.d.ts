@@ -9,12 +9,15 @@
  * Describes a mimetype string
  */
 export type MimeType = string;
+/**
+ * A path to a node
+ */
 export type Path = string;
 
 export interface PublicUri {
-  uri?: string;
-  expires?: string | null;
-  name?: string;
-  mimeType?: MimeType;
-  path?: Path;
+  uri: string;
+  expires: string | null;
+  name: string;
+  mimeType: MimeType;
+  path: Path;
 }
