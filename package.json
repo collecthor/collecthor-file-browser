@@ -21,6 +21,7 @@
     "url": "git+https://github.com/collecthor/collecthor-file-browser"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.6.0",
     "@stoplight/prism-cli": "^5",
     "@sveltejs/kit": "^1.15.9",
     "@sveltejs/package": "^2.0.2",

@@ -75,20 +75,6 @@ paths:
             application/json:
               schema:
                 $ref: ./models/PublicUri.json
-              examples:
-                Example 1:
-                  value: 
-                    readme:
-                      filename: readme.md
-                      type: file
-                      path: /readme.md
-                      size: 150
-                      mimetype: text/markdown
-                      permissions:
-                        read: true
-                        write: true
-                        create: false
-                        delete: true
       description: Retrieves / generates a publicly accessible URL for the file
       requestBody:
         content:
