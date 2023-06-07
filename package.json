@@ -12,7 +12,8 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "test": "jest src",
     "clearGeneratedInterfaces": "rm -rf ./src/lib/generated/*",
-    "json2ts": "npm run clearGeneratedInterfaces && npx json2ts --input 'reference/models/*.json'  --cwd reference/models --unknownAny --output 'src/lib/generated/' --additionalProperties false"
+    "json2ts": "npm run clearGeneratedInterfaces && npx json2ts --input 'reference/models/*.json'  --cwd reference/models --unknownAny --output 'src/lib/generated/' --additionalProperties false",
+    "format": "prettier --plugin-search-dir . --write ."
   },
   "peerDependencies": {
     "@sveltejs/kit": "^1.15.9",
@@ -47,7 +48,9 @@
   "dependencies": {
     "@sveltejs/adapter-auto": "^2.0.1",
     "@sveltejs/adapter-static": "^2.0.2",
+    "eventemitter3": "^5.0.1",
     "openapi-fetch": "^0.2.1",
+    "strongly-typed-events": "^3.0.9",
     "svelte-material-icons": "^3",
     "svelte-simple-modal": "^1.5"
   },

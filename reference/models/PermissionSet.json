@@ -23,10 +23,5 @@
       "type": "boolean"
     }
   },
-  "required": [
-    "read",
-    "write",
-    "create",
-    "delete"
-  ]
+  "required": ["read", "write", "create", "delete"]
 }

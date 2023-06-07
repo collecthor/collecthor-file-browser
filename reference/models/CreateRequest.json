@@ -30,10 +30,5 @@
       "format": "uri"
     }
   },
-  "required": [
-    "path",
-    "name",
-    "mimeType",
-    "uri"
-  ]
+  "required": ["path", "name", "mimeType", "uri"]
 }

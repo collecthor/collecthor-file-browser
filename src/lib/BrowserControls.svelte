@@ -1,8 +1,7 @@
 <script lang="ts">
   import { getContext } from "svelte";
+  import type { Context } from "svelte-simple-modal";
   import NameInputModal from "./NameInputModal.svelte";
-
-  import type { external } from "$lib/interfaces/api.generated.d";
 
   import type FileManager from "./FileManager";
 
@@ -11,8 +10,10 @@
   export let folderNamePromise: Promise<string> | null = null;
   let fileUpload: HTMLInputElement;
 
+  export let modalContext: Context;
 
-  const { open, close } = getContext('simple-modal');
+
+
 
   const onFileSelected = () => {
     if (fileUpload.files && fileUpload.files.length > 0) {
@@ -39,7 +40,7 @@
       namePromise = folderNamePromise;
     } else {
       namePromise = new Promise((resolve: (name: string) => void) => {
-        open(NameInputModal, {
+        modalContext.open(NameInputModal, {
           title: 'Folder name',
           namePicked: resolve,
         });
@@ -54,7 +55,7 @@
       mimeType: "inode/directory",
       uri: 'data:text/plain;base64,dGVzdCBmaWxl'
     });
-    close();
+    modalContext.close();
   };
 
   const newFile = async() => {
@@ -63,7 +64,7 @@
       namePromise = fileNamePromise;
     } else {
       namePromise = new Promise((resolve: (name: string) => void) => {
-        open(NameInputModal, {
+        modalContext.open(NameInputModal, {
           title: 'File name',
           namePicked: resolve,
         });
@@ -78,7 +79,7 @@
       mimeType: "application/text",
       uri: 'data:text/plain;base64,dGVzdCBmaWxl'
     });
-    close();
+    modalContext.close();
   }
 </script>
 

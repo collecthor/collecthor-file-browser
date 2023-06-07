@@ -11,7 +11,5 @@
       "$ref": "./Path.json"
     }
   },
-  "required": [
-    "path"
-  ]
+  "required": ["path"]
 }

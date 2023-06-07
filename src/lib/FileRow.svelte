@@ -4,12 +4,15 @@
   import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
   import RowIcon from "./RowIcon.svelte";
   import type { external } from "$lib/interfaces/api.generated.d.ts";
+  import type FileManager from "$lib/FileManager";
   type Node = external["models/Node.json"]
   export let item: Node;
 
   export let actions: ContextMenuAction[];
+  export let fileManager: FileManager;
+  export let pickOnSingleClick: boolean = true;
 
-  const dispatch = createEventDispatcher<{itemClicked: Node, itemSelected: Node, updateItems: Promise<Node[]>}>();
+  const dispatch = createEventDispatcher<{itemClicked: Node, itemSelected: Node}>();
   let clickTimer: NodeJS.Timeout;
 
   const optionsClicked = (event: MouseEvent) => {
@@ -20,27 +23,24 @@
 
   const itemClicked = (event: MouseEvent) => {
     if (event.detail === 1) {
-      clickTimer = setTimeout(() => {
-        dispatch("itemClicked", {...item})
-      }, 200)
+      if (item.mimeType === "inode/directory") {
+        fileManager.goToNode(item);
+      } else if (pickOnSingleClick) {
+        fileManager.pickFile(item);
+      }
     }
-  }
-
-  const itemDoubleClicked = () => {
-    clearTimeout(clickTimer);
-    dispatch("itemSelected", {...item});
   }
 
   const actionClicked = (event: MouseEvent, action: ContextMenuAction) => {
-    dispatch('updateItems', action.action(item));
     if (event.target instanceof Element) {
       event.target.closest('.dropdown')?.classList.remove('show');
     }
+    action.action(item, fileManager);
   }
 
 </script>
 
-<tr on:click={itemClicked} on:dblclick={itemDoubleClicked} class="file-row">
+<tr on:click={itemClicked} class="file-row">
   <td class="text-center-column icon-column">
       <RowIcon iconUrl={item.icon} mimeType={item.mimeType} />
   </td>

@@ -1,7 +1,6 @@
 <script lang="ts">
   import { getContext } from "svelte";
 
-  const { close } = getContext('simple-modal');
   export let title: string;
   export let namePicked: (name: string) => void;
 
@@ -14,7 +13,6 @@
   <input type="text" bind:this={nameInput}/>
   <div class="input-modal-buttons">
     <button on:click={() => namePicked(nameInput.value)} >Create</button>
-    <button class="cancel-button" on:click={() => close()} >Cancel</button>
   </div>
 </div>
 
@@ -34,21 +32,11 @@
         border-radius: 4px;
         margin: 0 8px;
 
-        &.cancel-button {
-          color: white;
-          background-color: var(--ch-red);
-          border-color: var(--ch-red);
-        }
-
         &:hover {
           cursor: pointer;
           color: white;
           background-color: var(--ch-orange);
 
-          &.cancel-button {
-            background-color: var(--ch-dark-red);
-            border-color: var(--ch-dark-red);
-          }
         }
       }
 

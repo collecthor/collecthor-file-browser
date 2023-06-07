@@ -1,55 +1,29 @@
 <script lang="ts">
   import PathBar from "./PathBar.svelte";
   import FileRow from "./FileRow.svelte";
-  import Delete from "svelte-material-icons/Delete.svelte";
-  import Download from "svelte-material-icons/Download.svelte";
-  import Eye from "svelte-material-icons/Eye.svelte";
   import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
-  import { createEventDispatcher, getContext, setContext } from "svelte";
+  import { getContext } from "svelte";
   import BrowserControls from "./BrowserControls.svelte";
-  import ErrorModal from "./ErrorModal.svelte";
-  import ConfirmPickModal from "./ConfirmPickModal.svelte";
-  import type { external } from "$lib/interfaces/api.generated.d.ts";
 
-  import type ApiClient from "$lib/interfaces/ApiClient";
-  import FileManager from "./FileManager";
+  import type FileManager from "$lib/FileManager";
+
   import DownloadAction from "./actions/DownloadAction";
   import DeleteAction from "./actions/DeleteAction";
+  import type { Context } from "svelte-simple-modal";
 
-  export let client: ApiClient;
-  export let openFile: (file: Node) => void;
-  export let itemSelected: (file: Node) => void;
   export let type: "browser"|"picker" = "browser";
   export let actions: ContextMenuAction[] = [];
-
-  type Path = external["models/Path.json"];
-  type Node = external["models/Node.json"];
-  const allowedTypes = ["browser", "picker"];
-  const dispatch = createEventDispatcher();
-  const { open, close } = getContext("simple-modal");
+  export let modalContext: Context;
 
 
-
-  if (!allowedTypes.includes(type)) {
-    throw new Error(
-      `${type} is not a valid FileBrowser type(${allowedTypes.join(", ")})`
-    );
-  }
 
   let displayBrowser = true;
 
-  const fileManager = new FileManager(client);
+  export let fileManager: FileManager;
+
+
 
   const currentPathContents = fileManager.getContents();
-
-
-  const errorHandler = (errorData: Error) => {
-    open(ErrorModal, {
-      title: errorData.status,
-      message: errorData.detail,
-      type: "error",
-    });
-  };
 
   const dragStart = (event: DragEvent) => {
     event.preventDefault();
@@ -67,8 +41,12 @@
       const reader = new FileReader();
       reader.onload = async (event) => {
         if (reader.result) {
-          const dataUrl = reader.result.toString();
-          await uploadFile(file.name, dataUrl);
+          fileManager.createFile({
+            path: fileManager.generatePathForFileName(file.name),
+            name: file.name,
+            mimeType: file.type,
+            uri: reader.result.toString()
+          });
         }
       };
       reader.readAsDataURL(file);
@@ -76,37 +54,7 @@
     event.preventDefault();
   };
 
-  const uploadFile = async (name: string, dataUrl: string) => {
-    try {
-      const data = await client.createFile({
-        path: currentPath,
-        name: name,
-        mimeType: "file",
-        uri: dataUrl,
-      });
-      pathContents = [...pathContents, data];
-    } catch (error) {
-      dispatch("error", error);
-    }
-  };
 
-
-
-  const itemClicked = (event: CustomEvent<Node>) => {
-
-    const item = event.detail;
-    console.log('itemClicked', item);
-    if (item.mimeType === "inode/directory") {
-      fileManager.goToNode(item);
-    } else {
-      if (type === "picker") {
-        open(ConfirmPickModal, {
-          pickedFile: item,
-          confirmed: itemSelected
-        });
-      }
-    }
-  };
 
   const closeOptionDialogs = (event: MouseEvent) => {
     if (
@@ -143,8 +91,8 @@
     <PathBar fileManager={fileManager} />
       <span class="divider"></span>
     <BrowserControls
+      {modalContext}
       {fileManager}
-      {client}
     />
     </div>
     <div class="table-wrapper">
@@ -158,8 +106,8 @@
       {#each $currentPathContents as item}
         <FileRow
           {item}
-          on:itemClicked={itemClicked}
-          on:itemSelected={(event) => itemSelected(event.detail)}
+          pickOnSingleClick={type === "picker"}
+          {fileManager}
           actions={[...defaultActions, ...actions]}
         />
       {/each}
@@ -198,7 +146,6 @@
   .file-browser {
     font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
     container-type: inline-size;
-    container-name: filebrowser;
 
     &:global(.file-dragging) {
       border: 1px solid black;
@@ -279,7 +226,7 @@
   }
 
   :global {
-    @container filebrowser (max-width: 1000px) {
+    @container(max-width: 1000px) {
       .file-browser {
         .control-wrapper {
           margin: 0;

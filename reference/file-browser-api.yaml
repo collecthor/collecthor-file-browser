@@ -3,16 +3,16 @@ x-stoplight:
   id: bv8z7mj7mwxvx
 info:
   title: file-browser-api
-  version: '1.0'
+  version: "1.0"
   contact:
     name: Collecthor B.V.
-    url: 'http://collecthor.nl'
+    url: "http://collecthor.nl"
     email: info@collecthor.nl
   description: The spec that a simple file browser backend must implement
 servers:
-  - url: 'http://127.0.0.1:3100'
+  - url: "http://127.0.0.1:3100"
     description: Mock server
-  - url: 'https://collecthor.test/v2/file-manager'
+  - url: "https://collecthor.test/v2/file-manager"
     description: Local dev
 paths:
   /view:
@@ -20,7 +20,7 @@ paths:
       summary: View
       operationId: post-view
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -57,7 +57,7 @@ paths:
           application/json:
             schema:
               $ref: ./models/PathRequest.json
-        description: ''
+        description: ""
       parameters: []
       tags:
         - file-browser
@@ -67,7 +67,7 @@ paths:
       summary: View
       operationId: post-url
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -82,11 +82,11 @@ paths:
             examples:
               Root directory:
                 value:
-                  path: ''
+                  path: ""
               Nested:
                 value:
                   path: some/nested/directory
-        description: ''
+        description: ""
       parameters: []
       tags:
         - file-browser
@@ -97,12 +97,14 @@ paths:
       summary: Create
       operationId: post-create
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 $ref: ./models/Node.json
+        "500":
+          description: Internal Server Error
       description: Create a file or folder at the specified path
       requestBody:
         content:
@@ -117,7 +119,7 @@ paths:
       summary: Delete file
       operationId: post-delete
       responses:
-        '200':
+        "200":
           description: OK
       description: Delete a file or folder from the filesystem
       requestBody:
@@ -136,7 +138,7 @@ paths:
       summary: Move file
       operationId: post-move
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -156,7 +158,7 @@ paths:
               required:
                 - source
                 - destination
-        description: ''
+        description: ""
       tags:
         - file-browser
   /copy:
@@ -164,7 +166,7 @@ paths:
       summary: Copy file
       operationId: post-copy
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -184,7 +186,7 @@ paths:
               required:
                 - source
                 - destination
-        description: ''
+        description: ""
       tags:
         - file-browser
     parameters: []
