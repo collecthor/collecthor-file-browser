@@ -7,6 +7,7 @@
   import MusicBox from 'svelte-material-icons/MusicBox.svelte';
   import Application from 'svelte-material-icons/Application.svelte';
   import Folder from 'svelte-material-icons/Folder.svelte';
+  import ProgressUpload from 'svelte-material-icons/ProgressUpload.svelte';
 
   export let mimeType: string;
 
@@ -17,7 +18,9 @@
 {#if iconUrl }
   <img src={iconUrl} alt="File icon">
 {:else}
-  {#if mimeType.startsWith('video/')}
+  {#if mimeType.endsWith(';optimistic')}
+    <ProgressUpload />
+  {:else if mimeType.startsWith('video/')}
     <Video />
   {:else if mimeType.startsWith('text/')}
     <FileDocumentOutline />

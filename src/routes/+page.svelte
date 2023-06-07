@@ -20,7 +20,7 @@
 <FileBrowser
 	openFile={(file) => console.log(file.path)}
 	itemSelected={(file) => console.log(file.path)}
-	baseurl="http://localhost:3100"
+	baseUrl="http://localhost:3100"
 ></FileBrowser>
 
 

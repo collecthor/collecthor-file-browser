@@ -3,10 +3,10 @@
   import SizeDisplay from "./SizeDisplay.svelte";
   import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
   import RowIcon from "./RowIcon.svelte";
-  import type { Node } from "$lib/generated/Node";
-
+  import type { external } from "$lib/interfaces/api.generated.d.ts";
+  type Node = external["models/Node.json"]
   export let item: Node;
-  export let items: Node[];
+
   export let actions: ContextMenuAction[];
 
   const dispatch = createEventDispatcher<{itemClicked: Node, itemSelected: Node, updateItems: Promise<Node[]>}>();
@@ -14,7 +14,7 @@
 
   const optionsClicked = (event: MouseEvent) => {
     if (event.target instanceof Element) {
-      event.target.parentElement.classList.toggle("show");
+      event.target.parentElement?.classList.toggle("show");
     }
   };
 
@@ -32,9 +32,9 @@
   }
 
   const actionClicked = (event: MouseEvent, action: ContextMenuAction) => {
-    dispatch('updateItems', action.action(item, items));
+    dispatch('updateItems', action.action(item));
     if (event.target instanceof Element) {
-      event.target.closest('.dropdown').classList.remove('show');
+      event.target.closest('.dropdown')?.classList.remove('show');
     }
   }
 

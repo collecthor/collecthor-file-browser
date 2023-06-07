@@ -5,48 +5,45 @@
   import Download from "svelte-material-icons/Download.svelte";
   import Eye from "svelte-material-icons/Eye.svelte";
   import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
-  import type FileBrowserError from "$lib/interfaces/FileBrowserError";
-  import type { Node } from "$lib/generated/Node";
   import { createEventDispatcher, getContext, setContext } from "svelte";
   import BrowserControls from "./BrowserControls.svelte";
   import ErrorModal from "./ErrorModal.svelte";
   import ConfirmPickModal from "./ConfirmPickModal.svelte";
-  import type FilePath from "$lib/interfaces/FilePath";
-  import { uploadFile } from "$lib/helpers/uploadFile";
-  import type ErrorResponse from "$lib/interfaces/ErrorResponse";
-  import type { PublicUri } from "$lib/generated/PublicUri";
+  import type { external } from "$lib/interfaces/api.generated.d.ts";
 
-  export let baseurl: string;
+  import type ApiClient from "$lib/interfaces/ApiClient";
+  import FileManager from "./FileManager";
+  import DownloadAction from "./actions/DownloadAction";
+  import DeleteAction from "./actions/DeleteAction";
+
+  export let client: ApiClient;
   export let openFile: (file: Node) => void;
   export let itemSelected: (file: Node) => void;
   export let type: "browser"|"picker" = "browser";
-  export let basePath = "";
   export let actions: ContextMenuAction[] = [];
 
+  type Path = external["models/Path.json"];
+  type Node = external["models/Node.json"];
   const allowedTypes = ["browser", "picker"];
   const dispatch = createEventDispatcher();
   const { open, close } = getContext("simple-modal");
 
+
+
   if (!allowedTypes.includes(type)) {
-    throw new Error(`${type} is not a valid FileBrowser type(${allowedTypes.join(", ")})`);
+    throw new Error(
+      `${type} is not a valid FileBrowser type(${allowedTypes.join(", ")})`
+    );
   }
 
   let displayBrowser = true;
 
-  let currentPath: FilePath = {
-    path: basePath,
-    items: []
-  };
+  const fileManager = new FileManager(client);
 
-  let pathContents: Node[] = [];
-  $: fetchFilesForPath(currentPath.path);
+  const currentPathContents = fileManager.getContents();
 
-  /**
-   * Shows error modal on error
-   *
-   * @param errorData: FileBrowserError data with status, details, title and code
-   */
-  const errorHandler = (errorData: FileBrowserError) => {
+
+  const errorHandler = (errorData: Error) => {
     open(ErrorModal, {
       title: errorData.status,
       message: errorData.detail,
@@ -68,13 +65,10 @@
     (event.target as Element).classList.remove("file-dragging");
     for (const file of event.dataTransfer?.files ?? []) {
       const reader = new FileReader();
-      reader.onload = async () => {
+      reader.onload = async (event) => {
         if (reader.result) {
           const dataUrl = reader.result.toString();
-          const newFile = await uploadFile(baseurl, currentPath.path, file.name, file.type, dataUrl, errorHandler);
-          if (newFile) {
-            pathContents = [...pathContents, newFile]
-          }
+          await uploadFile(file.name, dataUrl);
         }
       };
       reader.readAsDataURL(file);
@@ -82,61 +76,28 @@
     event.preventDefault();
   };
 
-
-  const fetchFilesForPath = async (path: string) => {
-    console.log("Fetching for path", path);
+  const uploadFile = async (name: string, dataUrl: string) => {
     try {
-      const response = await fetch(`${baseurl}/view`, {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const data = await client.createFile({
+        path: currentPath,
+        name: name,
+        mimeType: "file",
+        uri: dataUrl,
       });
-
-      if (response.ok) {
-        /**
-         * TODO TYPING: Make sure data is actually of type Node[]
-         */
-        pathContents = await response.json();
-      } else {
-        /**
-         * TODO TYPING: Make sure data is actually of type FileBrowserError
-         */
-        const { errors }: ErrorResponse = await response.json();
-        if (errors.length > 0) {
-          errorHandler(errors[0] as FileBrowserError);
-        }
-      }
-    } catch (e) {
-        const errorData: FileBrowserError = {
-          title: "File server unreachable",
-          status: "File server unreachable",
-          detail: "Unable to reach file server. Please check your internet connection and try again.",
-          code: ""
-        }
-
-        errorHandler(errorData);
-        displayBrowser = false;
+      pathContents = [...pathContents, data];
+    } catch (error) {
+      dispatch("error", error);
     }
   };
 
-  const setPath = (event: CustomEvent<FilePath>) => {
-    /**
-     * TODO TYPING: Make sure detail is actually of type FilePath
-     */
-    currentPath = event.detail;
-  };
+
 
   const itemClicked = (event: CustomEvent<Node>) => {
-    /**
-     * TODO TYPING: Make sure detail is actually of type Node
-     */
-    const item = event.detail;
 
+    const item = event.detail;
+    console.log('itemClicked', item);
     if (item.mimeType === "inode/directory") {
-      currentPath.path = `${item.path}`;
-      currentPath.items.push(item);
+      fileManager.goToNode(item);
     } else {
       if (type === "picker") {
         open(ConfirmPickModal, {
@@ -160,95 +121,12 @@
     }
   };
 
-  const itemsUpdated = async (event) => {
-    const promiseItems = await event.detail;
-
-    /**
-     * TODO TYPING: Check if this is truly an array of Node types
-     */
-    if (Array.isArray(promiseItems)) {
-      pathContents = promiseItems as Node[];
-    }
-  };
-
   const defaultActions: ContextMenuAction[] = [
-    {
-      name: "Delete",
-      icon: Delete,
-      action: async (targetItem: Node, pathItems: Node[]): Promise<Node[]> => {
-        const response = await fetch(`${baseurl}/delete`, {
-            method: "POST",
-            credentials: "same-origin",
-            body: JSON.stringify({
-              path: targetItem.path,
-            }),
-            headers: {
-              "Content-Type": "application/json",
-            }
-        })
+    new DeleteAction(),
+    new DownloadAction(),
 
-        if (response.status === 200) {
-          return pathItems.filter(item => item.path !== targetItem.path && item.name !== targetItem.name);
-        } else {
-          const errorData: FileBrowserError = {
-            title: "Something went wrong deleting the file",
-            status: "Something went wrong deleting the file",
-            detail: `${targetItem.name} could not be deleted`,
-            code: ""
-          }
-
-          errorHandler(errorData);
-        }
-      },
-      validFor: () => true
-    },
-    {
-      name: "Download",
-      icon: Download,
-      action: async (targetItem: Node, pathItems: Node[]): Promise<Node[]> => {
-        const response = await fetch(`${baseurl}/url`, {
-          method: "POST",
-          credentials: "same-origin",
-          body: JSON.stringify({
-            path: targetItem.path,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          }
-        });
-
-        if (response.status === 200) {
-          const data = await response.json() satisfies Promise<PublicUri>;
-          const link = document.createElement("a");
-          link.href = data.uri;
-          link.download = targetItem.name;
-          link.click();
-          return pathItems;
-        } else {
-          const errorData: FileBrowserError = {
-            title: "Something went wrong downloading the file",
-            status: "Something went wrong downloading the file",
-            detail: `${targetItem.name} could not be downloaded from the server`,
-            code: ""
-          }
-
-          errorHandler(errorData);
-        }
-      },
-      validFor: (item: Node) => item.mimeType !== 'inode/directory'
-    },
-    {
-      name: "Open",
-      icon: Eye,
-      action: async (item: Node, pathItems: Node[]): Promise<Node[]> => {
-        openFile(item);
-        return pathItems;
-      },
-      validFor: (item: Node) => item.mimeType !== 'inode/directory'
-    },
   ];
 
-  setContext("errorHandler", errorHandler);
 </script>
 
 <svelte:window on:click={(event) => closeOptionDialogs(event)} />
@@ -262,12 +140,11 @@
     on:drop={fileDropped}
   >
     <div class="control-wrapper">
-    <PathBar path={currentPath} on:pathItemClicked={setPath} />
+    <PathBar fileManager={fileManager} />
       <span class="divider"></span>
     <BrowserControls
-      currentPath={currentPath.path}
-      {baseurl}
-      on:fileAdded={(e) => (pathContents = [...pathContents, e.detail])}
+      {fileManager}
+      {client}
     />
     </div>
     <div class="table-wrapper">
@@ -278,19 +155,17 @@
         <th class="size-column left-aligned-column">Size</th>
         <th class="dropdown-column"></th>
       </tr>
-      {#each pathContents as item}
+      {#each $currentPathContents as item}
         <FileRow
           {item}
-          items={pathContents}
           on:itemClicked={itemClicked}
-          on:updateItems={itemsUpdated}
           on:itemSelected={(event) => itemSelected(event.detail)}
           actions={[...defaultActions, ...actions]}
         />
       {/each}
       <tr class="file-table-footer">
         <td></td>
-        <td>Count: {pathContents.length}</td>
+        <td>Count: {$currentPathContents.length}</td>
       </tr>
     </table>
     </div>
