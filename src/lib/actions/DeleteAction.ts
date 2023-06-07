@@ -12,7 +12,7 @@ export default class DeleteAction implements ContextMenuAction {
     fileManager.delete(item);
   }
 
-  validFor(item: Node): boolean {
+  validFor(): boolean {
     return true;
   }
 }

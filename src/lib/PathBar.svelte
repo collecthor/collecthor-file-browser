@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { external } from "$lib/interfaces/api.generated.d.ts";
   import type FileManager from "./FileManager";
 
   export let fileManager: FileManager;

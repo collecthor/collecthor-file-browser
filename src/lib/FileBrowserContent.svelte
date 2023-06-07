@@ -2,7 +2,6 @@
   import PathBar from "./PathBar.svelte";
   import FileRow from "./FileRow.svelte";
   import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
-  import { getContext } from "svelte";
   import BrowserControls from "./BrowserControls.svelte";
 
   import type FileManager from "$lib/FileManager";
@@ -39,7 +38,7 @@
     (event.target as Element).classList.remove("file-dragging");
     for (const file of event.dataTransfer?.files ?? []) {
       const reader = new FileReader();
-      reader.onload = async (event) => {
+      reader.onload = async () => {
         if (reader.result) {
           fileManager.createFile({
             path: fileManager.generatePathForFileName(file.name),

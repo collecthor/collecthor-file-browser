@@ -14,10 +14,10 @@ export class PostMessageApiClient implements ApiClient {
     this.port = port;
   }
 
-  private createPromise(
+  private createPromise<T>(
     method: string,
     arg: Path | CreateRequest
-  ): Promise<any> {
+  ): Promise<T> {
     return new Promise((resolve, reject) => {
       const channel = new MessageChannel();
       channel.port1.onmessage = (e: MessageEvent) => {

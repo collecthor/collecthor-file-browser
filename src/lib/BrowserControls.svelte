@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { getContext } from "svelte";
   import type { Context } from "svelte-simple-modal";
   import NameInputModal from "./NameInputModal.svelte";
 
@@ -20,7 +19,7 @@
       const file = fileUpload.files[0];
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = async (event) => {
+      reader.onload = async () => {
         if (!reader.result) {
           return;
         }

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
   import SizeDisplay from "./SizeDisplay.svelte";
   import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
   import RowIcon from "./RowIcon.svelte";
@@ -10,10 +9,7 @@
 
   export let actions: ContextMenuAction[];
   export let fileManager: FileManager;
-  export let pickOnSingleClick: boolean = true;
-
-  const dispatch = createEventDispatcher<{itemClicked: Node, itemSelected: Node}>();
-  let clickTimer: NodeJS.Timeout;
+  export let pickOnSingleClick = true;
 
   const optionsClicked = (event: MouseEvent) => {
     if (event.target instanceof Element) {

@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { getContext } from "svelte";
-
   export let title: string;
   export let namePicked: (name: string) => void;
 

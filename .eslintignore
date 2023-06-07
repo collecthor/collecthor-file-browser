@@ -1,0 +1,22 @@
+.DS_Store
+node_modules
+/build
+/.svelte-kit
+/package
+/dist
+.env
+.env.*
+!.env.example
+/playwright-report
+/.vscode
+/.idea
+/.github
+*.generated.d.ts
+
+# Ignore files for PNPM, NPM and YARN
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+
+

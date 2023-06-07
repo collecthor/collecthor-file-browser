@@ -54,10 +54,8 @@ export default class FileManager {
 
   private async navigateToPath(path: Path) {
     let partialPath = "";
-    let pathStack: Node[] = [];
-
     const promises: Promise<Node>[] = [];
-    for (let part of path.split("/")) {
+    for (const part of path.split("/")) {
       // Get all the files
       const filesInPath = this.client.viewPath(partialPath);
 
@@ -86,7 +84,7 @@ export default class FileManager {
   }
 
   public getCurrentPathString(): string {
-    let pathStack = get(this.pathStackStore);
+    const pathStack = get(this.pathStackStore);
     if (pathStack.length > 0) {
       return pathStack[pathStack.length - 1].path;
     } else {
@@ -95,7 +93,7 @@ export default class FileManager {
   }
 
   public generatePathForFileName(name: string): string {
-    let pathStack = get(this.pathStackStore);
+    const pathStack = get(this.pathStackStore);
     if (pathStack.length > 0) {
       return pathStack[pathStack.length - 1].path + "/" + name;
     } else {

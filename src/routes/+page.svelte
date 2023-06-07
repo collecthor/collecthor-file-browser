@@ -23,7 +23,7 @@
 		}
 	}
 
-	function setModalContext<T>(key: any, value: T): T {
+	function setModalContext<T>(key: unknown, value: T): T {
     if (key === 'simple-modal') {
       // ugly, no strict type check
       modalContext = <Context>value;
