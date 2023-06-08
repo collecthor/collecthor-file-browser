@@ -9,7 +9,7 @@
 </script>
 
 <div class="path-bar">
-  <span class="path-item" on:click={fileManager.goHome} on:keydown={fileManager.goHome}>Home</span>
+  <span class="path-item" on:click={() => fileManager.goHome()} on:keydown={() => fileManager.goHome()}>Home</span>
   <span class="separator">/</span>
   {#each $pathStack as pathItem, i}
     <span class="path-item" on:click={() => fileManager.goToNode(pathItem)} on:keydown={() => fileManager.goToNode(pathItem)}>

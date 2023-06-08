@@ -14,7 +14,7 @@
     "generate": "npx openapi-typescript ./reference/file-browser-api.yaml -o ./src/lib/interfaces/api.generated.d.ts",
     "format": "prettier --plugin-search-dir . --write .",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
-    "eslint": "eslint ."
+		"eslint": "eslint ."
   },
   "peerDependencies": {
     "@sveltejs/kit": "^1.15.9",
