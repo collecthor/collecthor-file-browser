@@ -6,6 +6,7 @@ import EventEmitter from 'eventemitter3';
 import type FileBrowserError from './interfaces/FileBrowserError';
 import type { PublicUri } from '$lib';
 import { isFileBrowserError } from './interfaces/FileBrowserError';
+import { tick } from 'svelte';
 
 type Node = external['models/Node.json'];
 type Path = external['models/Path.json'];
@@ -32,17 +33,37 @@ export default class FileManager {
 		this.dispatcher = new EventEmitter();
 
 		this.pathStackStore = writable<Node[]>([]);
-		this.pathContentsStore = writable<Node[]>([]);
+		this.pathContentsStore = writable<Node[]>([], () => {
+			console.log('started content store');
+			let unsubscribe: () => void;
+			let canceled = false;
 
-		this.pathStackStore.subscribe(async (newValue) => {
-			let contents;
-			if (newValue.length > 0) {
-				contents = await this.client.viewPath(newValue[newValue.length - 1].path);
-			} else {
-				contents = await this.client.viewPath('');
-			}
-			console.log('New contents:', contents);
-			this.pathContentsStore.set(contents);
+			(async () => {
+				await tick();
+
+				// To avoid race conditions
+				if (!canceled) {
+					console.log('Subscribing to pathstackstore');
+					unsubscribe = this.pathStackStore.subscribe(async (newValue) => {
+						let contents;
+						if (newValue.length > 0) {
+							contents = await this.client.viewPath(newValue[newValue.length - 1].path);
+						} else {
+							contents = await this.client.viewPath('');
+						}
+						console.log('pathStackStore updated:', contents);
+						this.pathContentsStore.set(contents);
+					});
+				}
+			})();
+
+			return () => {
+				canceled = true;
+
+				if (unsubscribe) {
+					unsubscribe();
+				}
+			};
 		});
 
 		if (initialPath != '') {
@@ -74,6 +95,7 @@ export default class FileManager {
 	}
 
 	public getContents(): Readable<Node[]> {
+		console.log('getcontents');
 		return readonly(this.pathContentsStore);
 	}
 
