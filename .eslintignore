@@ -3,6 +3,7 @@ node_modules
 /build
 /.svelte-kit
 /package
+/dist
 .env
 .env.*
 !.env.example
@@ -10,12 +11,10 @@ node_modules
 /.vscode
 /.idea
 /.github
-/dist
-/src/lib/generated/
+*.generated.d.ts
 .husky/
 .github/
 .stoplight/
-reference/
 
 # Ignore files for PNPM, NPM and YARN
 pnpm-lock.yaml

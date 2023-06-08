@@ -1,24 +1,70 @@
 <script lang="ts">
-	// This component is needed to be able to use the modal from the filebrowsercontent component
-	import type ContextMenuAction from './interfaces/ContextMenuAction';
-	import type { Node } from '$lib/generated/Node';
+  import type ContextMenuAction from "./interfaces/ContextMenuAction";
 
-	import type { Modal as ModalType } from 'svelte-simple-modal';
-	import FileBrowserContent from '$lib/FileBrowserContent.svelte';
-	import { onMount } from 'svelte';
-	export let baseurl: string;
-	export let openFile: (file: Node) => void;
-	export let itemSelected: (file: Node) => void;
-	export let type = 'browser';
-	export let basePath = '/';
-	export let actions: ContextMenuAction[] = [];
 
-	let Modal: typeof ModalType;
-	onMount(async () => {
-		Modal = (await import('svelte-simple-modal')).default;
-	});
+  import { Modal, type Context } from "svelte-simple-modal";
+  import FileBrowserContent from "$lib/FileBrowserContent.svelte";
+  import ErrorModal from "./ErrorModal.svelte";
+  import type FileManager from "$lib/FileManager";
+
+  export let actions: ContextMenuAction[] = [];
+
+  export let type: "browser"|"picker" = "browser";
+  export let fileManager: FileManager;
+
+  export let modalContext: Context|null = null;
+
+  let manualWrap = false;
+
+  if (modalContext === null) {
+    manualWrap = true;
+  }
+
+  fileManager.eventRegistry().on("error", (errorData) => {
+    if (modalContext) {
+      modalContext.open(ErrorModal, {
+        title: errorData.statusText,
+        message: JSON.stringify(errorData.detail),
+        type: "error",
+      });
+
+    }
+    console.error(errorData);
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function setModalContext<T>(key:any, value: T): T {
+    if (key === 'simple-modal') {
+      // ugly, no strict type check
+      modalContext = <Context>value;
+    }
+    return value;
+  }
 </script>
 
-<svelte:component this={Modal} styleCloseButton={{ cursor: 'pointer' }}>
-	<FileBrowserContent {...$$props} on:message />
-</svelte:component>
+{#if manualWrap}
+<Modal
+  styleCloseButton={{ cursor: 'pointer' }}
+  setContext={setModalContext}
+  styleContent={{ backgroundColor: 'pink'}}
+ >
+ {#if modalContext}
+ <FileBrowserContent
+    {modalContext}
+    {type}
+    {actions}
+    {fileManager}
+  />
+  {/if}
+</Modal>
+{:else}
+  {#if modalContext}
+    <FileBrowserContent
+    {modalContext}
+    {type}
+    {actions}
+    {fileManager}
+    />
+  {/if}
+ {/if}
+

@@ -10,10 +10,7 @@
       "format": "uri"
     },
     "expires": {
-      "type": [
-        "string",
-        "null"
-      ],
+      "type": ["string", "null"],
       "format": "date-time"
     },
     "name": {
@@ -26,11 +23,5 @@
       "$ref": "./Path.json"
     }
   },
-  "required": [
-    "uri",
-    "expires",
-    "name",
-    "mimeType",
-    "path"
-  ]
+  "required": ["uri", "expires", "name", "mimeType", "path"]
 }

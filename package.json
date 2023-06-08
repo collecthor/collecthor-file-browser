@@ -1,84 +1,87 @@
 {
-	"name": "@collecthor/file-browser",
-	"private": false,
-	"version": "0.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "vite dev",
-		"dev:test": "vite dev --mode test --port 9999",
-		"package": "svelte-kit sync && svelte-package",
-		"preview": "vite preview",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"eslint": "eslint .",
-		"format": "prettier --plugin-search-dir . --write .",
-		"test:playwright": "npx playwright test --trace on",
-		"test:vitest": "vitest watch",
-		"test:vitest:ci": "vitest run",
-		"clearGeneratedInterfaces": "rm -rf ./src/lib/generated/*",
-		"json2ts": "npm run clearGeneratedInterfaces && npx json2ts --input 'reference/models/*.json'  --cwd reference/models --unknownAny --output 'src/lib/generated/' --additionalProperties false"
-	},
-	"peerDependencies": {
-		"@sveltejs/kit": "^1.15.9",
-		"svelte": "^3.58"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/collecthor/collecthor-file-browser"
-	},
-	"devDependencies": {
-		"@commitlint/cli": "^17.6.3",
-		"@commitlint/config-conventional": "^17.6.3",
-		"@openapitools/openapi-generator-cli": "^2.6.0",
-		"@playwright/test": "^1.34.3",
-		"@stoplight/prism-cli": "^5",
-		"@sveltejs/kit": "^1.15.9",
-		"@sveltejs/package": "^2.0.2",
-		"@testing-library/jest-dom": "^5.16.5",
-		"@testing-library/svelte": "^3.2.2",
-		"@tsconfig/svelte": "^4",
-		"@types/testing-library__jest-dom": "^5.14.6",
-		"@typescript-eslint/eslint-plugin": "^5.59.7",
-		"@typescript-eslint/parser": "^5.59.7",
-		"eslint": "^8.41.0",
-		"eslint-config-prettier": "^8.8.0",
-		"eslint-plugin-promise": "^6.1.1",
-		"eslint-plugin-svelte3": "^4.0.0",
-		"husky": "^8.0.3",
-		"jsdom": "^22.0.0",
-		"json-schema-to-typescript": "^13.0.1",
-		"prettier": "^2.8.8",
-		"prettier-plugin-svelte": "^2.10.0",
-		"sass": "^1.62.1",
-		"svelte-check": "^3",
-		"svelte-preprocess": "^5",
-		"tslib": "^2.3.1",
-		"typescript": "^5",
-		"vite": "^4",
-		"vitest": "^0.31.1"
-	},
-	"dependencies": {
-		"@sveltejs/adapter-auto": "^2.0.1",
-		"@sveltejs/adapter-static": "^2.0.2",
-		"svelte-material-icons": "^3",
-		"svelte-simple-modal": "^1.5"
-	},
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"svelte": "./dist/index.js"
-		}
-	},
-	"files": [
-		"dist",
-		"!dist/**/*.test.*",
-		"!dist/**/*.spec.*"
-	],
-	"svelte": "./dist/index.js",
-	"types": "./dist/index.d.ts",
-	"publishConfig": {
-		"provenance": true,
-		"access": "public"
-	}
+  "name": "@collecthor/file-browser",
+  "private": false,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "dev:test": "vite dev --mode test --port 9999",
+    "package": "svelte-kit sync && svelte-package",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "lint": "prettier --plugin-search-dir . --check . && eslint .",
+    "eslint": "eslint .",
+    "format": "prettier --plugin-search-dir . --write .",
+    "test:playwright": "npx playwright test --trace on",
+    "test:vitest": "vitest watch",
+    "test:vitest:ci": "vitest run",
+    "generate": "npx openapi-typescript ./reference/file-browser-api.yaml -o ./src/lib/interfaces/api.generated.d.ts"
+  },
+  "peerDependencies": {
+    "@sveltejs/kit": "^1.15.9",
+    "svelte": "^3.58"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/collecthor/collecthor-file-browser"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.3",
+    "@commitlint/config-conventional": "^17.6.3",
+    "@openapitools/openapi-generator-cli": "^2.6.0",
+    "@playwright/test": "^1.34.3",
+    "@stoplight/prism-cli": "^5",
+    "@sveltejs/kit": "^1.15.9",
+    "@sveltejs/package": "^2.0.2",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/svelte": "^3.2.2",
+    "@tsconfig/svelte": "^4",
+    "@types/testing-library__jest-dom": "^5.14.6",
+    "@typescript-eslint/eslint-plugin": "^5.59.9",
+    "@typescript-eslint/parser": "^5.59.9",
+    "eslint": "^8.42.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-svelte3": "^4.0.0",
+    "husky": "^8.0.3",
+    "jsdom": "^22.0.0",
+    "json-schema-to-typescript": "^13.0.1",
+    "openapi-typescript": "^6.2.6",
+    "prettier": "^2.8.8",
+    "prettier-plugin-svelte": "^2.10.0",
+    "sass": "^1.62.1",
+    "svelte-check": "^3",
+    "svelte-preprocess": "^5",
+    "tslib": "^2.3.1",
+    "typescript": "^5",
+    "vite": "^4",
+    "vitest": "^0.31.1"
+  },
+  "dependencies": {
+    "@sveltejs/adapter-auto": "^2.0.1",
+    "@sveltejs/adapter-static": "^2.0.2",
+    "eventemitter3": "^5.0.1",
+    "openapi-fetch": "^0.2.1",
+    "strongly-typed-events": "^3.0.9",
+    "svelte-material-icons": "^3",
+    "svelte-simple-modal": "^1.5"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  }
 }

@@ -1,24 +1,22 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import type FilePath from '$lib/interfaces/FilePath';
+  import type FileManager from "./FileManager";
 
-	export let path: FilePath;
-	const dispatch = createEventDispatcher();
+  export let fileManager: FileManager;
 
-	const pathItemClicked = (newPath: string, index: number) => {
-		dispatch('pathItemClicked', {
-			path: `${newPath}`,
-			items: path.items.slice(0, index + 1)
-		} as FilePath);
-	};
+  const pathStack = fileManager.getPathStack();
+
+
 </script>
 
 <div class="path-bar">
-	<span class="path-item" on:click={() => pathItemClicked('/', -1)}>Home</span><span>/</span>
-	{#each path.items as pathItem, i}
-		<span class="path-item" on:click={() => pathItemClicked(pathItem.path, i)}>{pathItem.name}</span
-		><span>/</span>
-	{/each}
+  <span class="path-item" on:click={fileManager.goHome} on:keydown={fileManager.goHome}>Home</span>
+  <span class="separator">/</span>
+  {#each $pathStack as pathItem, i}
+    <span class="path-item" on:click={() => fileManager.goToNode(pathItem)} on:keydown={() => fileManager.goToNode(pathItem)}>
+      {pathItem.name}
+    </span>
+    <span class="separator">/</span>
+  {/each}
 </div>
 
 <style lang="scss">

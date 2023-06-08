@@ -1,427 +1,247 @@
 <script lang="ts">
-	import PathBar from './PathBar.svelte';
-	import FileRow from './FileRow.svelte';
-	import Delete from 'svelte-material-icons/Delete.svelte';
-	import Download from 'svelte-material-icons/Download.svelte';
-	import Eye from 'svelte-material-icons/Eye.svelte';
-	import type ContextMenuAction from '$lib/interfaces/ContextMenuAction';
-	import type FileBrowserError from '$lib/interfaces/FileBrowserError';
-	import type { Node } from '$lib/generated/Node';
-	import { createEventDispatcher, getContext, setContext } from 'svelte';
-	import BrowserControls from './BrowserControls.svelte';
-	import ErrorModal from './ErrorModal.svelte';
-	import ConfirmPickModal from './ConfirmPickModal.svelte';
-	import type FilePath from '$lib/interfaces/FilePath';
-	import { uploadFile } from '$lib/helpers/uploadFile';
-	import type ErrorResponse from '$lib/interfaces/ErrorResponse';
-	import type { PublicUri } from '$lib/generated/PublicUri';
+  import PathBar from "./PathBar.svelte";
+  import FileRow from "./FileRow.svelte";
+  import type ContextMenuAction from "$lib/interfaces/ContextMenuAction";
+  import BrowserControls from "./BrowserControls.svelte";
 
-	export let baseurl: string;
-	export let openFile: (file: Node) => void;
-	export let itemSelected: (file: Node) => void;
-	export let type: 'browser' | 'picker' = 'browser';
-	export let basePath = '';
-	export let actions: ContextMenuAction[] = [];
+  import type FileManager from "$lib/FileManager";
 
-	const allowedTypes = ['browser', 'picker'];
-	const dispatch = createEventDispatcher();
-	const { open, close } = getContext('simple-modal');
+  import DownloadAction from "./actions/DownloadAction";
+  import DeleteAction from "./actions/DeleteAction";
+  import type { Context } from "svelte-simple-modal";
 
-	if (!allowedTypes.includes(type)) {
-		throw new Error(`${type} is not a valid FileBrowser type(${allowedTypes.join(', ')})`);
-	}
+  export let type: "browser"|"picker" = "browser";
+  export let actions: ContextMenuAction[] = [];
+  export let modalContext: Context;
 
-	let displayBrowser = true;
 
-	let currentPath: FilePath = {
-		path: basePath,
-		items: []
-	};
 
-	let pathContents: Node[] = [];
-	$: fetchFilesForPath(currentPath.path);
+  let displayBrowser = true;
 
-	/**
-	 * Shows error modal on error
-	 *
-	 * @param errorData: FileBrowserError data with status, details, title and code
-	 */
-	const errorHandler = (errorData: FileBrowserError) => {
-		open(ErrorModal, {
-			title: errorData.status,
-			message: errorData.detail,
-			type: 'error'
-		});
-	};
+  export let fileManager: FileManager;
 
-	const dragStart = (event: DragEvent) => {
-		event.preventDefault();
-		(event.target as Element).classList.add('file-dragging');
-	};
 
-	const dragEnd = (event: DragEvent) => {
-		event.preventDefault();
-		(event.target as Element).classList.remove('file-dragging');
-	};
 
-	const fileDropped = (event: DragEvent) => {
-		(event.target as Element).classList.remove('file-dragging');
-		for (const file of event.dataTransfer?.files ?? []) {
-			const reader = new FileReader();
-			reader.onload = async () => {
-				if (reader.result) {
-					const dataUrl = reader.result.toString();
-					const newFile = await uploadFile(
-						baseurl,
-						currentPath.path,
-						file.name,
-						file.type,
-						dataUrl,
-						errorHandler
-					);
-					if (newFile) {
-						pathContents = [...pathContents, newFile];
-					}
-				}
-			};
-			reader.readAsDataURL(file);
-		}
-		event.preventDefault();
-	};
+  const currentPathContents = fileManager.getContents();
 
-	const fetchFilesForPath = async (path: string) => {
-		console.log('Fetching for path', path);
-		try {
-			const response = await fetch(`${baseurl}/view`, {
-				method: 'POST',
-				credentials: 'same-origin',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
+  const dragStart = (event: DragEvent) => {
+    event.preventDefault();
+    (event.target as Element).classList.add("file-dragging");
+  };
 
-			if (response.ok) {
-				/**
-				 * TODO TYPING: Make sure data is actually of type Node[]
-				 */
-				pathContents = await response.json();
-			} else {
-				/**
-				 * TODO TYPING: Make sure data is actually of type FileBrowserError
-				 */
-				const { errors }: ErrorResponse = await response.json();
-				if (errors.length > 0) {
-					errorHandler(errors[0] as FileBrowserError);
-				}
-			}
-		} catch (e) {
-			const errorData: FileBrowserError = {
-				title: 'File server unreachable',
-				status: 'File server unreachable',
-				detail: 'Unable to reach file server. Please check your internet connection and try again.',
-				code: ''
-			};
+  const dragEnd = (event: DragEvent) => {
+    event.preventDefault();
+    (event.target as Element).classList.remove("file-dragging");
+  };
 
-			errorHandler(errorData);
-			displayBrowser = false;
-		}
-	};
+  const fileDropped = (event: DragEvent) => {
+    (event.target as Element).classList.remove("file-dragging");
+    for (const file of event.dataTransfer?.files ?? []) {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        if (reader.result) {
+          fileManager.createFile({
+            path: fileManager.generatePathForFileName(file.name),
+            name: file.name,
+            mimeType: file.type,
+            uri: reader.result.toString()
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+    event.preventDefault();
+  };
 
-	const setPath = (event: CustomEvent<FilePath>) => {
-		/**
-		 * TODO TYPING: Make sure detail is actually of type FilePath
-		 */
-		currentPath = event.detail;
-	};
 
-	const itemClicked = (event: CustomEvent<Node>) => {
-		/**
-		 * TODO TYPING: Make sure detail is actually of type Node
-		 */
-		const item = event.detail;
 
-		if (item.mimeType === 'inode/directory') {
-			currentPath.path = `${item.path}`;
-			currentPath.items.push(item);
-		} else {
-			if (type === 'picker') {
-				open(ConfirmPickModal, {
-					pickedFile: item,
-					confirmed: itemSelected
-				});
-			}
-		}
-	};
+  const closeOptionDialogs = (event: MouseEvent) => {
+    if (
+      event.target instanceof Element &&
+      !event.target.matches(".show-options")
+    ) {
+      Array.from(document.getElementsByClassName("dropdown")).forEach(
+        (dropdown) => {
+          dropdown.classList.remove("show");
+        }
+      );
+    }
+  };
 
-	const closeOptionDialogs = (event: MouseEvent) => {
-		if (event.target instanceof Element && !event.target.matches('.show-options')) {
-			Array.from(document.getElementsByClassName('dropdown')).forEach((dropdown) => {
-				dropdown.classList.remove('show');
-			});
-		}
-	};
+  const defaultActions: ContextMenuAction[] = [
+    new DeleteAction(),
+    new DownloadAction(),
 
-	const itemsUpdated = async (event) => {
-		const promiseItems = await event.detail;
+  ];
 
-		/**
-		 * TODO TYPING: Check if this is truly an array of Node types
-		 */
-		if (Array.isArray(promiseItems)) {
-			pathContents = promiseItems as Node[];
-		}
-	};
-
-	const defaultActions: ContextMenuAction[] = [
-		{
-			name: 'Delete',
-			icon: Delete,
-			action: async (targetItem: Node, pathItems: Node[]): Promise<Node[]> => {
-				const response = await fetch(`${baseurl}/delete`, {
-					method: 'POST',
-					credentials: 'same-origin',
-					body: JSON.stringify({
-						path: targetItem.path
-					}),
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				});
-
-				if (response.status === 200) {
-					return pathItems.filter(
-						(item) => item.path !== targetItem.path && item.name !== targetItem.name
-					);
-				} else {
-					const errorData: FileBrowserError = {
-						title: 'Something went wrong deleting the file',
-						status: 'Something went wrong deleting the file',
-						detail: `${targetItem.name} could not be deleted`,
-						code: ''
-					};
-
-					errorHandler(errorData);
-				}
-			},
-			validFor: () => true
-		},
-		{
-			name: 'Download',
-			icon: Download,
-			action: async (targetItem: Node, pathItems: Node[]): Promise<Node[]> => {
-				const response = await fetch(`${baseurl}/url`, {
-					method: 'POST',
-					credentials: 'same-origin',
-					body: JSON.stringify({
-						path: targetItem.path
-					}),
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				});
-
-				if (response.status === 200) {
-					const data = (await response.json()) satisfies Promise<PublicUri>;
-					const link = document.createElement('a');
-					link.href = data.uri;
-					link.download = targetItem.name;
-					link.click();
-					return pathItems;
-				} else {
-					const errorData: FileBrowserError = {
-						title: 'Something went wrong downloading the file',
-						status: 'Something went wrong downloading the file',
-						detail: `${targetItem.name} could not be downloaded from the server`,
-						code: ''
-					};
-
-					errorHandler(errorData);
-				}
-			},
-			validFor: (item: Node) => item.mimeType !== 'inode/directory'
-		},
-		{
-			name: 'Open',
-			icon: Eye,
-			action: async (item: Node, pathItems: Node[]): Promise<Node[]> => {
-				openFile(item);
-				return pathItems;
-			},
-			validFor: (item: Node) => item.mimeType !== 'inode/directory'
-		}
-	];
-
-	setContext('errorHandler', errorHandler);
 </script>
 
 <svelte:window on:click={(event) => closeOptionDialogs(event)} />
 
 {#if displayBrowser}
-	<div
-		class="file-browser"
-		on:dragover={dragStart}
-		on:dragenter={dragStart}
-		on:dragleave={dragEnd}
-		on:drop={fileDropped}
-	>
-		<div class="control-wrapper">
-			<PathBar path={currentPath} on:pathItemClicked={setPath} />
-			<span class="divider" />
-			<BrowserControls
-				currentPath={currentPath.path}
-				{baseurl}
-				on:fileAdded={(e) => (pathContents = [...pathContents, e.detail])}
-			/>
-		</div>
-		<div class="table-wrapper">
-			<table class="file-table">
-				<tr>
-					<th class="icon-column" />
-					<th class="name-column left-aligned-column">Name</th>
-					<th class="size-column left-aligned-column">Size</th>
-					<th class="dropdown-column" />
-				</tr>
-				{#each pathContents as item}
-					<FileRow
-						{item}
-						items={pathContents}
-						on:itemClicked={itemClicked}
-						on:updateItems={itemsUpdated}
-						on:itemSelected={(event) => itemSelected(event.detail)}
-						actions={[...defaultActions, ...actions]}
-					/>
-				{/each}
-				<tr class="file-table-footer">
-					<td />
-					<td>Count: {pathContents.length}</td>
-				</tr>
-			</table>
-		</div>
-	</div>
+  <div
+    class="file-browser"
+    on:dragover={dragStart}
+    on:dragenter={dragStart}
+    on:dragleave={dragEnd}
+    on:drop={fileDropped}
+  >
+    <div class="control-wrapper">
+    <PathBar fileManager={fileManager} />
+      <span class="divider"></span>
+    <BrowserControls
+      {modalContext}
+      {fileManager}
+    />
+    </div>
+    <div class="table-wrapper">
+    <table class="file-table">
+      <tr>
+        <th class="icon-column"></th>
+        <th class="name-column left-aligned-column">Name</th>
+        <th class="size-column left-aligned-column">Size</th>
+        <th class="dropdown-column"></th>
+      </tr>
+      {#each $currentPathContents as item}
+        <FileRow
+          {item}
+          pickOnSingleClick={type === "picker"}
+          {fileManager}
+          actions={[...defaultActions, ...actions]}
+        />
+      {/each}
+      <tr class="file-table-footer">
+        <td></td>
+        <td>Count: {$currentPathContents.length}</td>
+      </tr>
+    </table>
+    </div>
+  </div>
 {:else}
-	<div class="file-browser">
-		<p>Could not reach file server. Check your internet connection and try again.</p>
-	</div>
+  <div class="file-browser">
+    <p>
+      Could not reach file server. Check your internet connection and try again.
+    </p>
+  </div>
 {/if}
 
 <style lang="scss">
-	:root {
-		--ch-blue: #71cbf4;
-		--ch-purple: #2d3367;
-		--ch-orange: #f39200;
-		--ch-red: #ff6b6b;
+  :root {
+    --ch-blue: #71cbf4;
+    --ch-purple: #2d3367;
+    --ch-orange: #f39200;
+    --ch-red: #FF6B6B;
 
-		--ch-dark-blue: #00aeea;
-		--ch-dark-purple: #21244a;
-		--ch-dark-orange: #ed6b06;
-		--ch-dark-red: #ff3939;
+    --ch-dark-blue: #00aeea;
+    --ch-dark-purple: #21244a;
+    --ch-dark-orange: #ed6b06;
+    --ch-dark-red: #FF3939;
 
-		--small-column: 36px;
-		--name-column: 100%;
-		--size-column: 150px;
-	}
+    --small-column: 36px;
+    --name-column: 100%;
+    --size-column: 150px;
+  }
 
-	.file-browser {
-		font-family: 'Helvetica Neue', Roboto, Arial, 'Droid Sans', sans-serif;
-		container-type: inline-size;
-		container-name: filebrowser;
+  .file-browser {
+    font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+    container-type: inline-size;
 
-		&:global(.file-dragging) {
-			border: 1px solid black;
-		}
+    &:global(.file-dragging) {
+      border: 1px solid black;
+    }
 
-		.control-wrapper {
-			display: flex;
-			justify-content: space-between;
-			flex-wrap: wrap;
-			margin: 8px 0;
+    .control-wrapper {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin: 8px 0;
 
-			.divider {
-				width: 16px;
-				margin-right: 16px;
-				border-right: 1px solid var(--ch-orange);
-			}
-		}
+      .divider {
+        width: 16px;
+        margin-right: 16px;
+        border-right: 1px solid var(--ch-orange);
+      }
+    }
 
-		.table-wrapper {
-			max-height: 500px;
-			overflow-y: scroll;
-		}
+    .table-wrapper {
+      max-height: 500px;
+      overflow-y: scroll;
+    }
 
-		table.file-table {
-			border-collapse: separate;
-			border-spacing: 0;
-			width: 100%;
-			position: relative;
+    table.file-table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      position: relative;
 
-			th {
-				background: white;
-				position: sticky;
-				top: 0;
-				z-index: 2;
-				border-bottom: 1px solid var(--ch-orange);
-			}
+      th {
+        background: white;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        border-bottom: 1px solid var(--ch-orange);
+      }
 
-			:global {
-				.icon-column {
-					min-width: var(--small-column);
-					color: var(--ch-purple);
-				}
+      :global {
+        .icon-column {
+          min-width: var(--small-column);
+          color: var(--ch-purple);
+        }
 
-				.name-column {
-					min-width: var(--name-column);
-				}
+        .name-column {
+          min-width: var(--name-column);
+        }
 
-				.size-column {
-					min-width: var(--size-column);
-				}
+        .size-column {
+          min-width: var(--size-column);
+        }
 
-				.dropdown-column {
-					min-width: var(--small-column);
-				}
-			}
+        .dropdown-column {
+          min-width: var(--small-column);
+        }
+      }
 
-			.left-aligned-column {
-				text-align: left;
-				padding-left: 8px;
-			}
+      .left-aligned-column {
+        text-align: left;
+        padding-left: 8px;
+      }
 
-			th {
-				padding: 8px 8px 4px 8px;
-			}
+      th {
+        padding: 8px 8px 4px 8px;
+      }
 
-			th {
-				border-bottom: 1px solid var(--ch-orange);
-				border-spacing: 0;
-				&:not(:first-child) {
-					border-left: 1px solid var(--ch-orange);
-				}
-			}
+      th {
+        border-bottom: 1px solid var(--ch-orange);
+        border-spacing: 0;
+        &:not(:first-child) {
+          border-left: 1px solid var(--ch-orange);
+        }
+      }
 
-			.file-table-footer {
-				padding-top: 1rem;
-			}
-		}
-	}
+      .file-table-footer {
+        padding-top: 1rem;
+      }
+    }
+  }
 
-	:global {
-		@container filebrowser (max-width: 1000px) {
-			.file-browser {
-				.control-wrapper {
-					margin: 0;
+  :global {
+    @container(max-width: 1000px) {
+      .file-browser {
+        .control-wrapper {
+          margin: 0;
 
-					.divider {
-						border-right: none !important;
-						border-bottom: 1px solid var(--ch-orange);
-						width: 100% !important;
-						margin: 5px 0 8px 0 !important;
-					}
+          .divider {
+            border-right: none !important;
+            border-bottom: 1px solid var(--ch-orange);
+            width: 100% !important;
+            margin: 5px 0 8px 0 !important;
+          }
 
-					.filebrowser-controls {
-						margin: 4px 0 8px auto;
-					}
-				}
-			}
-		}
-	}
+          .filebrowser-controls {
+            margin: 4px 0 8px auto;
+          }
+        }
+      }
+    }
+  }
 </style>

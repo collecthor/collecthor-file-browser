@@ -28,10 +28,7 @@
       "$ref": "./Path.json"
     },
     "size": {
-      "type": [
-        "integer",
-        "null"
-      ],
+      "type": ["integer", "null"],
       "description": "Size of the file in bytes, null if not applicable ",
       "minimum": 1
     },
@@ -43,19 +40,9 @@
       "$ref": "./PermissionSet.json"
     },
     "icon": {
-      "type": [
-        "string",
-        "null"
-      ],
+      "type": ["string", "null"],
       "format": "uri"
     }
   },
-  "required": [
-    "name",
-    "path",
-    "size",
-    "mimeType",
-    "permissions",
-    "icon"
-  ]
+  "required": ["name", "path", "size", "mimeType", "permissions", "icon"]
 }
