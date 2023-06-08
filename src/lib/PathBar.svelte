@@ -1,22 +1,28 @@
 <script lang="ts">
-  import type FileManager from "./FileManager";
+	import type FileManager from './FileManager';
 
-  export let fileManager: FileManager;
+	export let fileManager: FileManager;
 
-  const pathStack = fileManager.getPathStack();
-
-
+	const pathStack = fileManager.getPathStack();
 </script>
 
 <div class="path-bar">
-  <span class="path-item" on:click={() => fileManager.goHome()} on:keydown={() => fileManager.goHome()}>Home</span>
-  <span class="separator">/</span>
-  {#each $pathStack as pathItem, i}
-    <span class="path-item" on:click={() => fileManager.goToNode(pathItem)} on:keydown={() => fileManager.goToNode(pathItem)}>
-      {pathItem.name}
-    </span>
-    <span class="separator">/</span>
-  {/each}
+	<span
+		class="path-item"
+		on:click={() => fileManager.goHome()}
+		on:keydown={() => fileManager.goHome()}>Home</span
+	>
+	<span class="separator">/</span>
+	{#each $pathStack as pathItem, i}
+		<span
+			class="path-item"
+			on:click={() => fileManager.goToNode(pathItem)}
+			on:keydown={() => fileManager.goToNode(pathItem)}
+		>
+			{pathItem.name}
+		</span>
+		<span class="separator">/</span>
+	{/each}
 </div>
 
 <style lang="scss">
