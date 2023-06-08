@@ -13,6 +13,10 @@ node_modules
 /.github
 /dist
 /src/lib/generated/
+.husky/
+.github/
+.stoplight/
+reference/
 
 # Ignore files for PNPM, NPM and YARN
 pnpm-lock.yaml

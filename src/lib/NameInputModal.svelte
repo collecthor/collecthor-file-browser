@@ -1,60 +1,59 @@
 <script lang="ts">
-  import { getContext } from "svelte";
+	import { getContext } from 'svelte';
 
-  const { close } = getContext('simple-modal');
-  export let title: string;
-  export let namePicked: (name: string) => void;
+	const { close } = getContext('simple-modal');
+	export let title: string;
+	export let namePicked: (name: string) => void;
 
-
-  let nameInput: HTMLInputElement;
+	let nameInput: HTMLInputElement;
 </script>
 
 <div class="name-input-modal">
-  <p>{title}</p>
-  <input type="text" bind:this={nameInput}/>
-  <div class="input-modal-buttons">
-    <button on:click={() => namePicked(nameInput.value)} >Create</button>
-    <button class="cancel-button" on:click={() => close()} >Cancel</button>
-  </div>
+	<p>{title}</p>
+	<input type="text" bind:this={nameInput} />
+	<div class="input-modal-buttons">
+		<button on:click={() => namePicked(nameInput.value)}>Create</button>
+		<button class="cancel-button" on:click={() => close()}>Cancel</button>
+	</div>
 </div>
 
 <style lang="scss">
-  .name-input-modal {
-    font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+	.name-input-modal {
+		font-family: 'Helvetica Neue', Roboto, Arial, 'Droid Sans', sans-serif;
 
-    .input-modal-buttons {
-      padding-top: 8px;
-      display: flex;
-      justify-content: end;
+		.input-modal-buttons {
+			padding-top: 8px;
+			display: flex;
+			justify-content: end;
 
-      button {
-        border: 1px solid var(--ch-orange);
-        padding: 8px 16px;
-        background-color: transparent;
-        border-radius: 4px;
-        margin: 0 8px;
+			button {
+				border: 1px solid var(--ch-orange);
+				padding: 8px 16px;
+				background-color: transparent;
+				border-radius: 4px;
+				margin: 0 8px;
 
-        &.cancel-button {
-          color: white;
-          background-color: var(--ch-red);
-          border-color: var(--ch-red);
-        }
+				&.cancel-button {
+					color: white;
+					background-color: var(--ch-red);
+					border-color: var(--ch-red);
+				}
 
-        &:hover {
-          cursor: pointer;
-          color: white;
-          background-color: var(--ch-orange);
+				&:hover {
+					cursor: pointer;
+					color: white;
+					background-color: var(--ch-orange);
 
-          &.cancel-button {
-            background-color: var(--ch-dark-red);
-            border-color: var(--ch-dark-red);
-          }
-        }
-      }
+					&.cancel-button {
+						background-color: var(--ch-dark-red);
+						border-color: var(--ch-dark-red);
+					}
+				}
+			}
 
-      button:last-of-type {
-        margin-right: 0;
-      }
-    }
-  }
+			button:last-of-type {
+				margin-right: 0;
+			}
+		}
+	}
 </style>

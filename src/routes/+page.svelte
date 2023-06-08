@@ -1,7 +1,7 @@
 <script lang="ts">
-	import {getContext, onMount} from "svelte";
-	import FileBrowser from "$lib/FileBrowser.svelte";
-	import type { Node } from "$lib/generated/Node";
+	import { getContext, onMount } from 'svelte';
+	import FileBrowser from '$lib/FileBrowser.svelte';
+	import type { Node } from '$lib/generated/Node';
 
 	const { open } = getContext('simple-modal');
 
@@ -9,9 +9,9 @@
 		open(FileBrowser, {
 			openFile: (file) => console.log(file.path),
 			itemSelected: (file: Node) => console.log(file.path),
-			baseurl: "http://localhost:3100",
-			type: "picker",
-		})
+			baseurl: 'http://localhost:3100',
+			type: 'picker'
+		});
 	}
 </script>
 
@@ -21,9 +21,7 @@
 	openFile={(file) => console.log(file.path)}
 	itemSelected={(file) => console.log(file.path)}
 	baseurl="http://localhost:3100"
-></FileBrowser>
-
+/>
 
 <style lang="scss">
-
 </style>
