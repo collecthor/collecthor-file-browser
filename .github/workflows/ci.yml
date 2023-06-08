@@ -28,3 +28,4 @@ jobs:
 
       - name: Run ViTest tests
         run: npm run test:vitest:ci
+      - run: npm run check
