@@ -8,9 +8,15 @@
 			}
 		],
 		[
+			"@semantic-release/exec",
+			{
+				"prepare": "tar -czvf dist.tar.gz dist"
+			}
+		],
+		[
 			"@semantic-release/github",
 			{
-				"assets": [{ "path": "dist/**", "label": "Dist" }]
+				"assets": [{ "path": "dist.tar.gz", "label": "Distribution archive" }]
 			}
 		],
 		"@semantic-release/npm",
