@@ -10,7 +10,7 @@
 		[
 			"@semantic-release/exec",
 			{
-				"prepare": "tar -czvf dist.tar.gz dist"
+				"prepareCmd": "tar -czvf dist.tar.gz dist"
 			}
 		],
 		[
