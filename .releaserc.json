@@ -10,7 +10,7 @@
 		[
 			"@semantic-release/github",
 			{
-				"assets": ["dist"]
+				"assets": [{ "path": "dist/**", "label": "Dist" }]
 			}
 		],
 		"@semantic-release/npm",
