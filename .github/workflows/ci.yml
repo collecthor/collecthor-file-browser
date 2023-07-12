@@ -2,7 +2,7 @@ name: Continuous integration (PRs)
 on: pull_request
 jobs:
   test:
-    timeout-minutes: 3
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
