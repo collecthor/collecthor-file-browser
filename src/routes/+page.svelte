@@ -32,8 +32,10 @@
 	}
 </script>
 
-<button on:click={() => openFileBrowser(true)}>Open file browser modal with modal context!</button>
-<button on:click={() => openFileBrowser(false)}
+<button type="button" on:click={() => openFileBrowser(true)}
+	>Open file browser modal with modal context!</button
+>
+<button type="button" on:click={() => openFileBrowser(false)}
 	>Open file browser modal without modal context!</button
 >
 <!-- This modal is only used for the popup via the button above-->

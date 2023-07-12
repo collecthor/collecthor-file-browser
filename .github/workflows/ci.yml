@@ -8,11 +8,13 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
+          cache: 'npm'
           node-version: 19
-
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
-
+          cache-dependency-path: "package-lock.json"
+      - run: npm ci
+      - name: Run ViTest tests
+        run: npm run test:vitest:ci
+      - run: npm run check
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
@@ -26,6 +28,3 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-      - name: Run ViTest tests
-        run: npm run test:vitest:ci
-      - run: npm run check

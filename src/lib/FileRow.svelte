@@ -43,13 +43,18 @@
 	<td class="size-column"><SizeDisplay size={item.size} /></td>
 	<td class="dropdown-column text-center-column small-column">
 		<div class="dropdown">
-			<button class="show-options" on:click|stopPropagation={(event) => optionsClicked(event)}
-				>...</button
+			<button
+				type="button"
+				class="show-options"
+				on:click|stopPropagation={(event) => optionsClicked(event)}>...</button
 			>
 			<div class="file-options">
 				{#each actions as action}
 					{#if action.validFor(item)}
-						<button on:click|stopPropagation={(event) => actionClicked(event, action)}>
+						<button
+							type="button"
+							on:click|stopPropagation={(event) => actionClicked(event, action)}
+						>
 							<div>
 								<svelte:component this={action.icon} />
 								<span>{action.name}</span>
@@ -63,11 +68,10 @@
 </tr>
 
 <style lang="scss">
-	:global {
-		.show .file-options {
-			display: block !important;
-		}
+	:global(.show .file-options) {
+		display: block !important;
 	}
+
 	.file-row {
 		td {
 			padding: 8px;

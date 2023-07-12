@@ -10,12 +10,16 @@
 	<span
 		class="path-item"
 		on:click={() => fileManager.goHome()}
-		on:keydown={() => fileManager.goHome()}>Home</span
+		on:keydown={() => fileManager.goHome()}
+		role="button"
+		tabindex="0">Home</span
 	>
 	<span class="separator">/</span>
-	{#each $pathStack as pathItem, i}
+	{#each $pathStack as pathItem}
 		<span
 			class="path-item"
+			role="button"
+			tabindex="0"
 			on:click={() => fileManager.goToNode(pathItem)}
 			on:keydown={() => fileManager.goToNode(pathItem)}
 		>

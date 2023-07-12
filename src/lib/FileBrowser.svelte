@@ -5,6 +5,7 @@
 	import FileBrowserContent from '$lib/FileBrowserContent.svelte';
 	import ErrorModal from './ErrorModal.svelte';
 	import type FileManager from '$lib/FileManager';
+	import { IconStack } from '@collecthor/svelte-material-icons';
 
 	export let actions: ContextMenuAction[] = [];
 
@@ -40,6 +41,7 @@
 	}
 </script>
 
+<IconStack />
 {#if manualWrap}
 	<Modal
 		styleCloseButton={{ cursor: 'pointer' }}

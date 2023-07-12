@@ -1,18 +1,17 @@
 <script lang="ts">
-	import AlertCircleOutline from 'svelte-material-icons/AlertCircleOutline.svelte';
-	import AlertOutline from 'svelte-material-icons/AlertOutline.svelte';
+	import { AlertOutline, AlertCircleOutline } from '@collecthor/svelte-material-icons';
 
 	export let title: string;
 	export let message: string;
-	export let type: string;
+	export let type: 'error' | 'warning';
 </script>
 
 <div class="error-modal">
 	<div class="icon-container">
-		{#if type === 'error'}
-			<AlertOutline size="100%" />
-		{:else if type === 'warning'}
-			<AlertCircleOutline size="100%" />
+		{#if type == 'error'}
+			<AlertOutline />
+		{:else}
+			<AlertCircleOutline />
 		{/if}
 	</div>
 	<div class="message-container">

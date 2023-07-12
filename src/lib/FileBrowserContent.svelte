@@ -69,6 +69,7 @@
 		on:dragenter={dragStart}
 		on:dragleave={dragEnd}
 		on:drop={fileDropped}
+		role="complementary"
 	>
 		<div class="control-wrapper">
 			<PathBar {fileManager} />
@@ -161,26 +162,24 @@
 				border-bottom: 1px solid var(--ch-orange);
 			}
 
-			:global {
-				.icon-column {
-					min-width: var(--small-column);
-					color: var(--ch-purple);
-				}
-
-				.name-column {
-					min-width: var(--name-column);
-				}
-
-				.size-column {
-					min-width: var(--size-column);
-				}
-
-				.dropdown-column {
-					min-width: var(--small-column);
-				}
+			:global(.icon-column) {
+				min-width: var(--small-column);
+				color: var(--ch-purple);
 			}
 
-			.left-aligned-column {
+			:global(.name-column) {
+				min-width: var(--name-column);
+			}
+
+			:global(.size-column) {
+				min-width: var(--size-column);
+			}
+
+			:global(.dropdown-column) {
+				min-width: var(--small-column);
+			}
+
+			:global(.left-aligned-column) {
 				text-align: left;
 				padding-left: 8px;
 			}
@@ -203,22 +202,20 @@
 		}
 	}
 
-	:global {
-		@container (max-width: 1000px) {
-			.file-browser {
-				.control-wrapper {
-					margin: 0;
+	@container (max-width: 1000px) {
+		.file-browser {
+			.control-wrapper {
+				margin: 0;
 
-					.divider {
-						border-right: none !important;
-						border-bottom: 1px solid var(--ch-orange);
-						width: 100% !important;
-						margin: 5px 0 8px 0 !important;
-					}
+				.divider {
+					border-right: none !important;
+					border-bottom: 1px solid var(--ch-orange);
+					width: 100% !important;
+					margin: 5px 0 8px 0 !important;
+				}
 
-					.filebrowser-controls {
-						margin: 4px 0 8px auto;
-					}
+				.filebrowser-controls {
+					margin: 4px 0 8px auto;
 				}
 			}
 		}
