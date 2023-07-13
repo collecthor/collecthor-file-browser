@@ -1,13 +1,18 @@
 <script lang="ts">
-	import File from 'svelte-material-icons/File.svelte';
-	import FilePdfBox from 'svelte-material-icons/FilePdfBox.svelte';
-	import FileImage from 'svelte-material-icons/FileImage.svelte';
-	import FileDocumentOutline from 'svelte-material-icons/FileDocumentOutline.svelte';
-	import Video from 'svelte-material-icons/Video.svelte';
-	import MusicBox from 'svelte-material-icons/MusicBox.svelte';
-	import Application from 'svelte-material-icons/Application.svelte';
-	import Folder from 'svelte-material-icons/Folder.svelte';
-	import ProgressUpload from 'svelte-material-icons/ProgressUpload.svelte';
+	/**
+	 * We use these imports because vitest deals very poorly with the proper way of importing it;
+	 * it takes 2 minutes in its transformation step if we use
+	 * import { Application } from '@collecthor/svelte-material-icons'
+	 */
+	import Application from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/Application.svelte';
+	import FileDocumentOutline from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/FileDocumentOutline.svelte';
+	import FileImage from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/FileImage.svelte';
+	import FilePdfBox from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/FilePdfBox.svelte';
+	import Folder from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/Folder.svelte';
+	import MusicBox from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/MusicBox.svelte';
+	import ProgressUpload from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/ProgressUpload.svelte';
+	import Video from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/Video.svelte';
+	import File from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/File.svelte';
 
 	export let mimeType: string;
 

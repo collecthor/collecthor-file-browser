@@ -9,7 +9,7 @@
 	<p>{title}</p>
 	<input type="text" bind:this={nameInput} />
 	<div class="input-modal-buttons">
-		<button on:click={() => namePicked(nameInput.value)}>Create</button>
+		<button type="button" on:click={() => namePicked(nameInput.value)}>Create</button>
 	</div>
 </div>
 

@@ -86,9 +86,11 @@
 		bind:this={fileUpload}
 		on:change={() => onFileSelected()}
 	/>
-	<button class="filebrowser-button" on:click={() => fileUpload.click()}>Add file</button>
-	<button class="filebrowser-button" on:click={() => newFolder()}>New folder</button>
-	<button class="filebrowser-button" on:click={() => newFile()}>New file</button>
+	<button type="button" class="filebrowser-button" on:click={() => fileUpload.click()}
+		>Add file</button
+	>
+	<button type="button" class="filebrowser-button" on:click={() => newFolder()}>New folder</button>
+	<button type="button" class="filebrowser-button" on:click={() => newFile()}>New file</button>
 </div>
 
 <style lang="scss">

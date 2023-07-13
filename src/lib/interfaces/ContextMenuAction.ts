@@ -1,6 +1,6 @@
 import type FileManager from '$lib/FileManager';
+import type { Delete } from '@collecthor/svelte-material-icons';
 import type { external } from '$lib/interfaces/api.generated.d.ts';
-import type Delete from 'svelte-material-icons/Delete.svelte';
 
 type Node = external['models/Node.json'];
 /**

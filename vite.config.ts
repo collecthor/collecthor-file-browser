@@ -1,28 +1,23 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import type { UserConfig } from 'vite';
-import { configDefaults, type UserConfig as VitestConfig } from 'vitest/config';
+import type { UserConfig as VitestConfig } from 'vitest/config';
 
 const config: UserConfig & { test: VitestConfig['test'] } = {
 	plugins: [sveltekit()],
-	define: {
-		// Eliminate in-source test code
-		'import.meta.vitest': 'undefined'
-	},
 	test: {
 		// jest like globals
-		threads: false,
+		threads: true,
 		globals: true,
 		environment: 'jsdom',
-		// in-source testing
-		includeSource: ['src/**/*.{js,ts,svelte}'],
 		// Add @testing-library/jest-dom matchers & mocks of SvelteKit modules
 		setupFiles: ['/tests/vitest.setup.ts'],
-		// Exclude files in c8
+		include: ['src/**/*.spec.ts'],
 		coverage: {
-			exclude: ['./tests']
+			exclude: ['./tests'],
+			provider: 'v8',
+			enabled: false
 		},
-		// Exclude playwright tests folder
-		exclude: [...configDefaults.exclude, './tests']
+		exclude: []
 	}
 };
 

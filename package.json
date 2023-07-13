@@ -14,7 +14,7 @@
 		"eslint": "eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
 		"test:playwright": "npx playwright test --trace on",
-		"test:vitest": "vitest watch",
+		"test:vitest": "vitest watch --ui --open",
 		"test:vitest:ci": "vitest run",
 		"generate": "npx openapi-typescript ./reference/file-browser-api.yaml -o ./src/lib/interfaces/api.generated.d.ts"
 	},
@@ -32,18 +32,20 @@
 		"@openapitools/openapi-generator-cli": "^2.6.0",
 		"@playwright/test": "^1.34.3",
 		"@stoplight/prism-cli": "^5",
-		"@sveltejs/kit": "^1.15.9",
+		"@sveltejs/kit": "^1",
 		"@sveltejs/package": "^2.0.2",
 		"@testing-library/jest-dom": "^5.16.5",
-		"@testing-library/svelte": "^3.2.2",
+		"@testing-library/svelte": "^4",
 		"@tsconfig/svelte": "^4",
 		"@types/testing-library__jest-dom": "^5.14.6",
 		"@typescript-eslint/eslint-plugin": "^5.59.9",
 		"@typescript-eslint/parser": "^5.59.9",
+		"@vitest/coverage-v8": "^0.33.0",
+		"@vitest/ui": "^0.33.0",
 		"eslint": "^8.42.0",
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-promise": "^6.1.1",
-		"eslint-plugin-svelte3": "^4.0.0",
+		"eslint-plugin-svelte": "^2",
 		"husky": "^8.0.3",
 		"jsdom": "^22.0.0",
 		"json-schema-to-typescript": "^13.0.1",
@@ -51,21 +53,22 @@
 		"prettier": "^2.8.8",
 		"prettier-plugin-svelte": "^2.10.0",
 		"sass": "^1.62.1",
+		"svelte": "^4",
 		"svelte-check": "^3",
 		"svelte-preprocess": "^5",
 		"tslib": "^2.3.1",
 		"typescript": "^5",
 		"vite": "^4",
-		"vitest": "^0.31.1"
+		"vitest": "^0.33"
 	},
 	"dependencies": {
+		"@collecthor/svelte-material-icons": "^1.0.2",
 		"@sveltejs/adapter-auto": "^2.0.1",
 		"@sveltejs/adapter-static": "^2.0.2",
 		"eventemitter3": "^5.0.1",
 		"openapi-fetch": "^0.2.1",
 		"strongly-typed-events": "^3.0.9",
-		"svelte-material-icons": "^3",
-		"svelte-simple-modal": "^1.5"
+		"svelte-simple-modal": "^1.6"
 	},
 	"exports": {
 		".": {

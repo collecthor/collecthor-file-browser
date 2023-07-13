@@ -1,7 +1,7 @@
 import type ContextMenuAction from '$lib/interfaces/ContextMenuAction';
-import Download from 'svelte-material-icons/Download.svelte';
 import type { external } from '$lib/interfaces/api.generated';
 import type FileManager from '$lib/FileManager';
+import { Download } from '@collecthor/svelte-material-icons';
 type Node = external['models/Node.json'];
 
 export default class DownloadAction implements ContextMenuAction {
