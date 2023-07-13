@@ -7,8 +7,8 @@ const config = defineConfig({
 	webServer: {
 		command: 'npm run dev:test',
 		url: 'http://localhost:9999/',
-		timeout: 60 * 1000,
-		reuseExistingServer: true
+		timeout: 10 * 1000,
+		reuseExistingServer: false
 	},
 	testDir: './tests',
 	/* Maximum time one test can run for. */
