@@ -5,8 +5,9 @@ import { defineConfig, devices } from '@playwright/test';
  */
 const config = defineConfig({
 	webServer: {
-		command: 'npm run dev:test',
-		url: 'http://localhost:9999/',
+		command: 'npx vite dev --mode test --port 9999',
+		port: 9999,
+		// This timeout is needed be
 		timeout: 10 * 1000,
 		reuseExistingServer: false
 	},

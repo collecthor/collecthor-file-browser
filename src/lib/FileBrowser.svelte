@@ -5,7 +5,7 @@
 	import FileBrowserContent from '$lib/FileBrowserContent.svelte';
 	import ErrorModal from './ErrorModal.svelte';
 	import type FileManager from '$lib/FileManager';
-	import { IconStack } from '@collecthor/svelte-material-icons';
+	import IconStack from '@collecthor/svelte-material-icons/dist/IconStack.svelte';
 
 	export let actions: ContextMenuAction[] = [];
 

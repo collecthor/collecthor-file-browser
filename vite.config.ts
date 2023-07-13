@@ -16,8 +16,7 @@ const config: UserConfig & { test: VitestConfig['test'] } = {
 			exclude: ['./tests'],
 			provider: 'v8',
 			enabled: false
-		},
-		exclude: []
+		}
 	}
 };
 

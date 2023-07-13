@@ -1,7 +1,7 @@
 import type ContextMenuAction from '$lib/interfaces/ContextMenuAction';
 import type { external } from '$lib/interfaces/api.generated';
 import type FileManager from '$lib/FileManager';
-import { Delete } from '@collecthor/svelte-material-icons';
+import Delete from '@collecthor/svelte-material-icons/dist/generated/Delete.svelte';
 type Node = external['models/Node.json'];
 
 export default class DeleteAction implements ContextMenuAction {

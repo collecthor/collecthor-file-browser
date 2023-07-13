@@ -4,15 +4,15 @@
 	 * it takes 2 minutes in its transformation step if we use
 	 * import { Application } from '@collecthor/svelte-material-icons'
 	 */
-	import Application from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/Application.svelte';
-	import FileDocumentOutline from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/FileDocumentOutline.svelte';
-	import FileImage from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/FileImage.svelte';
-	import FilePdfBox from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/FilePdfBox.svelte';
-	import Folder from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/Folder.svelte';
-	import MusicBox from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/MusicBox.svelte';
-	import ProgressUpload from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/ProgressUpload.svelte';
-	import Video from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/Video.svelte';
-	import File from '../../node_modules/@collecthor/svelte-material-icons/dist/generated/File.svelte';
+	import Application from '@collecthor/svelte-material-icons/dist/generated/Application.svelte';
+	import FileDocumentOutline from '@collecthor/svelte-material-icons/dist/generated/FileDocumentOutline.svelte';
+	import FileImage from '@collecthor/svelte-material-icons/dist/generated/FileImage.svelte';
+	import FilePdfBox from '@collecthor/svelte-material-icons/dist/generated/FilePdfBox.svelte';
+	import Folder from '@collecthor/svelte-material-icons/dist/generated/Folder.svelte';
+	import MusicBox from '@collecthor/svelte-material-icons/dist/generated/MusicBox.svelte';
+	import ProgressUpload from '@collecthor/svelte-material-icons/dist/generated/ProgressUpload.svelte';
+	import Video from '@collecthor/svelte-material-icons/dist/generated/Video.svelte';
+	import File from '@collecthor/svelte-material-icons/dist/generated/File.svelte';
 
 	export let mimeType: string;
 

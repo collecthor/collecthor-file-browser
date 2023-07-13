@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { AlertOutline, AlertCircleOutline } from '@collecthor/svelte-material-icons';
+	import AlertOutline from '@collecthor/svelte-material-icons/dist/generated/AlertOutline.svelte';
+	import AlertCircleOutline from '@collecthor/svelte-material-icons/dist/generated/AlertCircleOutline.svelte';
 
 	export let title: string;
 	export let message: string;
