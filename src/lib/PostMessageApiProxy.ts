@@ -1,6 +1,6 @@
 import type { external } from '$lib/interfaces/api.generated.d.ts';
 
-import { FetchApiClient } from '$lib/FetchApiClient';
+import FetchApiClient from '$lib/FetchApiClient';
 type CreateRequest = external['models/CreateRequest.json'];
 type Path = external['models/Path.json'];
 

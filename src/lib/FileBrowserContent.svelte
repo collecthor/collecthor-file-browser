@@ -84,7 +84,7 @@
 					<th class="size-column left-aligned-column">Size</th>
 					<th class="dropdown-column" />
 				</tr>
-				{#each $currentPathContents as item}
+				{#each $currentPathContents as item (item.path)}
 					<FileRow
 						{item}
 						pickOnSingleClick={type === 'picker'}
@@ -123,8 +123,11 @@
 	}
 
 	.file-browser {
+		min-height: 400px;
 		font-family: 'Helvetica Neue', Roboto, Arial, 'Droid Sans', sans-serif;
 		container-type: inline-size;
+		display: flex;
+		flex-direction: column;
 
 		&:global(.file-dragging) {
 			border: 1px solid black;
@@ -144,8 +147,8 @@
 		}
 
 		.table-wrapper {
-			max-height: 500px;
-			overflow-y: scroll;
+			flex-grow: 1;
+			overflow-y: auto;
 		}
 
 		table.file-table {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import FileBrowser from '$lib/FileBrowser.svelte';
 	import FileManager from '$lib/FileManager';
-	import { FetchApiClient } from '$lib/FetchApiClient';
+	import FetchApiClient from '$lib/FetchApiClient';
 	import type { PublicUri } from '$lib';
 	import { Modal, type Context } from 'svelte-simple-modal';
 

@@ -43,7 +43,6 @@ export default class FileManager {
 
 				// To avoid race conditions
 				if (!canceled) {
-					console.log('Subscribing to pathstackstore');
 					unsubscribe = this.pathStackStore.subscribe(async (newValue) => {
 						let contents;
 						if (newValue.length > 0) {
@@ -51,7 +50,6 @@ export default class FileManager {
 						} else {
 							contents = await this.client.viewPath('');
 						}
-						console.log('pathStackStore updated:', contents);
 						this.pathContentsStore.set(contents);
 					});
 				}
@@ -95,7 +93,6 @@ export default class FileManager {
 	}
 
 	public getContents(): Readable<Node[]> {
-		console.log('getcontents');
 		return readonly(this.pathContentsStore);
 	}
 
@@ -129,14 +126,18 @@ export default class FileManager {
 		const pathStack = get(this.pathStackStore);
 		if (pathStack.length === 0) {
 			this.pathStackStore.set([node]);
-		} else if (pathStack.includes(node)) {
-			this.pathStackStore.set(pathStack.slice(0, pathStack.indexOf(node)));
+		} else if (pathStack.some((n) => n.path === node.path)) {
+			this.pathStackStore.set(
+				pathStack.slice(0, pathStack.findIndex((n) => n.path === node.path) + 1)
+			);
 		} else if (node.path.startsWith(pathStack[pathStack.length - 1].path + '/')) {
 			this.pathStackStore.set([...pathStack, node]);
 		} else {
 			// This node is not yet on the stack and not a direct child of the stack
 			console.warn(
-				'Navigating to node not in stack, this requires recursive lookups to build the stack'
+				'Navigating to node not in stack, this requires recursive lookups to build the stack',
+				pathStack,
+				node
 			);
 			this.navigateToPath(node.path);
 		}
