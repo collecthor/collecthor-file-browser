@@ -17,6 +17,7 @@ node_modules
 .stoplight/
 playwright.config.ts
 svelte.config.js
+vite.browser.js
 
 # Ignore files for PNPM, NPM and YARN
 pnpm-lock.yaml

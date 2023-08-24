@@ -42,7 +42,10 @@
       "$ref": "./PermissionSet.json"
     },
     "icon": {
-      "type": "string",
+      "type": [
+        "string",
+        "null"
+      ],
       "format": "uri"
     }
   },

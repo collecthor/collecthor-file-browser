@@ -13,6 +13,7 @@ export type { external as Models } from '$lib/interfaces/api.generated.d.ts';
 import type { external as Models } from '$lib/interfaces/api.generated.d.ts';
 
 export { default as PostMessageApiClient } from '$lib/PostMessageApiClient';
+export { default as FetchApiClient } from '$lib/FetchApiClient';
 export { default as FileManager } from '$lib/FileManager';
 export type Node = Models['models/Node.json'];
 export type PublicUri = Models['models/PublicUri.json'];

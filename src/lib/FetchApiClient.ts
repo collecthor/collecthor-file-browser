@@ -11,12 +11,13 @@ type Path = external['models/Path.json'];
 /**
  * This postmessage client does not do any type checking.
  */
-export class FetchApiClient implements ApiClient {
+export default class FetchApiClient implements ApiClient {
 	private client: ReturnType<typeof createClient<paths>>;
 
-	constructor(baseUrl?: string) {
+	constructor(baseUrl?: string, fetcher?: typeof fetch) {
 		this.client = createClient<paths>({
-			baseUrl
+			baseUrl,
+			fetch: fetcher
 		});
 	}
 
@@ -40,7 +41,6 @@ export class FetchApiClient implements ApiClient {
 	public async viewPath(
 		path: Path
 	): Promise<operations['post-view']['responses']['200']['content']['application/json']> {
-		console.log('viewPath', path, path.length);
 		const { data, error } = await this.client.post('/view', {
 			headers: {
 				Prefer: 'code=200, example=Example 1'
