@@ -17,13 +17,13 @@
 	import LanguageHtml5 from '@collecthor/svelte-material-icons/dist/generated/LanguageHtml5.svelte';
 	import LanguageCss3 from '@collecthor/svelte-material-icons/dist/generated/LanguageCss3.svelte';
 	import LanguageJavascript from '@collecthor/svelte-material-icons/dist/generated/LanguageJavascript.svelte';
-	import type { SvelteComponent } from 'svelte';
+	import type { ComponentType } from 'svelte';
 
 	export let mimeType: string;
 
 	export let iconUrl: string | null;
 
-	const map: Record<string, SvelteComponent> = {
+	const map: Record<string, ComponentType> = {
 		'application/javascript': LanguageJavascript,
 		'text/javascript': LanguageJavascript,
 		'application/text': TextBoxOutline,
