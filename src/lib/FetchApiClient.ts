@@ -20,6 +20,23 @@ export default class FetchApiClient implements ApiClient {
 			fetch: fetcher
 		});
 	}
+	public async moveFile(
+		source: Path,
+		destination: Path
+	): Promise<operations['post-move']['responses']['200']['content']['application/json']> {
+		const { data, error, response } = await this.client.post('/move', {
+			body: { source, destination }
+		});
+		if (typeof data != 'undefined') {
+			return data;
+		}
+		throw <FileBrowserError>{
+			status: response.status,
+			statusText: response.statusText,
+			detail: error,
+			title: 'Error'
+		};
+	}
 
 	public async createFile(
 		file: CreateRequest

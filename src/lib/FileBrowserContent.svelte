@@ -8,7 +8,9 @@
 
 	import DownloadAction from './actions/DownloadAction';
 	import DeleteAction from './actions/DeleteAction';
+	import EditAction from './actions/EditAction';
 	import type { Context } from 'svelte-simple-modal';
+	import CopyUrlAction from './actions/CopyUrlAction';
 
 	export let type: 'browser' | 'picker' = 'browser';
 	export let actions: ContextMenuAction[] = [];
@@ -57,7 +59,12 @@
 		}
 	};
 
-	const defaultActions: ContextMenuAction[] = [new DeleteAction(), new DownloadAction()];
+	const defaultActions: ContextMenuAction[] = [
+		new DeleteAction(),
+		new DownloadAction(),
+		new EditAction(),
+		new CopyUrlAction()
+	];
 </script>
 
 <svelte:window on:click={(event) => closeOptionDialogs(event)} />
@@ -82,9 +89,10 @@
 					<th class="icon-column" />
 					<th class="name-column left-aligned-column">Name</th>
 					<th class="size-column left-aligned-column">Size</th>
+					<th class="size-column left-aligned-column">Mime</th>
 					<th class="dropdown-column" />
 				</tr>
-				{#each $currentPathContents as item (item.path)}
+				{#each $currentPathContents as item}
 					<FileRow
 						{item}
 						pickOnSingleClick={type === 'picker'}

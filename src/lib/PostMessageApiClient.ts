@@ -15,7 +15,10 @@ export default class PostMessageApiClient implements ApiClient {
 		this.port = port;
 	}
 
-	private createPromise<T>(method: string, arg: Path | CreateRequest): Promise<T> {
+	private createPromise<T>(
+		method: string,
+		arg: Path | CreateRequest | { source: Path; destination: Path }
+	): Promise<T> {
 		return new Promise((resolve, reject) => {
 			const channel = new MessageChannel();
 			channel.port1.onmessage = (e: MessageEvent) => {
@@ -42,6 +45,13 @@ export default class PostMessageApiClient implements ApiClient {
 		file: CreateRequest
 	): Promise<operations['post-create']['responses']['200']['content']['application/json']> {
 		return this.createPromise('createFile', file);
+	}
+
+	public async moveFile(
+		source: Path,
+		destination: Path
+	): Promise<operations['post-move']['responses']['200']['content']['application/json']> {
+		return this.createPromise('moveFile', { source, destination });
 	}
 
 	public async viewPath(

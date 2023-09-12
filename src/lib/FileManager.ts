@@ -100,6 +100,14 @@ export default class FileManager {
 		return readonly(this.pathStackStore);
 	}
 
+	public refresh() {
+		let updates = 0;
+		this.pathStackStore.subscribe(() => updates++);
+		const pathStack = get(this.pathStackStore);
+		this.pathStackStore.set(pathStack);
+		console.log('Refreshing', updates);
+	}
+
 	public getCurrentPathString(): string {
 		const pathStack = get(this.pathStackStore);
 		if (pathStack.length > 0) {
@@ -156,7 +164,7 @@ export default class FileManager {
 		);
 	}
 
-	public async createFile(request: CreateRequest) {
+	public async createFile(request: CreateRequest): Promise<Node> {
 		// Optimistic update
 		const newNode: Node = {
 			name: request.name,
@@ -175,12 +183,41 @@ export default class FileManager {
 		try {
 			const createdNode = await this.client.createFile(request);
 			this.addNode(createdNode);
+			this.removeNode(newNode);
+			return createdNode;
 		} catch (error) {
+			this.removeNode(newNode);
 			if (isFileBrowserError(error)) {
 				this.dispatcher.emit('error', error);
 			}
-		} finally {
-			setTimeout(() => this.removeNode(newNode), 1000);
+			throw error;
+		}
+	}
+
+	/**
+	 * Rename a file in the same path
+	 */
+	public async rename(source: Node, newName: string): Promise<Node> {
+		const oldName = source.name;
+		const oldPath = source.path;
+		const baseName = source.path.substring(0, source.path.lastIndexOf('/'));
+		const newPath = baseName === '' ? newName : `${baseName}/${newName}`;
+		source.name = newName;
+		source.path = newPath;
+
+		try {
+			const newNode = await this.client.moveFile(oldPath, newPath);
+			// We update the old node with properties from the new node.
+			Object.assign(source, newNode);
+			console.log(source, newNode);
+			return newNode;
+		} catch (error) {
+			source.name = oldName;
+			source.path = oldPath;
+			if (isFileBrowserError(error)) {
+				this.dispatcher.emit('error', error);
+			}
+			throw error;
 		}
 	}
 
@@ -188,9 +225,14 @@ export default class FileManager {
 		this.removeNode(file);
 		try {
 			await this.client.deleteFile(file.path);
-		} finally {
-			setTimeout(() => this.addNode(file), 1000);
+		} catch {
+			this.addNode(file);
 		}
+	}
+
+	public async getUrl(file: Node): Promise<URL> {
+		const data = await this.client.getUrl(file.path);
+		return new URL(data.uri);
 	}
 
 	public async download(file: Node): Promise<void> {
@@ -200,6 +242,18 @@ export default class FileManager {
 		link.target = '_blank';
 		link.download = file.name;
 		link.click();
+	}
+
+	public async getFileContents(file: Node): Promise<string> {
+		const url = await this.client.getUrl(file.path);
+		const response = await fetch(url.uri, {
+			mode: 'cors',
+			credentials: 'omit',
+			cache: 'no-cache'
+		});
+		const result = await response.text();
+		console.warn('Gettign file contents', result);
+		return result;
 	}
 
 	public eventRegistry(): EventEmitter<Events> {

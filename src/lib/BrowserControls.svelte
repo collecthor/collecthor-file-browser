@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Context } from 'svelte-simple-modal';
 	import NameInputModal from './NameInputModal.svelte';
+	import mime from 'mime/lite';
 
 	import type FileManager from './FileManager';
 
@@ -72,7 +73,7 @@
 		fileManager.createFile({
 			path: fileManager.generatePathForFileName(name),
 			name: name,
-			mimeType: 'application/text',
+			mimeType: mime.getType(name) ?? 'application/text',
 			uri: 'data:text/plain;base64,dGVzdCBmaWxl'
 		});
 		modalContext.close();

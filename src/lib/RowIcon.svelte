@@ -13,14 +13,29 @@
 	import ProgressUpload from '@collecthor/svelte-material-icons/dist/generated/ProgressUpload.svelte';
 	import Video from '@collecthor/svelte-material-icons/dist/generated/Video.svelte';
 	import File from '@collecthor/svelte-material-icons/dist/generated/File.svelte';
+	import TextBoxOutline from '@collecthor/svelte-material-icons/dist/generated/TextBoxOutline.svelte';
+	import LanguageHtml5 from '@collecthor/svelte-material-icons/dist/generated/LanguageHtml5.svelte';
+	import LanguageCss3 from '@collecthor/svelte-material-icons/dist/generated/LanguageCss3.svelte';
+	import LanguageJavascript from '@collecthor/svelte-material-icons/dist/generated/LanguageJavascript.svelte';
+	import type { SvelteComponent } from 'svelte';
 
 	export let mimeType: string;
 
 	export let iconUrl: string | null;
+
+	const map: Record<string, SvelteComponent> = {
+		'application/javascript': LanguageJavascript,
+		'text/javascript': LanguageJavascript,
+		'application/text': TextBoxOutline,
+		'text/html': LanguageHtml5,
+		'text/css': LanguageCss3
+	};
 </script>
 
 {#if iconUrl}
 	<img src={iconUrl} alt="File icon" />
+{:else if map[mimeType]}
+	<svelte:component this={map[mimeType]} />
 {:else if mimeType.endsWith(';optimistic')}
 	<ProgressUpload />
 {:else if mimeType.startsWith('video/')}

@@ -4,6 +4,11 @@ type CreateRequest = external['models/CreateRequest.json'];
 type Path = external['models/Path.json'];
 
 export default interface ApiClient {
+	moveFile(
+		source: Path,
+		destination: Path
+	): Promise<operations['post-move']['responses']['200']['content']['application/json']>;
+
 	createFile(
 		file: CreateRequest
 	): Promise<operations['post-create']['responses']['200']['content']['application/json']>;

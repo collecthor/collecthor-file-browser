@@ -41,6 +41,7 @@
 	</td>
 	<td class="name-column">{item.name}</td>
 	<td class="size-column"><SizeDisplay size={item.size} /></td>
+	<td class="size-column">{item.mimeType}</td>
 	<td class="dropdown-column text-center-column small-column">
 		<div class="dropdown">
 			<button

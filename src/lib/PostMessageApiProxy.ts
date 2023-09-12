@@ -14,6 +14,11 @@ export type FetchRequest =
 			port: MessagePort;
 			method: 'deleteFile' | 'viewPath' | 'getUrl';
 			arg: Path;
+	  }
+	| {
+			port: MessagePort;
+			method: 'moveFile';
+			arg: { source: Path; destination: Path };
 	  };
 /**
  * This proxy listens on the given port and forwards requests to the client.
@@ -28,20 +33,21 @@ export default class PostMessageApiProxy {
 
 	listenToPort(port: MessagePort): void {
 		port.onmessage = async (ev: MessageEvent<FetchRequest>) => {
-			if (ev.data.method === 'createFile') {
-				try {
-					const data = await this.client.createFile(ev.data.arg);
-					ev.data.port.postMessage({ data });
-				} catch (error) {
-					ev.data.port.postMessage({ error });
+			let result;
+			try {
+				switch (ev.data.method) {
+					case 'createFile':
+						result = await this.client.createFile(ev.data.arg);
+						break;
+					case 'moveFile':
+						result = await this.client.moveFile(ev.data.arg.source, ev.data.arg.destination);
+						break;
+					default:
+						result = await this.client[ev.data.method](ev.data.arg);
 				}
-			} else {
-				try {
-					const data = await this.client[ev.data.method](ev.data.arg);
-					ev.data.port.postMessage({ data });
-				} catch (error) {
-					ev.data.port.postMessage({ error });
-				}
+				ev.data.port.postMessage({ result });
+			} catch (error) {
+				ev.data.port.postMessage({ error });
 			}
 		};
 	}

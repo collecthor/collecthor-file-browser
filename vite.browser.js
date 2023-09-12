@@ -10,7 +10,7 @@ export default defineConfig({
 			name: 'Components',
 			fileName: 'components'
 		},
-		outDir: 'dist/browser'
+		outDir: 'browser'
 	},
 	plugins: [svelte()]
 });
