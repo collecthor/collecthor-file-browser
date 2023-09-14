@@ -76,6 +76,7 @@
 		}
 	},
 	"files": [
+		"browser",
 		"dist",
 		"!dist/**/*.test.*",
 		"!dist/**/*.spec.*"
