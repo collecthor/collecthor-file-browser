@@ -22,8 +22,9 @@ type Events = {
  * It exposes mutators that can be triggered by UI components.
  */
 export default class FileManager {
+	private statusStore: Writable<string> = writable<string>('Initializing');
 	private pathContentsStore: Writable<Node[]>;
-	private pathStackStore: Writable<Node[]>;
+	private pathStackStore: Writable<Node[]> = writable<Node[]>([]);
 
 	private client: ApiClient;
 	private dispatcher: EventEmitter<Events>;
@@ -32,9 +33,9 @@ export default class FileManager {
 		this.client = client;
 		this.dispatcher = new EventEmitter();
 
-		this.pathStackStore = writable<Node[]>([]);
+		this.statusStore.set('Constructing');
+
 		this.pathContentsStore = writable<Node[]>([], () => {
-			console.log('started content store');
 			let unsubscribe: () => void;
 			let canceled = false;
 
@@ -44,13 +45,25 @@ export default class FileManager {
 				// To avoid race conditions
 				if (!canceled) {
 					unsubscribe = this.pathStackStore.subscribe(async (newValue) => {
-						let contents;
-						if (newValue.length > 0) {
-							contents = await this.client.viewPath(newValue[newValue.length - 1].path);
-						} else {
-							contents = await this.client.viewPath('');
+						const path = newValue.length > 0 ? newValue[newValue.length - 1].path : '';
+						this.statusStore.set(`Loading contents for path ${path}`);
+						try {
+							const contents = await this.client.viewPath(path);
+							this.pathContentsStore.set(contents);
+						} catch (error) {
+							if (typeof error === 'string') {
+								this.statusStore.set(`Failed loading contents with error ${error}`);
+								return;
+							} else if (error instanceof Error) {
+								this.statusStore.set(
+									`Failed loading contents with error ${error.name}: ${error.message}`
+								);
+								return;
+							}
+							console.error(error);
 						}
-						this.pathContentsStore.set(contents);
+
+						this.statusStore.set(`Ready`);
 					});
 				}
 			})();
@@ -96,6 +109,9 @@ export default class FileManager {
 		return readonly(this.pathContentsStore);
 	}
 
+	public getStatus(): Readable<string> {
+		return readonly(this.statusStore);
+	}
 	public getPathStack(): Readable<Node[]> {
 		return readonly(this.pathStackStore);
 	}
@@ -131,6 +147,7 @@ export default class FileManager {
 	}
 
 	public async goToNode(node: Node): Promise<void> {
+		this.statusStore.set(`Navigating to path ${node.path}`);
 		const pathStack = get(this.pathStackStore);
 		if (pathStack.length === 0) {
 			this.pathStackStore.set([node]);

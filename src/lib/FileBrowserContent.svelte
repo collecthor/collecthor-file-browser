@@ -21,6 +21,7 @@
 	export let fileManager: FileManager;
 
 	const currentPathContents = fileManager.getContents();
+	const status = fileManager.getStatus();
 
 	const dragStart = (event: DragEvent) => {
 		event.preventDefault();
@@ -82,6 +83,9 @@
 			<PathBar {fileManager} />
 			<span class="divider" />
 			<BrowserControls {modalContext} {fileManager} />
+		</div>
+		<div class="status">
+			{$status}
 		</div>
 		<div class="table-wrapper">
 			<table class="file-table">
@@ -163,6 +167,7 @@
 			border-collapse: separate;
 			border-spacing: 0;
 			width: 100%;
+			height: 100%;
 			position: relative;
 
 			th {

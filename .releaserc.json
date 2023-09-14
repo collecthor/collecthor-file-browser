@@ -14,9 +14,18 @@
 			}
 		],
 		[
+			"@semantic-release/exec",
+			{
+				"prepareCmd": "tar -czvf browser.tar.gz browser"
+			}
+		],
+		[
 			"@semantic-release/github",
 			{
-				"assets": [{ "path": "dist.tar.gz", "label": "Distribution archive" }]
+				"assets": [
+					{ "path": "dist.tar.gz", "label": "Distribution archive" },
+					{ "path": "browser.tar.gz", "label": "Browser archive" }
+				]
 			}
 		],
 		"@semantic-release/npm",

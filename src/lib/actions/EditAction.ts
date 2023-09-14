@@ -32,7 +32,8 @@ export default class EditAction implements ContextMenuAction {
 			'text/javascript',
 			'application/javascript',
 			'text/html',
-			'text/css'
+			'text/css',
+			'application/json'
 		].includes(item.mimeType);
 	}
 }

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import type { Context } from 'svelte-simple-modal';
 	import NameInputModal from './NameInputModal.svelte';
-	import mime from 'mime/lite';
-
 	import type FileManager from './FileManager';
 
 	export let fileManager: FileManager;
@@ -11,6 +9,14 @@
 	let fileUpload: HTMLInputElement;
 
 	export let modalContext: Context;
+
+	const extensionToMime: Record<string, string> = {
+		js: 'text/javascript',
+		css: 'text/css',
+		html: 'text/html',
+		json: 'application/json',
+		txt: 'text/plain'
+	};
 
 	const onFileSelected = () => {
 		if (fileUpload.files && fileUpload.files.length > 0) {
@@ -73,7 +79,7 @@
 		fileManager.createFile({
 			path: fileManager.generatePathForFileName(name),
 			name: name,
-			mimeType: mime.getType(name) ?? 'application/text',
+			mimeType: extensionToMime[name.split('.').pop() ?? 'txt'] ?? 'application/octet-stream',
 			uri: 'data:text/plain;base64,dGVzdCBmaWxl'
 		});
 		modalContext.close();

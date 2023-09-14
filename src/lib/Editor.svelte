@@ -16,6 +16,20 @@
 	let editorElement: HTMLDivElement;
 	let progress = 10;
 
+	const workers: Record<string, { new (): Worker }> = {
+		html: HtmlWorker,
+		editorWorkerService: EditorWorker,
+		css: CssWorker,
+		json: JsonWorker,
+		js: TsWorker
+	};
+
+	const languages: Record<string, string> = {
+		'application/text': 'plaintext',
+		'application/javascript': 'javascript',
+		'text/html': 'html'
+	};
+
 	export let fileManager: FileManager;
 	export let node: Node;
 
@@ -48,30 +62,12 @@
 		self.MonacoEnvironment = {
 			globalAPI: true,
 			getWorker(workerId: string, label: string): Worker {
-				let result;
-				switch (label) {
-					case 'json':
-						result = JsonWorker;
-						break;
-					case 'css':
-					case 'scss':
-					case 'less':
-						result = CssWorker;
-						break;
-					case 'html':
-					case 'handlebars':
-					case 'razor':
-						result = HtmlWorker;
-						break;
-					case 'typescript':
-					case 'javascript':
-						result = TsWorker;
-						break;
-					default:
-						result = EditorWorker;
+				console.log(`Getting worker with id ${workerId} and label ${label}`);
+				if (!workers[label]) {
+					console.error(`Worker type not configured`);
+					throw new Error(`Worker with label ${label}`);
 				}
-				console.log('Getting worker', workerId, label);
-				return new result();
+				return new workers[label]();
 			},
 			createTrustedTypesPolicy() {
 				return undefined;
@@ -80,23 +76,10 @@
 
 		const contentPromise = fileManager.getFileContents(node);
 
-		const Monaco = await import('monaco-editor');
-		// Monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-		// 	validate: true,
-		// 	// schemas: [
-		// 	// 	{
-		// 	// 		schema: surveySchemas,
-		// 	// 		uri: 'never',
-		// 	// 		fileMatch: ['*']
-		// 	// 	}
-		// 	// ]
-		// });
-
-		console.log(Monaco);
-
+		const [Monaco, value] = await Promise.all([import('monaco-editor'), contentPromise]);
 		editor = Monaco.editor.create(editorElement, {
-			language: node.mimeType,
-			value: await contentPromise,
+			language: languages[node.mimeType] ?? node.mimeType,
+			value: value,
 			glyphMargin: true,
 			automaticLayout: true
 		});

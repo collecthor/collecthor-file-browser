@@ -17,6 +17,7 @@
 	import LanguageHtml5 from '@collecthor/svelte-material-icons/dist/generated/LanguageHtml5.svelte';
 	import LanguageCss3 from '@collecthor/svelte-material-icons/dist/generated/LanguageCss3.svelte';
 	import LanguageJavascript from '@collecthor/svelte-material-icons/dist/generated/LanguageJavascript.svelte';
+	import CodeJson from '@collecthor/svelte-material-icons/dist/generated/CodeJson.svelte';
 	import type { ComponentType } from 'svelte';
 
 	export let mimeType: string;
@@ -28,7 +29,8 @@
 		'text/javascript': LanguageJavascript,
 		'application/text': TextBoxOutline,
 		'text/html': LanguageHtml5,
-		'text/css': LanguageCss3
+		'text/css': LanguageCss3,
+		'application/json': CodeJson
 	};
 </script>
 

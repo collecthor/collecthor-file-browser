@@ -62,7 +62,6 @@
 		"@sveltejs/adapter-static": "^2.0.2",
 		"@types/mime": "^3.0.1",
 		"eventemitter3": "^5.0.1",
-		"mime": "^3.0.0",
 		"monaco-editor": "^0.41.0",
 		"openapi-fetch": "^0.6.1",
 		"strongly-typed-events": "^3.0.9",
