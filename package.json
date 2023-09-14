@@ -67,7 +67,7 @@
 		"strongly-typed-events": "^3.0.9",
 		"svelte": "^4.2",
 		"svelte-simple-modal": "^1.6",
-		"winbox": "^0.2.82"
+		"winbox": "github:collecthor/winbox#fix-support-ssr"
 	},
 	"exports": {
 		".": {
