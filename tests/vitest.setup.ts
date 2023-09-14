@@ -21,6 +21,7 @@ vi.mock('$app/environment', (): typeof environment => ({
 // Mock SvelteKit runtime module $app/navigation
 vi.mock('$app/navigation', (): typeof navigation => ({
 	afterNavigate: () => {},
+	onNavigate: () => {},
 	beforeNavigate: () => {},
 	disableScrollHandling: () => {},
 	goto: async () => void 0,
