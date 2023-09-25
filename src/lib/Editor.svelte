@@ -101,10 +101,7 @@
 
 <section>
 	<div class="toolbar">
-		<button class="btn" type="button">Save</button><button type="button">Refresh</button><button
-			class="btn"
-			type="button">Cancel</button
-		>
+		<button class="btn" type="button" on:click={saveFile}>Save</button>
 		<progress value={progress} max="100" />
 		<span>Size: {size}</span>
 	</div>

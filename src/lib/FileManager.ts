@@ -1,12 +1,10 @@
-import { get, writable, readonly } from 'svelte/store';
-import type { Readable, Writable } from 'svelte/store';
 import type ApiClient from './interfaces/ApiClient';
 import type { external } from '$lib/interfaces/api.generated.d.ts';
 import EventEmitter from 'eventemitter3';
 import type FileBrowserError from './interfaces/FileBrowserError';
 import type { PublicUri } from '$lib';
 import { isFileBrowserError } from './interfaces/FileBrowserError';
-import { tick } from 'svelte';
+import { BehaviorSubject, from, Observable } from 'rxjs';
 
 type Node = external['models/Node.json'];
 type Path = external['models/Path.json'];
@@ -22,9 +20,10 @@ type Events = {
  * It exposes mutators that can be triggered by UI components.
  */
 export default class FileManager {
-	private statusStore: Writable<string> = writable<string>('Initializing');
-	private pathContentsStore: Writable<Node[]>;
-	private pathStackStore: Writable<Node[]> = writable<Node[]>([]);
+	private statusStore: BehaviorSubject<string> = new BehaviorSubject<string>('Initializing');
+
+	private pathContentsStore: BehaviorSubject<Node[]> = new BehaviorSubject<Node[]>([]);
+	private pathStackStore: BehaviorSubject<Node[]> = new BehaviorSubject<Node[]>([]);
 
 	private client: ApiClient;
 	private dispatcher: EventEmitter<Events>;
@@ -33,48 +32,30 @@ export default class FileManager {
 		this.client = client;
 		this.dispatcher = new EventEmitter();
 
-		this.statusStore.set('Constructing');
+		this.statusStore.next('Constructing');
 
-		this.pathContentsStore = writable<Node[]>([], () => {
-			let unsubscribe: () => void;
-			let canceled = false;
+		this.pathContentsStore = new BehaviorSubject<Node[]>([]);
 
-			(async () => {
-				await tick();
-
-				// To avoid race conditions
-				if (!canceled) {
-					unsubscribe = this.pathStackStore.subscribe(async (newValue) => {
-						const path = newValue.length > 0 ? newValue[newValue.length - 1].path : '';
-						this.statusStore.set(`Loading contents for path ${path}`);
-						try {
-							const contents = await this.client.viewPath(path);
-							this.pathContentsStore.set(contents);
-						} catch (error) {
-							if (typeof error === 'string') {
-								this.statusStore.set(`Failed loading contents with error ${error}`);
-								return;
-							} else if (error instanceof Error) {
-								this.statusStore.set(
-									`Failed loading contents with error ${error.name}: ${error.message}`
-								);
-								return;
-							}
-							console.error(error);
-						}
-
-						this.statusStore.set(`Ready`);
-					});
+		this.pathStackStore.subscribe(async (newValue) => {
+			const path = newValue.length > 0 ? newValue[newValue.length - 1].path : '';
+			this.statusStore.next(`Loading contents for path ${path}`);
+			try {
+				const contents = await this.client.viewPath(path);
+				this.pathContentsStore.next(contents);
+			} catch (error) {
+				if (typeof error === 'string') {
+					this.statusStore.next(`Failed loading contents with error ${error}`);
+					return;
+				} else if (error instanceof Error) {
+					this.statusStore.next(
+						`Failed loading contents with error ${error.name}: ${error.message}`
+					);
+					return;
 				}
-			})();
+				console.error(error);
+			}
 
-			return () => {
-				canceled = true;
-
-				if (unsubscribe) {
-					unsubscribe();
-				}
-			};
+			this.statusStore.next(`Ready`);
 		});
 
 		if (initialPath != '') {
@@ -102,30 +83,27 @@ export default class FileManager {
 			);
 		}
 		console.log('Waiting for', promises.length, 'api calls');
-		this.pathStackStore.set(await Promise.all(promises));
+		this.pathStackStore.next(await Promise.all(promises));
 	}
 
-	public getContents(): Readable<Node[]> {
-		return readonly(this.pathContentsStore);
+	public getContents(): Observable<Node[]> {
+		console.log('getContents');
+		return from(this.pathContentsStore);
 	}
 
-	public getStatus(): Readable<string> {
-		return readonly(this.statusStore);
+	public getStatus(): Observable<string> {
+		return from(this.statusStore);
 	}
-	public getPathStack(): Readable<Node[]> {
-		return readonly(this.pathStackStore);
+	public getPathStack(): Observable<Node[]> {
+		return from(this.pathStackStore);
 	}
 
-	public refresh() {
-		let updates = 0;
-		this.pathStackStore.subscribe(() => updates++);
-		const pathStack = get(this.pathStackStore);
-		this.pathStackStore.set(pathStack);
-		console.log('Refreshing', updates);
+	public async refresh() {
+		this.pathStackStore.next(this.pathStackStore.value);
 	}
 
 	public getCurrentPathString(): string {
-		const pathStack = get(this.pathStackStore);
+		const pathStack = this.pathStackStore.value;
 		if (pathStack.length > 0) {
 			return pathStack[pathStack.length - 1].path;
 		} else {
@@ -134,7 +112,7 @@ export default class FileManager {
 	}
 
 	public generatePathForFileName(name: string): string {
-		const pathStack = get(this.pathStackStore);
+		const pathStack = this.pathStackStore.value;
 		if (pathStack.length > 0) {
 			return pathStack[pathStack.length - 1].path + '/' + name;
 		} else {
@@ -143,20 +121,19 @@ export default class FileManager {
 	}
 
 	public goHome(): void {
-		this.pathStackStore.set([]);
+		this.pathStackStore.next([]);
 	}
 
 	public async goToNode(node: Node): Promise<void> {
-		this.statusStore.set(`Navigating to path ${node.path}`);
-		const pathStack = get(this.pathStackStore);
+		this.statusStore.next(`Navigating to path ${node.path}`);
+		const pathStack = this.pathStackStore.value;
+		let newStack: Node[];
 		if (pathStack.length === 0) {
-			this.pathStackStore.set([node]);
+			newStack = [node];
 		} else if (pathStack.some((n) => n.path === node.path)) {
-			this.pathStackStore.set(
-				pathStack.slice(0, pathStack.findIndex((n) => n.path === node.path) + 1)
-			);
+			newStack = pathStack.slice(0, pathStack.findIndex((n) => n.path === node.path) + 1);
 		} else if (node.path.startsWith(pathStack[pathStack.length - 1].path + '/')) {
-			this.pathStackStore.set([...pathStack, node]);
+			newStack = [...pathStack, node];
 		} else {
 			// This node is not yet on the stack and not a direct child of the stack
 			console.warn(
@@ -165,19 +142,21 @@ export default class FileManager {
 				node
 			);
 			this.navigateToPath(node.path);
+			return;
 		}
+		this.pathStackStore.next(newStack);
 	}
 
 	/**
 	 * Add a new node to the current content, could be an optimistic UI update
 	 */
 	public addNode(node: Node): void {
-		this.pathContentsStore.set([node, ...get(this.pathContentsStore)]);
+		this.pathContentsStore.next([node, ...this.pathContentsStore.value]);
 	}
 
 	public removeNode(node: Node): void {
-		this.pathContentsStore.set(
-			get(this.pathContentsStore).filter((existing: Node) => existing !== node)
+		this.pathContentsStore.next(
+			this.pathContentsStore.value.filter((existing: Node) => existing !== node)
 		);
 	}
 
@@ -227,6 +206,7 @@ export default class FileManager {
 			// We update the old node with properties from the new node.
 			Object.assign(source, newNode);
 			console.log(source, newNode);
+			this.refresh();
 			return newNode;
 		} catch (error) {
 			source.name = oldName;
