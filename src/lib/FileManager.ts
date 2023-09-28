@@ -193,12 +193,9 @@ export default class FileManager {
 	/**
 	 * Rename a file in the same path
 	 */
-	public async rename(source: Node, newName: string): Promise<Node> {
+	public async move(source: Node, newPath: string): Promise<Node> {
 		const oldName = source.name;
 		const oldPath = source.path;
-		const baseName = source.path.substring(0, source.path.lastIndexOf('/'));
-		const newPath = baseName === '' ? newName : `${baseName}/${newName}`;
-		source.name = newName;
 		source.path = newPath;
 
 		try {

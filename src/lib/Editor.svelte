@@ -52,7 +52,7 @@
 
 		console.log('Created tempFile', newFile);
 		progress = 50;
-		await fileManager.rename(newFile, node.path);
+		await fileManager.move(newFile, node.path);
 		progress = 100;
 		node = node;
 		console.log('new size: ', node.size);
