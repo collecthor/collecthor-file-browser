@@ -41,13 +41,35 @@
 	async function saveFile() {
 		progress = 0;
 		// Handle saving
+
+
+
+		const dataURL: Promise<string> = new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			const blob = new Blob([editor.getValue({ preserveBOM: true, lineEnding: '\n' })], {
+				type: node.mimeType
+			});
+			reader.addEventListener('load', () => {
+				if (typeof reader.result == 'string') {
+					resolve(reader.result);
+				} else {
+					reject("Expted reader result to be string")
+				}
+
+			})
+			reader.readAsDataURL(blob);
+		})
+
+
+
+
+
+
 		const newFile = await fileManager.createFile({
 			path: node.path + '-tmp',
 			name: node.name + '-tmp',
 			mimeType: node.mimeType,
-			uri:
-				`data:${node.mimeType};base64,` +
-				btoa(editor.getValue({ preserveBOM: true, lineEnding: '\n' }))
+			uri: await dataURL
 		});
 
 		console.log('Created tempFile', newFile);
