@@ -6,6 +6,11 @@ import { resolve } from 'path';
 export default defineConfig({
 	base: '',
 	build: {
+		rollupOptions: {
+			output: {
+				inlineDynamicImports: true
+			}
+		},
 		lib: {
 			entry: resolve(__dirname, 'dist/index.js'),
 			name: 'Components',

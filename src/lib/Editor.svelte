@@ -20,8 +20,11 @@
 		html: HtmlWorker,
 		editorWorkerService: EditorWorker,
 		css: CssWorker,
+		scss: CssWorker,
+		less: CssWorker,
 		json: JsonWorker,
-		js: TsWorker
+		typescript: TsWorker,
+		javascript: TsWorker
 	};
 
 	const languages: Record<string, string> = {
@@ -42,8 +45,6 @@
 		progress = 0;
 		// Handle saving
 
-
-
 		const dataURL: Promise<string> = new Promise((resolve, reject) => {
 			const reader = new FileReader();
 			const blob = new Blob([editor.getValue({ preserveBOM: true, lineEnding: '\n' })], {
@@ -53,17 +54,11 @@
 				if (typeof reader.result == 'string') {
 					resolve(reader.result);
 				} else {
-					reject("Expted reader result to be string")
+					reject('Expted reader result to be string');
 				}
-
-			})
+			});
 			reader.readAsDataURL(blob);
-		})
-
-
-
-
-
+		});
 
 		const newFile = await fileManager.createFile({
 			path: node.path + '-tmp',
@@ -83,6 +78,7 @@
 		setInterval(() => (node.size = node.size ?? 0 + 10), 1000);
 		self.MonacoEnvironment = {
 			globalAPI: true,
+
 			getWorker(workerId: string, label: string): Worker {
 				console.log(`Getting worker with id ${workerId} and label ${label}`);
 				if (!workers[label]) {
