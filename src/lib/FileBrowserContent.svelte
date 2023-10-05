@@ -9,12 +9,10 @@
 	import DownloadAction from './actions/DownloadAction';
 	import DeleteAction from './actions/DeleteAction';
 	import EditAction from './actions/EditAction';
-	import type { Context } from 'svelte-simple-modal';
 	import CopyUrlAction from './actions/CopyUrlAction';
 
 	export let type: 'browser' | 'picker' = 'browser';
 	export let actions: ContextMenuAction[] = [];
-	export let modalContext: Context;
 
 	let displayBrowser = true;
 
@@ -82,7 +80,7 @@
 		<div class="control-wrapper">
 			<PathBar {fileManager} />
 			<span class="divider" />
-			<BrowserControls {modalContext} {fileManager} />
+			<BrowserControls {fileManager} />
 		</div>
 		<div class="status">
 			{$status}

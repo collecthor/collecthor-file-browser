@@ -69,14 +69,16 @@ export default class FileManager {
 		for (const part of path.split('/')) {
 			// Get all the files
 			const filesInPath = this.client.viewPath(partialPath);
-
 			partialPath = partialPath.length === 0 ? part : `${partialPath}/${part}`;
+			const search = partialPath;
+
 			// Look for the relevant file
 			promises.push(
 				filesInPath.then((nodes: Node[]) => {
-					const node = nodes.find((node: Node) => node.path === partialPath);
+					const node = nodes.find((node: Node) => node.path === search);
 					if (typeof node == 'undefined') {
-						throw `Did not find node with path ${partialPath}`;
+						console.warn('Did not find node', search, nodes);
+						throw `Did not find node with path ${search}`;
 					}
 					return node;
 				})
