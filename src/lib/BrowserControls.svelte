@@ -1,14 +1,11 @@
 <script lang="ts">
-	import type { Context } from 'svelte-simple-modal';
 	import NameInputModal from './NameInputModal.svelte';
 	import type FileManager from './FileManager';
+	import 'winbox/src/css/winbox.css';
+	import WinBox from 'winbox/src/js/winbox';
 
 	export let fileManager: FileManager;
-	export let fileNamePromise: Promise<string> | null = null;
-	export let folderNamePromise: Promise<string> | null = null;
 	let fileUpload: HTMLInputElement;
-
-	export let modalContext: Context;
 
 	const extensionToMime: Record<string, string> = {
 		js: 'text/javascript',
@@ -38,17 +35,20 @@
 	};
 
 	const newFolder = async () => {
-		let namePromise: Promise<string>;
-		if (folderNamePromise !== null) {
-			namePromise = folderNamePromise;
-		} else {
-			namePromise = new Promise((resolve: (name: string) => void) => {
-				modalContext.open(NameInputModal, {
+		const winBox = new WinBox('Create folder', {});
+		const namePromise: Promise<string> = new Promise((resolve: (name: string) => void) => {
+			const inputModal = new NameInputModal({
+				target: winBox.body,
+				props: {
 					title: 'Folder name',
 					namePicked: resolve
-				});
+				}
 			});
-		}
+			winBox.onclose = () => {
+				inputModal.$destroy();
+				return false;
+			};
+		});
 
 		const name = await namePromise;
 
@@ -58,21 +58,25 @@
 			mimeType: 'inode/directory',
 			uri: 'data:text/plain;base64,dGVzdCBmaWxl'
 		});
-		modalContext.close();
+
+		winBox.close();
 	};
 
 	const newFile = async () => {
-		let namePromise: Promise<string>;
-		if (fileNamePromise !== null) {
-			namePromise = fileNamePromise;
-		} else {
-			namePromise = new Promise((resolve: (name: string) => void) => {
-				modalContext.open(NameInputModal, {
+		const winBox = new WinBox('Create file', {});
+		const namePromise: Promise<string> = new Promise((resolve: (name: string) => void) => {
+			const inputModal = new NameInputModal({
+				target: winBox.body,
+				props: {
 					title: 'File name',
 					namePicked: resolve
-				});
+				}
 			});
-		}
+			winBox.onclose = () => {
+				inputModal.$destroy();
+				return false;
+			};
+		});
 
 		const name = await namePromise;
 		console.log('Currentpath:', fileManager.getCurrentPathString());
@@ -82,7 +86,7 @@
 			mimeType: extensionToMime[name.split('.').pop() ?? 'txt'] ?? 'application/octet-stream',
 			uri: 'data:text/plain;base64,dGVzdCBmaWxl'
 		});
-		modalContext.close();
+		winBox.close();
 	};
 </script>
 
