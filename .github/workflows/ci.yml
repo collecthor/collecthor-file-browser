@@ -9,7 +9,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: 'npm'
-          node-version: 19
+          node-version: 20
           cache-dependency-path: "package-lock.json"
       - run: npm ci
       - name: Run ViTest tests
