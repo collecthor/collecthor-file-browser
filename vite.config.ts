@@ -5,7 +5,7 @@ import type { UserConfig as VitestConfig } from 'vitest/config';
 const config: UserConfig & { test: VitestConfig['test'] } = {
 	plugins: [sveltekit()],
 	build: {
-		minify: false
+		minify: true
 	},
 	test: {
 		// jest like globals
