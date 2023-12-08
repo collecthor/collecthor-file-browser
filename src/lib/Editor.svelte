@@ -75,7 +75,6 @@
 		console.log('new size: ', node.size);
 	}
 	onMount(async () => {
-		setInterval(() => (node.size = node.size ?? 0 + 10), 1000);
 		self.MonacoEnvironment = {
 			globalAPI: true,
 
@@ -102,8 +101,11 @@
 			automaticLayout: true
 		});
 
-		editor.addCommand(Monaco.KeyMod.CtrlCmd | Monaco.KeyCode.KeyS, () => {
-			saveFile();
+		editor.addAction({
+			id: 'save',
+			label: 'save',
+			run: saveFile,
+			keybindings: [Monaco.KeyMod.CtrlCmd | Monaco.KeyCode.KeyS]
 		});
 		const model = editor.getModel();
 		if (model == null) {

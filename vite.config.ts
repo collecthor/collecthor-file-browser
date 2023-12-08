@@ -4,9 +4,11 @@ import type { UserConfig as VitestConfig } from 'vitest/config';
 
 const config: UserConfig & { test: VitestConfig['test'] } = {
 	plugins: [sveltekit()],
+	build: {
+		minify: false
+	},
 	test: {
 		// jest like globals
-		threads: true,
 		globals: true,
 		environment: 'jsdom',
 		// Add @testing-library/jest-dom matchers & mocks of SvelteKit modules

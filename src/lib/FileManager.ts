@@ -247,9 +247,7 @@ export default class FileManager {
 			credentials: 'omit',
 			cache: 'no-cache'
 		});
-		const result = await response.text();
-		console.warn('Gettign file contents', result);
-		return result;
+		return response.text();
 	}
 
 	public eventRegistry(): EventEmitter<Events> {

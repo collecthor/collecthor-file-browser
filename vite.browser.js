@@ -6,6 +6,7 @@ import { resolve } from 'path';
 export default defineConfig({
 	base: '',
 	build: {
+		minify: false,
 		rollupOptions: {
 			output: {
 				inlineDynamicImports: true
