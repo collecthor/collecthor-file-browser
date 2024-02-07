@@ -8,7 +8,7 @@ test('show file icon with unrecognized mime type', () => {
 		iconUrl: null,
 		mimeType: 'random/mimeType'
 	});
-	expect(document.querySelector('use')).toHaveAttribute('href', '#mdiFile');
+	expect(document.querySelector('svg')).toHaveAttribute('viewBox', '0 0 24 24');
 });
 
 test('show file icon with image mime type', () => {
@@ -16,11 +16,11 @@ test('show file icon with image mime type', () => {
 		iconUrl: null,
 		mimeType: 'image/jpeg'
 	});
-	expect(document.querySelector('use')).toHaveAttribute('href', '#mdiFileImage');
+	expect(document.querySelector('svg')).toHaveAttribute('viewBox', '0 0 24 24');
 
 	render(RowIcon, {
 		iconUrl: null,
 		mimeType: 'image/png'
 	});
-	expect(document.querySelector('use')).toHaveAttribute('href', '#mdiFileImage');
+	expect(document.querySelector('svg')).toHaveAttribute('viewBox', '0 0 24 24');
 });

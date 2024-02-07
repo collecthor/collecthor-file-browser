@@ -3,7 +3,7 @@
 	import FileManager from '$lib/FileManager';
 	import FetchApiClient from '$lib/FetchApiClient';
 	import type { PublicUri } from '$lib';
-
+	import Folder from 'virtual:icons/mdi/folder';
 	const client = new FetchApiClient('http://localhost:3100');
 	const fileManager = new FileManager(client);
 
@@ -12,6 +12,7 @@
 	});
 </script>
 
+<Folder></Folder>
 <FileBrowser {fileManager} />
 
 <style lang="scss">

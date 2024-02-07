@@ -1,23 +1,18 @@
 <script lang="ts">
-	/**
-	 * We use these imports because vitest deals very poorly with the proper way of importing it;
-	 * it takes 2 minutes in its transformation step if we use
-	 * import { Application } from '@collecthor/svelte-material-icons'
-	 */
-	import Application from '@collecthor/svelte-material-icons/dist/generated/Application.svelte';
-	import FileDocumentOutline from '@collecthor/svelte-material-icons/dist/generated/FileDocumentOutline.svelte';
-	import FileImage from '@collecthor/svelte-material-icons/dist/generated/FileImage.svelte';
-	import FilePdfBox from '@collecthor/svelte-material-icons/dist/generated/FilePdfBox.svelte';
-	import Folder from '@collecthor/svelte-material-icons/dist/generated/Folder.svelte';
-	import MusicBox from '@collecthor/svelte-material-icons/dist/generated/MusicBox.svelte';
-	import ProgressUpload from '@collecthor/svelte-material-icons/dist/generated/ProgressUpload.svelte';
-	import Video from '@collecthor/svelte-material-icons/dist/generated/Video.svelte';
-	import File from '@collecthor/svelte-material-icons/dist/generated/File.svelte';
-	import TextBoxOutline from '@collecthor/svelte-material-icons/dist/generated/TextBoxOutline.svelte';
-	import LanguageHtml5 from '@collecthor/svelte-material-icons/dist/generated/LanguageHtml5.svelte';
-	import LanguageCss3 from '@collecthor/svelte-material-icons/dist/generated/LanguageCss3.svelte';
-	import LanguageJavascript from '@collecthor/svelte-material-icons/dist/generated/LanguageJavascript.svelte';
-	import CodeJson from '@collecthor/svelte-material-icons/dist/generated/CodeJson.svelte';
+	import Application from 'virtual:icons/mdi/application';
+	import FileDocumentOutline from 'virtual:icons/mdi/file-document-outline';
+	import FileImage from 'virtual:icons/mdi/file-image';
+	import FilePdfBox from 'virtual:icons/mdi/file-pdf-box';
+	import Folder from 'virtual:icons/mdi/folder';
+	import MusicBox from 'virtual:icons/mdi/music-box';
+	import ProgressUpload from 'virtual:icons/mdi/progress-upload';
+	import Video from 'virtual:icons/mdi/video';
+	import File from 'virtual:icons/mdi/file';
+	import TextBoxOutline from 'virtual:icons/mdi/text-box-outline';
+	import LanguageHtml5 from 'virtual:icons/mdi/language-html5';
+	import LanguageCss3 from 'virtual:icons/mdi/language-css3';
+	import LanguageJavascript from 'virtual:icons/mdi/language-javascript';
+	import CodeJson from 'virtual:icons/mdi/code-json';
 	import type { ComponentType } from 'svelte';
 
 	export let mimeType: string;

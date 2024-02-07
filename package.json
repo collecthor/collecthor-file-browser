@@ -24,6 +24,7 @@
 	"devDependencies": {
 		"@commitlint/cli": "^18",
 		"@commitlint/config-conventional": "^18",
+		"@iconify-json/mdi": "^1.1.64",
 		"@openapitools/openapi-generator-cli": "^2.6.0",
 		"@playwright/test": "^1.34.3",
 		"@stoplight/prism-cli": "^5",
@@ -56,11 +57,11 @@
 		"svelte-preprocess": "^5",
 		"tslib": "^2.3.1",
 		"typescript": "^5",
+		"unplugin-icons": "^0.18.5",
 		"vite": "^4",
 		"vitest": "^1"
 	},
 	"dependencies": {
-		"@collecthor/svelte-material-icons": "^7",
 		"eventemitter3": "^5.0.1",
 		"monaco-editor": "^0.45.0",
 		"openapi-fetch": "^0.8",

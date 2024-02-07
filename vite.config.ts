@@ -1,9 +1,15 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import type { UserConfig } from 'vite';
 import type { UserConfig as VitestConfig } from 'vitest/config';
+import Icons from 'unplugin-icons/vite';
 
 const config: UserConfig & { test: VitestConfig['test'] } = {
-	plugins: [sveltekit()],
+	plugins: [
+		sveltekit(),
+		Icons({
+			compiler: 'svelte'
+		})
+	],
 	build: {
 		minify: true
 	},
