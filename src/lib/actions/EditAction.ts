@@ -1,7 +1,7 @@
 import type ContextMenuAction from '$lib/interfaces/ContextMenuAction';
 import type { external } from '$lib/interfaces/api.generated';
 import type FileManager from '$lib/FileManager';
-import FileEdit from '@collecthor/svelte-material-icons/dist/generated/FileEdit.svelte';
+import FileEdit from 'virtual:icons/mdi/file-edit';
 import 'winbox/src/css/winbox.css';
 import WinBox from 'winbox/src/js/winbox';
 import Editor from '$lib/Editor.svelte';

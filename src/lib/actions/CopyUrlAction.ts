@@ -1,7 +1,7 @@
 import type ContextMenuAction from '$lib/interfaces/ContextMenuAction';
 import type { external } from '$lib/interfaces/api.generated';
 import type FileManager from '$lib/FileManager';
-import Icon from '@collecthor/svelte-material-icons/dist/generated/ContentCopy.svelte';
+import Icon from 'virtual:icons/mdi/content-copy';
 type Node = external['models/Node.json'];
 
 export default class CopyUrlAction implements ContextMenuAction {

@@ -3,7 +3,6 @@
 
 	import FileBrowserContent from '$lib/FileBrowserContent.svelte';
 	import type FileManager from '$lib/FileManager';
-	import IconStack from '@collecthor/svelte-material-icons/dist/IconStack.svelte';
 
 	export let actions: ContextMenuAction[] = [];
 
@@ -15,5 +14,4 @@
 	});
 </script>
 
-<IconStack />
 <FileBrowserContent {type} {actions} {fileManager} />
