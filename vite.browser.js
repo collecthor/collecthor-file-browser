@@ -2,6 +2,7 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
+import Icons from 'unplugin-icons/vite'
 
 export default defineConfig({
 	base: '',
@@ -19,5 +20,10 @@ export default defineConfig({
 		},
 		outDir: 'browser'
 	},
-	plugins: [svelte()]
+	plugins: [
+		svelte(),
+		Icons({
+			compiler: 'svelte',
+		  }),
+	]
 });
