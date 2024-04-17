@@ -16,17 +16,17 @@ vi.mock('$app/environment', (): typeof environment => ({
 }));
 
 // Mock SvelteKit runtime module $app/navigation
-vi.mock('$app/navigation', (): typeof navigation => ({
-	afterNavigate: () => {},
-	onNavigate: () => {},
-	beforeNavigate: () => {},
-	disableScrollHandling: () => {},
-	goto: async () => void 0,
-	invalidate: async () => void 0,
-	invalidateAll: async () => void 0,
-	preloadData: async () => void 0,
-	preloadCode: async () => void 0
-}));
+// vi.mock('$app/navigation', (): typeof navigation => ({
+// 	afterNavigate: () => {},
+// 	onNavigate: () => {},
+// 	beforeNavigate: () => {},
+// 	disableScrollHandling: () => {},
+// 	goto: async () => void 0,
+// 	invalidate: async () => void 0,
+// 	invalidateAll: async () => void 0,
+// 	preloadData: async () => void 0,
+// 	preloadCode: async () => void 0
+// }));
 
 // Mock SvelteKit runtime module $app/stores
 vi.mock('$app/stores', (): typeof stores => {
@@ -41,6 +41,7 @@ vi.mock('$app/stores', (): typeof stores => {
 				id: null
 			},
 			status: 200,
+			state: {},
 			error: null,
 			data: {},
 			form: undefined
