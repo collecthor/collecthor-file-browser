@@ -22,6 +22,7 @@
 		"url": "git+https://github.com/collecthor/collecthor-file-browser"
 	},
 	"devDependencies": {
+		"@types/jest": "^29.5.12",
 		"@commitlint/cli": "^19",
 		"@commitlint/config-conventional": "^19",
 		"@iconify-json/mdi": "^1.1.64",
@@ -35,10 +36,9 @@
 		"@testing-library/jest-dom": "^6",
 		"@testing-library/svelte": "^4",
 		"@tsconfig/svelte": "^5",
-		"@types/testing-library__jest-dom": "^5.14.6",
 		"@types/winbox": "^0.2.1",
-		"@typescript-eslint/eslint-plugin": "^6",
-		"@typescript-eslint/parser": "^6",
+		"@typescript-eslint/eslint-plugin": "^7",
+		"@typescript-eslint/parser": "^7",
 		"@vitest/coverage-v8": "^1",
 		"@vitest/ui": "^1",
 		"eslint": "^8.42.0",
