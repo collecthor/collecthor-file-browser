@@ -34,7 +34,7 @@
 		"@sveltejs/kit": "^2",
 		"@sveltejs/package": "^2.2",
 		"@testing-library/jest-dom": "^6",
-		"@testing-library/svelte": "^4",
+		"@testing-library/svelte": "^5",
 		"@tsconfig/svelte": "^5",
 		"@types/winbox": "^0.2.1",
 		"@typescript-eslint/eslint-plugin": "^7",
