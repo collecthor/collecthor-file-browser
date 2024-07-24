@@ -87,7 +87,7 @@
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"publishConfig": {
-		"provenance": true,
+		"provenance": false,
 		"access": "public",
 		"registry": "https://npm.pkg.github.com"
 	}
