@@ -30,12 +30,12 @@ export default class FetchApiClient implements ApiClient {
 		if (typeof data != 'undefined') {
 			return data;
 		}
-		throw <FileBrowserError>{
+		throw {
 			status: response.status,
 			statusText: response.statusText,
 			detail: error,
 			title: 'Error'
-		};
+		} as FileBrowserError;
 	}
 
 	public async createFile(
@@ -47,12 +47,12 @@ export default class FetchApiClient implements ApiClient {
 		if (typeof data != 'undefined') {
 			return data;
 		}
-		throw <FileBrowserError>{
+		throw {
 			status: response.status,
 			statusText: response.statusText,
 			detail: error,
 			title: 'Error'
-		};
+		} as FileBrowserError;
 	}
 
 	public async viewPath(

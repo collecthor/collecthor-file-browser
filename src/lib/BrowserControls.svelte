@@ -36,7 +36,7 @@
 
 	const newFolder = async () => {
 		const winBox = new WinBox('Create folder', {});
-		const namePromise: Promise<string> = new Promise((resolve: (name: string) => void) => {
+		const namePromise = new Promise((resolve: (name: string) => void) => {
 			const inputModal = new NameInputModal({
 				target: winBox.body,
 				props: {
@@ -64,7 +64,7 @@
 
 	const newFile = async () => {
 		const winBox = new WinBox('Create file', {});
-		const namePromise: Promise<string> = new Promise((resolve: (name: string) => void) => {
+		const namePromise = new Promise((resolve: (name: string) => void) => {
 			const inputModal = new NameInputModal({
 				target: winBox.body,
 				props: {

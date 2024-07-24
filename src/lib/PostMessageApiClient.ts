@@ -31,11 +31,11 @@ export default class PostMessageApiClient implements ApiClient {
 				reject(error);
 			};
 			this.port.postMessage(
-				<FetchRequest>{
+				{
 					method: method,
 					arg: arg,
 					port: channel.port2
-				},
+				} as FetchRequest,
 				[channel.port2]
 			);
 		});
