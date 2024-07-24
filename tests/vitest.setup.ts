@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 import type { Navigation, Page } from '@sveltejs/kit';
