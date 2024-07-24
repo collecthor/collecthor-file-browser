@@ -12,7 +12,7 @@
 		"types": ["unplugin-icons/types/svelte4"]
 	},
 	"include": [
-		"eslint.config.mjs",
+		"eslint.config.js",
 		"ambient.d.ts",
 		"non-ambient.d.ts",
 		"./types/**/$types.d.ts",
