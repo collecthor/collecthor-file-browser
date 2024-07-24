@@ -16,7 +16,7 @@
 	let editorElement: HTMLDivElement;
 	let progress = 10;
 
-	const workers: Record<string, { new (): Worker }> = {
+	const workers: Record<string, new () => Worker> = {
 		html: HtmlWorker,
 		editorWorkerService: EditorWorker,
 		css: CssWorker,
@@ -45,7 +45,7 @@
 		progress = 0;
 		// Handle saving
 
-		const dataURL: Promise<string> = new Promise((resolve, reject) => {
+		const dataURL = new Promise((resolve: (s: string) => void, reject) => {
 			const reader = new FileReader();
 			const blob = new Blob([editor.getValue({ preserveBOM: true, lineEnding: '\n' })], {
 				type: node.mimeType

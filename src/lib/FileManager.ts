@@ -10,10 +10,10 @@ type Node = external['models/Node.json'];
 type Path = external['models/Path.json'];
 type CreateRequest = external['models/CreateRequest.json'];
 
-type Events = {
+interface Events {
 	error: (error: FileBrowserError) => void;
 	pick: (file: PublicUri) => void;
-};
+}
 /**
  * This class manages client side state of a file manager.
  * It exposes stores that UI components like PathBar can use.
