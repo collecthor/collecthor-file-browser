@@ -62,7 +62,6 @@
 		"vitest": "^2"
 	},
 	"dependencies": {
-		"@types/eslint": "^9.6.0",
 		"eventemitter3": "^5.0.1",
 		"monaco-editor": "^0.50",
 		"openapi-fetch": "^0.10",
