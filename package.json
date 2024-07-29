@@ -69,7 +69,7 @@
 		"rxjs": "^7.8.1",
 		"strongly-typed-events": "^3.0.9",
 		"svelte": "^4.2",
-		"typescript-eslint": "^8.0.0-alpha.52",
+		"typescript-eslint": "^8.0.0-alpha.55",
 		"winbox": "github:collecthor/winbox#fix-support-ssr"
 	},
 	"exports": {
