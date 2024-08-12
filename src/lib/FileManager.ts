@@ -242,7 +242,10 @@ export default class FileManager {
 
 	public async getFileContents(file: Node): Promise<string> {
 		const url = await this.client.getUrl(file.path);
-		const response = await fetch(url.uri, {
+
+		const urlObject = new URL(url.uri);
+		urlObject.searchParams.append('t', Date.now().toString());
+		const response = await fetch(urlObject, {
 			mode: 'cors',
 			credentials: 'omit',
 			cache: 'no-cache'
