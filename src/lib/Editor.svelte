@@ -54,7 +54,7 @@
 				if (typeof reader.result == 'string') {
 					resolve(reader.result);
 				} else {
-					reject('Expted reader result to be string');
+					reject('Expected reader result to be string');
 				}
 			});
 			reader.readAsDataURL(blob);
