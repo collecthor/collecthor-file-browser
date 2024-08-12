@@ -30,7 +30,9 @@
 </script>
 
 {#if iconUrl}
-	<img src={iconUrl} alt="File icon" />
+	<object title="File preview" data={iconUrl}>
+		<FileImage />
+	</object>
 {:else if map[mimeType]}
 	<svelte:component this={map[mimeType]} />
 {:else if mimeType.endsWith(';optimistic')}
@@ -54,7 +56,7 @@
 {/if}
 
 <style>
-	img {
+	object {
 		max-width: 50px;
 		max-height: 50px;
 	}
