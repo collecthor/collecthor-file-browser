@@ -63,7 +63,7 @@ export default class FileManager {
 		}
 	}
 
-	private async navigateToPath(path: Path) {
+	public async navigateToPath(path: Path) {
 		let partialPath = '';
 		const promises: Promise<Node>[] = [];
 		for (const part of path.split('/')) {
