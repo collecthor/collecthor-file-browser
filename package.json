@@ -43,7 +43,7 @@
 		"eslint": "^9",
 		"eslint-plugin-promise": "^7",
 		"eslint-plugin-svelte": "^2",
-		"globals": "^15.8.0",
+		"globals": "^15.11.0",
 		"husky": "^9",
 		"jsdom": "^24",
 		"json-schema-to-typescript": "^15.0.2",
