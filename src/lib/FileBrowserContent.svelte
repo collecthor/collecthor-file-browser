@@ -79,7 +79,7 @@
 	>
 		<div class="control-wrapper">
 			<PathBar {fileManager} />
-			<span class="divider" />
+			<span class="divider"></span>
 			<BrowserControls {fileManager} />
 		</div>
 		<div class="status">
@@ -87,13 +87,16 @@
 		</div>
 		<div class="table-wrapper">
 			<table class="file-table">
+				<thead>
 				<tr>
-					<th class="icon-column" />
+					<th class="icon-column"></th>
 					<th class="name-column left-aligned-column">Name</th>
 					<th class="size-column left-aligned-column">Size</th>
 					<th class="size-column left-aligned-column">Mime</th>
-					<th class="dropdown-column" />
+					<th class="dropdown-column"></th>
 				</tr>
+				</thead>
+				<tbody>
 				{#each $currentPathContents as item}
 					<FileRow
 						{item}
@@ -102,10 +105,13 @@
 						actions={[...defaultActions, ...actions]}
 					/>
 				{/each}
+				</tbody>
+				<tfoot>
 				<tr class="file-table-footer">
-					<td />
+					<td></td>
 					<td>Count: {$currentPathContents.length}</td>
 				</tr>
+			</tfoot>
 			</table>
 		</div>
 	</div>
