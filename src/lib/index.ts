@@ -17,3 +17,4 @@ export { default as FetchApiClient } from '$lib/FetchApiClient';
 export { default as FileManager } from '$lib/FileManager';
 export type Node = Models['models/Node.json'];
 export type PublicUri = Models['models/PublicUri.json'];
+export { mount } from 'svelte';
