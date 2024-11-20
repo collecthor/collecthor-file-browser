@@ -1,5 +1,9 @@
 <script lang="ts">
-	export let size: number | null;
+	interface Props {
+		size: number | null;
+	}
+
+	let { size }: Props = $props();
 	const suffixes = [
 		{ label: 'B', fractionDigits: 0 },
 		{ label: 'KB', fractionDigits: 0 },

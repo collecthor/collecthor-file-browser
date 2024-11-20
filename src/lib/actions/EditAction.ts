@@ -5,6 +5,8 @@ import FileEdit from 'virtual:icons/mdi/file-edit';
 import 'winbox/src/css/winbox.css';
 import WinBox from 'winbox/src/js/winbox';
 import Editor from '$lib/Editor.svelte';
+import { mount, unmount } from 'svelte';
+
 type Node = external['models/Node.json'];
 
 export default class EditAction implements ContextMenuAction {
@@ -12,7 +14,7 @@ export default class EditAction implements ContextMenuAction {
 	icon = FileEdit;
 	async action(item: Node, fileManager: FileManager) {
 		const winBox = new WinBox(item.name, {});
-		const editor = new Editor({
+		const editor = mount(Editor, {
 			target: winBox.body,
 			props: {
 				fileManager,
@@ -20,7 +22,7 @@ export default class EditAction implements ContextMenuAction {
 			}
 		});
 		winBox.onclose = () => {
-			editor.$destroy();
+			unmount(editor);
 			return false;
 		};
 	}

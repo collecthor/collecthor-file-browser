@@ -11,12 +11,15 @@
 	import EditAction from './actions/EditAction';
 	import CopyUrlAction from './actions/CopyUrlAction';
 
-	export let type: 'browser' | 'picker' = 'browser';
-	export let actions: ContextMenuAction[] = [];
-
 	let displayBrowser = true;
 
-	export let fileManager: FileManager;
+	interface Props {
+		type?: 'browser' | 'picker';
+		actions?: ContextMenuAction[];
+		fileManager: FileManager;
+	}
+
+	let { type = 'browser', actions = [], fileManager }: Props = $props();
 
 	const currentPathContents = fileManager.getContents();
 	const status = fileManager.getStatus();
@@ -66,15 +69,15 @@
 	];
 </script>
 
-<svelte:window on:click={(event) => closeOptionDialogs(event)} />
+<svelte:window onclick={(event) => closeOptionDialogs(event)} />
 
 {#if displayBrowser}
 	<div
 		class="file-browser"
-		on:dragover={dragStart}
-		on:dragenter={dragStart}
-		on:dragleave={dragEnd}
-		on:drop={fileDropped}
+		ondragover={dragStart}
+		ondragenter={dragStart}
+		ondragleave={dragEnd}
+		ondrop={fileDropped}
 		role="complementary"
 	>
 		<div class="control-wrapper">
@@ -88,30 +91,30 @@
 		<div class="table-wrapper">
 			<table class="file-table">
 				<thead>
-				<tr>
-					<th class="icon-column"></th>
-					<th class="name-column left-aligned-column">Name</th>
-					<th class="size-column left-aligned-column">Size</th>
-					<th class="size-column left-aligned-column">Mime</th>
-					<th class="dropdown-column"></th>
-				</tr>
+					<tr>
+						<th class="icon-column"></th>
+						<th class="name-column left-aligned-column">Name</th>
+						<th class="size-column left-aligned-column">Size</th>
+						<th class="size-column left-aligned-column">Mime</th>
+						<th class="dropdown-column"></th>
+					</tr>
 				</thead>
 				<tbody>
-				{#each $currentPathContents as item}
-					<FileRow
-						{item}
-						pickOnSingleClick={type === 'picker'}
-						{fileManager}
-						actions={[...defaultActions, ...actions]}
-					/>
-				{/each}
+					{#each $currentPathContents as item}
+						<FileRow
+							{item}
+							pickOnSingleClick={type === 'picker'}
+							{fileManager}
+							actions={[...defaultActions, ...actions]}
+						/>
+					{/each}
 				</tbody>
 				<tfoot>
-				<tr class="file-table-footer">
-					<td></td>
-					<td>Count: {$currentPathContents.length}</td>
-				</tr>
-			</tfoot>
+					<tr class="file-table-footer">
+						<td></td>
+						<td>Count: {$currentPathContents.length}</td>
+					</tr>
+				</tfoot>
 			</table>
 		</div>
 	</div>
@@ -138,6 +141,72 @@
 		--size-column: 150px;
 	}
 
+	.control-wrapper {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		margin: 8px 0;
+	}
+
+	.table-wrapper {
+		flex-grow: 1;
+		overflow-y: auto;
+	}
+
+	.file-table {
+		border-collapse: separate;
+		border-spacing: 0;
+		width: 100%;
+		height: 100%;
+		position: relative;
+
+		th {
+			background: white;
+			position: sticky;
+			top: 0;
+			z-index: 2;
+			border-bottom: 1px solid var(--ch-orange);
+		}
+
+		:global(.icon-column) {
+			min-width: var(--small-column);
+			color: var(--ch-purple);
+		}
+
+		:global(.name-column) {
+			min-width: var(--name-column);
+		}
+
+		:global(.size-column) {
+			min-width: var(--size-column);
+		}
+
+		:global(.dropdown-column) {
+			min-width: var(--small-column);
+		}
+
+		:global(.left-aligned-column) {
+			text-align: left;
+			padding-left: 8px;
+		}
+
+		th {
+			padding: 8px 8px 4px 8px;
+		}
+
+		th {
+			border-bottom: 1px solid var(--ch-orange);
+			border-spacing: 0;
+			&:not(:first-child) {
+				border-left: 1px solid var(--ch-orange);
+			}
+		}
+
+		.file-table-footer {
+			padding-top: 1rem;
+		}
+	}
+
 	.file-browser {
 		min-height: 400px;
 		font-family: 'Helvetica Neue', Roboto, Arial, 'Droid Sans', sans-serif;
@@ -148,96 +217,23 @@
 		&:global(.file-dragging) {
 			border: 1px solid black;
 		}
+	}
 
-		.control-wrapper {
-			display: flex;
-			justify-content: space-between;
-			flex-wrap: wrap;
-			margin: 8px 0;
-
-			.divider {
-				width: 16px;
-				margin-right: 16px;
-				border-right: 1px solid var(--ch-orange);
-			}
-		}
-
-		.table-wrapper {
-			flex-grow: 1;
-			overflow-y: auto;
-		}
-
-		table.file-table {
-			border-collapse: separate;
-			border-spacing: 0;
-			width: 100%;
-			height: 100%;
-			position: relative;
-
-			th {
-				background: white;
-				position: sticky;
-				top: 0;
-				z-index: 2;
-				border-bottom: 1px solid var(--ch-orange);
-			}
-
-			:global(.icon-column) {
-				min-width: var(--small-column);
-				color: var(--ch-purple);
-			}
-
-			:global(.name-column) {
-				min-width: var(--name-column);
-			}
-
-			:global(.size-column) {
-				min-width: var(--size-column);
-			}
-
-			:global(.dropdown-column) {
-				min-width: var(--small-column);
-			}
-
-			:global(.left-aligned-column) {
-				text-align: left;
-				padding-left: 8px;
-			}
-
-			th {
-				padding: 8px 8px 4px 8px;
-			}
-
-			th {
-				border-bottom: 1px solid var(--ch-orange);
-				border-spacing: 0;
-				&:not(:first-child) {
-					border-left: 1px solid var(--ch-orange);
-				}
-			}
-
-			.file-table-footer {
-				padding-top: 1rem;
-			}
-		}
+	.divider {
+		width: 16px;
+		margin-right: 16px;
+		border-right: 1px solid var(--ch-orange);
 	}
 
 	@container (max-width: 1000px) {
-		.file-browser {
-			.control-wrapper {
-				margin: 0;
-
-				.divider {
-					border-right: none !important;
-					border-bottom: 1px solid var(--ch-orange);
-					width: 100% !important;
-					margin: 5px 0 8px 0 !important;
-				}
-
-				.filebrowser-controls {
-					margin: 4px 0 8px auto;
-				}
-			}
+		.divider {
+			border-right: none !important;
+			border-bottom: 1px solid var(--ch-orange);
+			width: 100% !important;
+			margin: 5px 0 8px 0 !important;
+		}
+		.control-wrapper {
+			margin: 0;
 		}
 	}
 </style>

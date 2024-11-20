@@ -1,6 +1,6 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import type Monaco from 'monaco-editor';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	import type FileManager from './FileManager';
 	import type { Node } from '$lib';
@@ -13,8 +13,8 @@
 </script>
 
 <script lang="ts">
-	let editorElement: HTMLDivElement;
-	let progress = 10;
+	let editorElement = $state<HTMLDivElement>();
+	let progress = $state(10);
 
 	const workers: Record<string, new () => Worker> = {
 		html: HtmlWorker,
@@ -33,15 +33,18 @@
 		'text/html': 'html'
 	};
 
-	export let fileManager: FileManager;
-	export let node: Node;
+	interface Props {
+		fileManager: FileManager;
+		node: Node;
+	}
 
-	let size = node.size;
-	$: size = node.size;
+	let { fileManager, node = $bindable() }: Props = $props();
 
-	let editor: Monaco.editor.IStandaloneCodeEditor;
+	let size = $derived(node.size);
+	let editor = $state<Monaco.editor.IStandaloneCodeEditor>();
 
 	async function saveFile() {
+		if (!editor) return;
 		progress = 0;
 		// Handle saving
 
@@ -74,6 +77,42 @@
 		node = node;
 		console.log('new size: ', node.size);
 	}
+
+	$effect(() => {
+		if (!editorElement) return;
+		let editor: Monaco.editor.IStandaloneCodeEditor;
+
+		(async () => {
+			const contentPromise = fileManager.getFileContents(node);
+			const monacoPromise = import('monaco-editor');
+
+			const [Monaco, value] = await Promise.all([monacoPromise, contentPromise]);
+
+			editor = Monaco.editor.create(editorElement, {
+				language: languages[node.mimeType] ?? node.mimeType,
+				value: value,
+				glyphMargin: true,
+				automaticLayout: true
+			});
+
+			editor.addAction({
+				id: 'save',
+				label: 'save',
+				run: saveFile,
+				keybindings: [Monaco.KeyMod.CtrlCmd | Monaco.KeyCode.KeyS]
+			});
+
+			const model = editor.getModel();
+			if (model == null) {
+				throw new Error('Failed to initialize model');
+			}
+		})();
+
+		return () => {
+			console.log('Destroying component');
+			editor?.dispose();
+		};
+	});
 	onMount(async () => {
 		self.MonacoEnvironment = {
 			globalAPI: true,
@@ -90,38 +129,12 @@
 				return undefined;
 			}
 		};
-
-		const contentPromise = fileManager.getFileContents(node);
-
-		const [Monaco, value] = await Promise.all([import('monaco-editor'), contentPromise]);
-		editor = Monaco.editor.create(editorElement, {
-			language: languages[node.mimeType] ?? node.mimeType,
-			value: value,
-			glyphMargin: true,
-			automaticLayout: true
-		});
-
-		editor.addAction({
-			id: 'save',
-			label: 'save',
-			run: saveFile,
-			keybindings: [Monaco.KeyMod.CtrlCmd | Monaco.KeyCode.KeyS]
-		});
-		const model = editor.getModel();
-		if (model == null) {
-			throw new Error('Failed to initialize model');
-		}
-	});
-
-	onDestroy(() => {
-		console.log('Destroying component');
-		editor?.dispose();
 	});
 </script>
 
 <section>
 	<div class="toolbar">
-		<button class="btn" type="button" on:click={saveFile}>Save</button>
+		<button class="btn" type="button" onclick={saveFile}>Save</button>
 		<progress value={progress} max="100"></progress>
 		<span>Size: {size}</span>
 	</div>

@@ -2,9 +2,13 @@
 	import AlertOutline from 'virtual:icons/mdi/alert-outline';
 	import AlertCircleOutline from 'virtual:icons/mdi/alert-circle-outline';
 
-	export let title: string;
-	export let message: string;
-	export let type: 'error' | 'warning';
+	interface Props {
+		title: string;
+		message: string;
+		type: 'error' | 'warning';
+	}
+
+	let { title, message, type }: Props = $props();
 </script>
 
 <div class="error-modal">
