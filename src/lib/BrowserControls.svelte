@@ -3,9 +3,14 @@
 	import type FileManager from './FileManager';
 	import 'winbox/src/css/winbox.css';
 	import WinBox from 'winbox/src/js/winbox';
+	import { mount, unmount } from 'svelte';
 
-	export let fileManager: FileManager;
-	let fileUpload: HTMLInputElement;
+	interface Props {
+		fileManager: FileManager;
+	}
+
+	let { fileManager }: Props = $props();
+	let fileUpload = $state<HTMLInputElement>();
 
 	const extensionToMime: Record<string, string> = {
 		js: 'text/javascript',
@@ -16,7 +21,7 @@
 	};
 
 	const onFileSelected = () => {
-		if (fileUpload.files && fileUpload.files.length > 0) {
+		if (fileUpload && fileUpload.files && fileUpload.files.length > 0) {
 			const file = fileUpload.files[0];
 			const reader = new FileReader();
 			reader.readAsDataURL(file);
@@ -37,7 +42,7 @@
 	const newFolder = async () => {
 		const winBox = new WinBox('Create folder', {});
 		const namePromise = new Promise((resolve: (name: string) => void) => {
-			const inputModal = new NameInputModal({
+			const inputModal = mount(NameInputModal, {
 				target: winBox.body,
 				props: {
 					title: 'Folder name',
@@ -45,7 +50,7 @@
 				}
 			});
 			winBox.onclose = () => {
-				inputModal.$destroy();
+				unmount(inputModal);
 				return false;
 			};
 		});
@@ -65,7 +70,7 @@
 	const newFile = async () => {
 		const winBox = new WinBox('Create file', {});
 		const namePromise = new Promise((resolve: (name: string) => void) => {
-			const inputModal = new NameInputModal({
+			const inputModal = mount(NameInputModal, {
 				target: winBox.body,
 				props: {
 					title: 'File name',
@@ -73,7 +78,7 @@
 				}
 			});
 			winBox.onclose = () => {
-				inputModal.$destroy();
+				unmount(inputModal);
 				return false;
 			};
 		});
@@ -95,29 +100,27 @@
 		style="display: none;"
 		type="file"
 		bind:this={fileUpload}
-		on:change={() => onFileSelected()}
+		onchange={() => onFileSelected()}
 	/>
-	<button type="button" class="filebrowser-button" on:click={() => fileUpload.click()}
+	<button type="button" class="filebrowser-button" onclick={() => fileUpload?.click()}
 		>Add file</button
 	>
-	<button type="button" class="filebrowser-button" on:click={() => newFolder()}>New folder</button>
-	<button type="button" class="filebrowser-button" on:click={() => newFile()}>New file</button>
+	<button type="button" class="filebrowser-button" onclick={() => newFolder()}>New folder</button>
+	<button type="button" class="filebrowser-button" onclick={() => newFile()}>New file</button>
 </div>
 
-<style lang="scss">
-	.filebrowser-controls {
-		.filebrowser-button {
-			padding: 8px 20px;
-			border: 1px solid var(--ch-orange);
-			background-color: transparent;
-			border-radius: 4px;
-			color: var(--ch-dark-purple);
+<style lang="css">
+	.filebrowser-button {
+		padding: 8px 20px;
+		border: 1px solid var(--ch-orange);
+		background-color: transparent;
+		border-radius: 4px;
+		color: var(--ch-dark-purple);
+	}
 
-			&:hover {
-				cursor: pointer;
-				background-color: var(--ch-orange);
-				color: white;
-			}
-		}
+	.filebrowser-button:hover {
+		cursor: pointer;
+		background-color: var(--ch-orange);
+		color: white;
 	}
 </style>

@@ -5,19 +5,25 @@
 	import type { external } from '$lib/interfaces/api.generated.d.ts';
 	import type FileManager from '$lib/FileManager';
 	type Node = external['models/Node.json'];
-	export let item: Node;
 
-	export let actions: ContextMenuAction[];
-	export let fileManager: FileManager;
-	export let pickOnSingleClick = true;
+	interface Props {
+		item: Node;
+		actions: ContextMenuAction[];
+		fileManager: FileManager;
+		pickOnSingleClick?: boolean;
+	}
+
+	let { item, actions, fileManager, pickOnSingleClick = true }: Props = $props();
 
 	const optionsClicked = (event: MouseEvent) => {
+		event.stopPropagation();
 		if (event.target instanceof Element) {
 			event.target.parentElement?.classList.toggle('show');
 		}
 	};
 
 	const itemClicked = (event: MouseEvent) => {
+		event.stopPropagation();
 		if (event.detail === 1) {
 			if (item.mimeType === 'inode/directory') {
 				fileManager.goToNode(item);
@@ -35,7 +41,7 @@
 	};
 </script>
 
-<tr on:click={itemClicked} class="file-row">
+<tr onclick={itemClicked} class="file-row">
 	<td class="text-center-column icon-column">
 		<RowIcon iconUrl={item.icon} mimeType={item.mimeType} />
 	</td>
@@ -44,20 +50,15 @@
 	<td class="size-column">{item.mimeType}</td>
 	<td class="dropdown-column text-center-column small-column">
 		<div class="dropdown">
-			<button
-				type="button"
-				class="show-options"
-				on:click|stopPropagation={(event) => optionsClicked(event)}>...</button
+			<button type="button" class="show-options" onclick={(event) => optionsClicked(event)}
+				>...</button
 			>
 			<div class="file-options">
 				{#each actions as action}
 					{#if action.validFor(item)}
-						<button
-							type="button"
-							on:click|stopPropagation={(event) => actionClicked(event, action)}
-						>
+						<button type="button" onclick={(event) => actionClicked(event, action)}>
 							<div>
-								<svelte:component this={action.icon} />
+								<action.icon />
 								<span>{action.name}</span>
 							</div>
 						</button>
@@ -73,15 +74,15 @@
 		display: block !important;
 	}
 
+	td {
+		padding: 8px;
+	}
+
+	.text-center-column {
+		text-align: center;
+	}
+
 	.file-row {
-		td {
-			padding: 8px;
-		}
-
-		.text-center-column {
-			text-align: center;
-		}
-
 		&:hover {
 			background-color: rgb(240, 240, 240);
 			cursor: pointer;

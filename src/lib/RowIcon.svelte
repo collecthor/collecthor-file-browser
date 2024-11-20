@@ -15,9 +15,12 @@
 	import CodeJson from 'virtual:icons/mdi/code-json';
 	import type { ComponentType } from 'svelte';
 
-	export let mimeType: string;
+	interface Props {
+		mimeType: string;
+		iconUrl: string | null;
+	}
 
-	export let iconUrl: string | null;
+	let { mimeType, iconUrl }: Props = $props();
 
 	const map: Record<string, ComponentType> = {
 		'application/javascript': LanguageJavascript,
@@ -34,7 +37,8 @@
 		<FileImage />
 	</object>
 {:else if map[mimeType]}
-	<svelte:component this={map[mimeType]} />
+	{@const SvelteComponent = map[mimeType]}
+	<SvelteComponent />
 {:else if mimeType.endsWith(';optimistic')}
 	<ProgressUpload />
 {:else if mimeType.startsWith('video/')}

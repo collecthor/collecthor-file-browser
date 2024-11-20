@@ -1,7 +1,11 @@
 <script lang="ts">
 	import type FileManager from './FileManager';
 
-	export let fileManager: FileManager;
+	interface Props {
+		fileManager: FileManager;
+	}
+
+	let { fileManager }: Props = $props();
 
 	const pathStack = fileManager.getPathStack();
 </script>
@@ -9,8 +13,8 @@
 <div class="path-bar">
 	<span
 		class="path-item"
-		on:click={() => fileManager.goHome()}
-		on:keydown={() => fileManager.goHome()}
+		onclick={() => fileManager.goHome()}
+		onkeydown={() => fileManager.goHome()}
 		role="button"
 		tabindex="0">Home</span
 	>
@@ -20,8 +24,8 @@
 			class="path-item"
 			role="button"
 			tabindex="0"
-			on:click={() => fileManager.goToNode(pathItem)}
-			on:keydown={() => fileManager.goToNode(pathItem)}
+			onclick={() => fileManager.goToNode(pathItem)}
+			onkeydown={() => fileManager.goToNode(pathItem)}
 		>
 			{pathItem.name}
 		</span>
@@ -38,18 +42,17 @@
 		text-overflow: ellipsis;
 		flex-grow: 100;
 		line-height: 32px;
+	}
+	span {
+		margin-right: 0.5em;
+	}
 
-		span {
-			margin-right: 0.5em;
-		}
+	.path-item {
+		color: var(--ch-dark-purple);
+	}
 
-		.path-item {
-			color: var(--ch-dark-purple);
-
-			&:hover {
-				cursor: pointer;
-				opacity: 0.4;
-			}
-		}
+	.path-item:hover {
+		cursor: pointer;
+		opacity: 0.4;
 	}
 </style>

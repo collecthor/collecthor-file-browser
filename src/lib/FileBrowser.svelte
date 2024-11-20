@@ -4,10 +4,13 @@
 	import FileBrowserContent from '$lib/FileBrowserContent.svelte';
 	import type FileManager from '$lib/FileManager';
 
-	export let actions: ContextMenuAction[] = [];
+	interface Props {
+		actions?: ContextMenuAction[];
+		type?: 'browser' | 'picker';
+		fileManager: FileManager;
+	}
 
-	export let type: 'browser' | 'picker' = 'browser';
-	export let fileManager: FileManager;
+	let { actions = [], type = 'browser', fileManager }: Props = $props();
 
 	fileManager.eventRegistry().on('error', (errorData) => {
 		console.error(errorData);
