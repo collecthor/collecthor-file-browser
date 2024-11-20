@@ -14,6 +14,3 @@
 
 <Folder></Folder>
 <FileBrowser {fileManager} />
-
-<style lang="scss">
-</style>

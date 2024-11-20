@@ -17,7 +17,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style lang="css">
 	button {
 		border: 1px solid var(--ch-orange);
 		padding: 8px 16px;

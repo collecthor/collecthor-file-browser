@@ -12,9 +12,8 @@
 		"lint": "prettier --check . && eslint .",
 		"eslint": "eslint .",
 		"format": "prettier --write .",
-		"test:playwright": "npx playwright test --trace on",
-		"test:vitest": "vitest watch --ui --open",
-		"test:vitest:ci": "vitest run",
+		"test": "vitest watch --ui --open",
+		"test:node": "vitest run",
 		"generate": "npx openapi-typescript ./reference/file-browser-api.yaml -o ./src/lib/interfaces/api.generated.d.ts"
 	},
 	"repository": {
@@ -27,7 +26,6 @@
 		"@eslint/js": "^9.10.0",
 		"@iconify-json/mdi": "^1.2.0",
 		"@openapitools/openapi-generator-cli": "^2.6.0",
-		"@playwright/test": "^1.48.2",
 		"@stoplight/prism-cli": "^5",
 		"@sveltejs/adapter-auto": "^3",
 		"@sveltejs/adapter-static": "^3",

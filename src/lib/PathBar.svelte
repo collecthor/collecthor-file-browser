@@ -42,18 +42,17 @@
 		text-overflow: ellipsis;
 		flex-grow: 100;
 		line-height: 32px;
+	}
+	span {
+		margin-right: 0.5em;
+	}
 
-		span {
-			margin-right: 0.5em;
-		}
+	.path-item {
+		color: var(--ch-dark-purple);
+	}
 
-		.path-item {
-			color: var(--ch-dark-purple);
-
-			&:hover {
-				cursor: pointer;
-				opacity: 0.4;
-			}
-		}
+	.path-item:hover {
+		cursor: pointer;
+		opacity: 0.4;
 	}
 </style>

@@ -74,15 +74,15 @@
 		display: block !important;
 	}
 
+	td {
+		padding: 8px;
+	}
+
+	.text-center-column {
+		text-align: center;
+	}
+
 	.file-row {
-		td {
-			padding: 8px;
-		}
-
-		.text-center-column {
-			text-align: center;
-		}
-
 		&:hover {
 			background-color: rgb(240, 240, 240);
 			cursor: pointer;
