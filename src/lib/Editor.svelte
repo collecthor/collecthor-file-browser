@@ -80,7 +80,6 @@
 
 	$effect(() => {
 		if (!editorElement) return;
-		let editor: Monaco.editor.IStandaloneCodeEditor;
 
 		(async () => {
 			const contentPromise = fileManager.getFileContents(node);
