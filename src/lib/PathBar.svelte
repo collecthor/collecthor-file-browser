@@ -19,7 +19,7 @@
 		tabindex="0">Home</span
 	>
 	<span class="separator">/</span>
-	{#each $pathStack as pathItem}
+	{#each $pathStack as pathItem (pathItem.path)}
 		<span
 			class="path-item"
 			role="button"
