@@ -44,11 +44,17 @@
 	let editor = $state<Monaco.editor.IStandaloneCodeEditor>();
 
 	async function saveFile() {
-		if (!editor) return;
+		if (typeof editor === 'undefined') {
+			return;
+		}
 		progress = 0;
 		// Handle saving
 
 		const dataURL = new Promise((resolve: (s: string) => void, reject) => {
+			if (typeof editor === 'undefined') {
+				reject('Editor not set');
+				return;
+			}
 			const reader = new FileReader();
 			const blob = new Blob([editor.getValue({ preserveBOM: true, lineEnding: '\n' })], {
 				type: node.mimeType
