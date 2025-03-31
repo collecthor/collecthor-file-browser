@@ -54,7 +54,7 @@
 				>...</button
 			>
 			<div class="file-options">
-				{#each actions as action}
+				{#each actions as action (action.name)}
 					{#if action.validFor(item)}
 						<button type="button" onclick={(event) => actionClicked(event, action)}>
 							<div>

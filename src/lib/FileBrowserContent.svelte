@@ -100,7 +100,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each $currentPathContents as item}
+					{#each $currentPathContents as item (item.path)}
 						<FileRow
 							{item}
 							pickOnSingleClick={type === 'picker'}
